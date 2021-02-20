@@ -1,1 +1,52 @@
+US 01.01.01: As an owner, I want to publish an experiment with a description, a region, and a minimum number of trials.
+	Rationale: An owner wishes to create experiments with specific information.
+			   This information includes: description, region, trial count.
+	Requirements: Nouns: Owner, Experiment, description, region, minimum trials.  Adjective: publish
+	Weight (1-10): 7 (because this will likely become a core class for our design).  Will likely take 2-3 days to build
+	Risk level (low, medium, high): high
 
+US 01.02.01:
+
+US 01.03.01:
+
+US 01.04.01: As an owner or experimenter, I want to subscribe to an experiment to participate in it.
+	Rationale: Owners would like to join in on experiments.
+	Requirements: Nouns: Owner, Experimenter, Experiment.  Adjectives: Subscribe, Participate
+	Weight (1-10): 5 (Users will need to be able to join other experiments for the experiments to work) 2-5 days to build
+	Risk level (low, medium, high): high
+
+US 01.05.01:
+
+US 01.06.01:
+
+US 01.07.01:
+
+US 01.08.01:
+
+US 01.09.01: As an owner or experimenter, I want to observe statistics (quartiles, median, mean, stdev) about a current trials.
+	Rationale: Statistics are a very important part of any trial.  They help determine how successful the experiment was.
+	Requirements: Owner, Experimenter, statistics.
+	Weight (1-10): 3 (standard statistics) 1-2 days to build
+	Risk level (low, medium, high): high
+
+
+US 02.01.01: As an experimenter, I want to ask a question about an experiment.
+	Rationale: Asking questions about a given experiment may help a user understand why the experiment is being performed and 				may also help the user decide if they want to participate in the experiment
+	Requirements: Nouns: Experimenter, experiment.  Adjectives: Question, Ask
+	Weight (1-10): 5, 2-5 days to build (will likely be in the form of a forum)
+	Risk level (low, medium, high): low
+
+US 02.02.01:
+
+US 02.03.01:
+
+
+US 03.01.01: As an experimenter, I want to be able to generate QR codes that I can print for a specific experiment and trial 				 result (for instance PASS for a binomial trial I subscribed to). 
+	Rationale: An experimenter can take a QR code to anywhere and show their experiment results to others.
+	Requirements: Nouns: QR Code, Experimenter, experiment, result.  Adjectives: Generate, print, 
+	Weight (1-10): 8 (may take a significant portion of time to get working) 14 days to build
+	Risk level (low, medium, high): low
+
+US 03.02.01:
+
+US 03.03.01:
