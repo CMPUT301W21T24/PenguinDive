@@ -7,8 +7,11 @@ US 01.01.01: As an owner, I want to publish an experiment with a description, a 
 
 US 01.02.01:
 
-US 01.03.01:
-
+US 01.03.01: As an owner, I want to end an experiment. This leaves the results available and public but does not allow new results to be added.
+	Rationale: Owners would like to close experiments from collecting more data. Useful when the owner has gathered they data they want or no longer wishes to continue trials. Thus, leaving only the results viewable.
+	Weight (1-10): 4 (An addition to the core functionality of US 01.01.01) Likely take 2-3 days to build and refine.
+	Risk level (low, medium, high): 
+	
 US 01.04.01: As an owner or experimenter, I want to subscribe to an experiment to participate in it.
 	Rationale: Owners would like to join in on experiments.
 	Requirements: Nouns: Owner, Experimenter, Experiment.  Adjectives: Subscribe, Participate
@@ -19,10 +22,16 @@ US 01.05.01:
 
 US 01.06.01:
 
-US 01.07.01:
+US 01.07.01: As an owner or experimenter, I want to see plots of the results of trials over time.
+	Rationale: Owners and experimenters can see visual representation of experiment outcomes as they are completed throughout the life of the experiment.
+	Weight (1-10): 5, (Backbone to the statistic readout for each experiment, will need to log all outcomes, omitting any that have been ignored by the owner) 2-3 days to build
+	Risk level (low, medium, high):
 
-US 01.08.01:
-
+US 01.08.01: As an owner, I want to ignore certain experimenters results.
+	Rationale: Owners would like control over which experiments they deem valid. Allowing them to omit ones they find inadequate or not fitting to their experiment.
+	Weight (1-10): 2 (Will need to remove the experiments results from statistics, while keeping the result active for qr code sharing) 1 day to build
+	Risk level (low, medium, high):
+	
 US 01.09.01: As an owner or experimenter, I want to observe statistics (quartiles, median, mean, stdev) about a current trials.
 	Rationale: Statistics are a very important part of any trial.  They help determine how successful the experiment was.
 	Requirements: Owner, Experimenter, statistics.
@@ -38,8 +47,10 @@ US 02.01.01: As an experimenter, I want to ask a question about an experiment.
 
 US 02.02.01:
 
-US 02.03.01:
-
+US 02.03.01: As an experimenter or owner, I want to browse questions and replies about an experiment.
+	Rationale: With questions and replies visible to the owner, the owner can gather valuable feedback in regards to his/her experiment and aid others by answering questions. Experiementers can look into whether the experiment interests them and view the experiences of others.
+	Weight (1-10): 1, (Most of the backbone will come from US 02.01.01)
+	Risk level (low, medium, high): low
 
 US 03.01.01: As an experimenter, I want to be able to generate QR codes that I can print for a specific experiment and trial 				 result (for instance PASS for a binomial trial I subscribed to). 
 	Rationale: An experimenter can take a QR code to anywhere and show their experiment results to others.
@@ -49,4 +60,7 @@ US 03.01.01: As an experimenter, I want to be able to generate QR codes that I c
 
 US 03.02.01:
 
-US 03.03.01:
+US 03.03.01: As an experimenter, I want to be able to register an arbitrary bar code (such as one off of your favourite book) to act a specific experiment result for a trial.
+	Rationale: An experimenter can register a barcode to their specific result/outcome and share it to others for them to scan and view. 
+	Weight (1-10): 4 (Will need to adapt existing qr code generation to accept a previously generated qr code) 2-4 days  
+	Risk level (low, medium, high):
