@@ -29,7 +29,7 @@ US 01.07.01: As an owner or experimenter, I want to see plots of the results of 
 
 US 01.08.01: As an owner, I want to ignore certain experimenters results.
 	Rationale: Owners would like control over which experiments they deem valid. Allowing them to omit ones they find inadequate or not fitting to their experiment.
-	Weight (1-10): 2 (Will need to remove the experiments results from statistics, while keeping the result active for qr code sharing) 1 day to build
+	Weight (1-10): 2 (Will need to remove the experiments results from statistics, while keeping the result active for qr code sharing) 1-2 days to build
 	Risk level (low, medium, high):
 	
 US 01.09.01: As an owner or experimenter, I want to observe statistics (quartiles, median, mean, stdev) about a current trials.
@@ -49,7 +49,7 @@ US 02.02.01:
 
 US 02.03.01: As an experimenter or owner, I want to browse questions and replies about an experiment.
 	Rationale: With questions and replies visible to the owner, the owner can gather valuable feedback in regards to his/her experiment and aid others by answering questions. Experiementers can look into whether the experiment interests them and view the experiences of others.
-	Weight (1-10): 1, (Most of the backbone will come from US 02.01.01)
+	Weight (1-10): 1, (Most of the backbone will come from US 02.01.01) Viewability will like be inherited, polishing might take 0.5-1 day
 	Risk level (low, medium, high): low
 
 US 03.01.01: As an experimenter, I want to be able to generate QR codes that I can print for a specific experiment and trial 				 result (for instance PASS for a binomial trial I subscribed to). 
