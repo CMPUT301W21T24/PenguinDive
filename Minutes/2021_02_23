@@ -15,7 +15,7 @@ Separation of work:
 Ryan: US 01.01.01 US 01.04.01 US 01.09.01 US 02.01.01 US 03.01.01
 Nikita: US 01.02.01 US 01.05.01 US 01.06.01 US 02.02.01 US 03.02.01
 Tyler: US 01.03.01 US 01.08.01 US 01.07.01 US 02.03.01 US 03.03.01
-Group 2 (Rui, Kevin, Matt): In charge of {
+Group 2 (Linrui, Kevin, Matt): In charge of {
 User Interface Mockups and Storyboard Sequences:
 Diagram the layout of your main user interface and major dialogs, with comments describing the important elements. Also, diagram storyboard sequences of using your application, with transitions between different states of the user interface, caused by the user manipulating the controls or providing input. Within the diagrams, reference the relevant requirements. Convincingly show all the requirements are covered. For a demo of storyboards: https://www.youtube.com/watch?v=5PPD0ncJU1g&list=PL240uJOh_Vb4PtMZ0f7N8ACYkCLv0673O
 Object-Oriented Analysis:
