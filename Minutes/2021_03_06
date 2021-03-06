@@ -1,0 +1,50 @@
+	March 6th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 3 Clarification
+______________________________________________________________________________
+
+Summary: Clarification of last weeks meeting to ensure everyone knows what we are to be focusing on. Re-update UML diagram within the Trials region to include 
+______________________________________________________________________________
+
+Deliverables to be accomplished by Tuesday March 9, 2021:
+
+- Trial Class
+- Experiement Class
+- Main Activity & Experiement Fragment
+______________________________________________________________________________
+
+Applicable Product Backlog Elements:
+
+US 01.01.01
+As an owner, I want to publish an experiment with a description, a region, and a minimum number of trials.
+
+US 01.02.01
+As an owner, I want to unpublish an experiment.
+
+US 01.03.01
+As an owner, I want to end an experiment. This leaves the results available and public but does not allow new results to be added.
+
+US 01.04.01
+As an owner or experimenter, I want to subscribe to an experiment to participate in it.
+
+US 01.05.01
+As an experimenter, I want to be able to execute trials for an experiment and upload them to the experiment.
+
+US 01.08.01
+As an owner, I want to ignore certain experimenters results.
+
+US 01.09.01
+As an owner or experimenter, I want to observe statistics (quartiles, median, mean, stdev) about a current trials.
+
+US 01.06.01
+As an owner or experimenter, I want to see histograms of the results of trials.
+
+US 01.07.01
+As an owner or experimenter, I want to see plots of the results of trials over time.
+
+______________________________________________________________________________
+
+Next meetings:
+Tuesday March 9, 2021, 1PM MST
+Thursday March 11, 2021, 7:30PM MST (After TA meeting)
+
+
