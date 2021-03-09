@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1030609598844",
+    "project_id": "cmput301-penguindive",
+    "storage_bucket": "cmput301-penguindive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030609598844:android:d53b3ed2112b1b06aa0cf9",
+        "android_client_info": {
+          "package_name": "com.cmput301.penguindive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030609598844-uac459652lgv0a87d7krgjui2ops10h0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK3Q65cLtXTljl3vpmGAX34xeeqGC0RyA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030609598844-uac459652lgv0a87d7krgjui2ops10h0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
