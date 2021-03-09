@@ -15,6 +15,10 @@ public class Experiment {
 		this.numNonNeg = 0;
 		this.numMeas = 0;
 		this.numBinomial = 0;
+		this.cTrials = new ArrayList<>();
+		this.bTrials = new ArrayList<>();
+		this.mTrials = new ArrayList<>();
+		this.nnTrials = new ArrayList<>();
 	}
 
 	public void createNewCount(Count_Trial c) {
