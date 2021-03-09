@@ -10,7 +10,7 @@ public class Experiment {
 	private ArrayList<Measurement_Trial> mTrials;
 	private ArrayList<Non_Negative_Integer_Counts_Trial> nnTrials;
 
-	public Experiment_Manager() {
+	public Experiment() {
 		this.numCount = 0;
 		this.numNonNeg = 0;
 		this.numMeas = 0;
