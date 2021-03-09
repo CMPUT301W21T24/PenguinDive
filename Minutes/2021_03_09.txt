@@ -34,7 +34,7 @@ Goals (by thursday march 11):
 After thursday goals:
 	- Matt will upate storyboard
 	- Rui will start working on location
-	- Nikita will begin creating tests for all her developed working
+	- Nikita will begin creating tests for all her developed work
 	- Tyler will begin creating profiles and tests for experiment searchs
 	- Kevin to update uml and help others with their tasks
 	- Ryan to start looking into qr codes
@@ -42,4 +42,3 @@ After thursday goals:
 ______________________________________________________________________________
 
 In general we want experiment, main activity, fragments, trials, and profiles done by middle of the next week, and the rest of that week will be easy testing.
-
