@@ -62,7 +62,12 @@ public class Experiment {
 	}
 
 	public void stats() {
-
+		int totalTrials = numCount + numBinomial + numMeas + numNonNeg;
+		int[] bSuccessRate;
+		for (int i = 0; i < bTrials.size(); i++) {
+			bSuccessRate[i] = bTrials.get(i).getNumPasses() / (bTrials.get(i).getNumPasses + 
+				bTrials.get(i).getNumFails());
+		}
 	}
 
 	public void histogram() {
