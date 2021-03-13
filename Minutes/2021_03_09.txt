@@ -1,0 +1,45 @@
+	March 9th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 3 Clarification
+______________________________________________________________________________
+
+Summary: Raising quesitons and concerns in regards to workload. Clarifying future goals.
+	
+	- Tyler mentioned changing the search functionality to not be a fragment, but be imbedded in the activity that shows all experiments
+		- Currently using searchview, Nikita mentioned possibility of regex
+		- Will require change in uml and story board
+		
+	- Profiles class having two constructors
+		- Profiles will have username and email, not phone number
+		- Reduce to one constructor containing both vars, remove the one with only username
+	
+	- Branch naming conventions, name your branch under your name
+		- If your branch receives a conflict, pull master then create your pull request
+	
+	- Rui clarifying what experiment layouts should look like
+	
+	- Starting to discuss how collections will be laid out in the database
+		- Users and experiments as the main collections
+______________________________________________________________________________
+
+Goals (by thursday march 11):
+	- Have a functioning experiment class, trials and search functionality
+		- Tyler to complete search functionality 
+		- Nikita to complete questions and main activity
+		- Rui to complete experiments and customlists
+			- Experiment fragment, customlist and 
+		- Kevin to complete custom trial list, trial fragment, then to inquire on how to integrate into experiments
+		- Ryan trials and experiment development
+		- Matt to get experiment development done
+
+After thursday goals:
+	- Matt will upate storyboard
+	- Rui will start working on location
+	- Nikita will begin creating tests for all her developed work
+	- Tyler will begin creating profiles and tests for experiment searchs
+	- Kevin to update uml and help others with their tasks
+	- Ryan to start looking into qr codes
+	
+______________________________________________________________________________
+
+In general we want experiment, main activity, fragments, trials, and profiles done by middle of the next week, and the rest of that week will be easy testing.
+
