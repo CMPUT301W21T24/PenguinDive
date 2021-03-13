@@ -36,6 +36,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // for QR and barcode generation and scanning
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'com.jourrneyapps:zxing-android-embedded:3.2.0@aar'
+
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:26.6.0')
     // Add the dependencies for the desired Firebase products
