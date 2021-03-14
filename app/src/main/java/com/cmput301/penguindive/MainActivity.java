@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.experiment_activity); //To be changed to main
+        setContentView(R.layout.activity_main);
 
         experimentList = findViewById(R.id.experimentList);
         experimentDataList = new ArrayList<>();
