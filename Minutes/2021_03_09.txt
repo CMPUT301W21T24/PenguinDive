@@ -42,3 +42,4 @@ After thursday goals:
 ______________________________________________________________________________
 
 In general we want experiment, main activity, fragments, trials, and profiles done by middle of the next week, and the rest of that week will be easy testing.
+
