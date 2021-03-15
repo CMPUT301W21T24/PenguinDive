@@ -6,10 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <SearchView
+    android:id="@+id/searchLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:iconifiedByDefault="false" >
+    </SearchView>
+
     <ListView
         android:id="@+id/experimentList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchLayout">
     </ListView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
