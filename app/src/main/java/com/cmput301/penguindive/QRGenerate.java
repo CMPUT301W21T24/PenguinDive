@@ -2,7 +2,14 @@ package com.cmput301.penguindive;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,8 +18,23 @@ import android.widget.Spinner;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.pdf417.encoder.BarcodeMatrix;
 import com.google.zxing.qrcode.encoder.Encoder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
+
+/*
+Developed with help from:
+https://github.com/androidmads/QRGenerator
+https://www.youtube.com/watch?v=NpVRUhEpRI8
+https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+using this answer: https://stackoverflow.com/a/17650125
+ */
 public class QRGenerate extends AppCompatActivity {
 
     String QRString;
@@ -22,6 +44,8 @@ public class QRGenerate extends AppCompatActivity {
     ImageView QRCode;
     Button generate;
     Button save;
+    Button back;
+    Bitmap bMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +58,19 @@ public class QRGenerate extends AppCompatActivity {
         generate = findViewById(R.id.generate);
         save = findViewById(R.id.saveButton);
         passfail = findViewById(R.id.pass_fail);
+        back = findViewById(R.id.goBack);
+
+        // set the dorpdown menu entries
+        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
+        String[] passOrFail = {"Pass", "Fail"};
+        ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
+        ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
+        trialType.setAdapter(typeAdapt);
+        passfail.setAdapter(passFailAdapt);
+
 
         save.setVisibility(Button.GONE);
+        back.setVisibility(Button.GONE);
 
         generate.setOnClickListener(v -> {
 
@@ -44,14 +79,42 @@ public class QRGenerate extends AppCompatActivity {
             String passFail = passfail.getSelectedItem().toString();
             QRString = name + "-" + type + "-" + passFail;
 
-            MultiFormatWriter mfw = new MultiFormatWriter();
-
+            QRGEncoder QRcode = new QRGEncoder(QRString, QRGContents.Type.TEXT, 500);
+            QRcode.setColorBlack(Color.BLACK);
+            QRcode.setColorWhite(Color.WHITE);
             try {
-                BitMatrix bMat = mfw.encode(QRString, BarcodeFormat.QR_CODE, 500, 500);
-                // TODO: show and save QRCode
+                bMap = QRcode.getBitmap();
+                QRCode.setImageBitmap(bMap);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // hide input areas and allow user to either save the QR Code to local storage or go back
+            generate.setVisibility(Button.GONE);
+            experName.setVisibility(EditText.GONE);
+            passfail.setVisibility(Spinner.GONE);
+            trialType.setVisibility(Spinner.GONE);
+
+            save.setVisibility(Button.VISIBLE);
+            back.setVisibility(Button.VISIBLE);
         });
+
+        // TODO: save files to photo gallery
+//        save.setOnClickListener(v -> {
+//            String location = Context.getExternalFilesDir(null);
+//            String filename = "QRCode-" + QRString;
+//            File file = new File(location, filename + ".png");
+//
+//            try {
+//                FileOutputStream fileOut = new FileOutputStream(file);
+//                bMap.compress(Bitmap.CompressFormat.PNG, 100, fileOut);
+//                fileOut.close();
+//
+//                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//                intent.setData
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
    }
 }
