@@ -3,6 +3,7 @@ package com.cmput301.penguindive;
 import java.io.Serializable;
 
 public class Experiment implements Serializable {
+    private String experimentId;
     private String title;
     private String description;
     private String region;
@@ -10,7 +11,8 @@ public class Experiment implements Serializable {
     private String ownerUserName;
     private String status;
 
-    public Experiment(String title, String description, String region, String totalTrail, String ownerUserName, String status) {
+    public Experiment(String experimentId, String title, String description, String region, String totalTrail, String ownerUserName, String status) {
+        this.experimentId = experimentId;
         this.title = title;
         this.description = description;
         this.region = region;
@@ -18,11 +20,19 @@ public class Experiment implements Serializable {
         this.ownerUserName = ownerUserName;
         this.status = status;
     }
-    String getTitle(){return this.title;}
-    String getDescription() {return this.description;}
-    String getRegion() {return this.region;}
-    String getTotalTrail() {return this.totalTrail;}
-    String getOwnerUserName() {return this.ownerUserName;}
+
+    public void setExperimentId(String experimentId) {this.experimentId = experimentId;}
+    String getExperimentId(){return experimentId;}
+    public void setTitle(String title){ this.title = title;}
+    String getTitle(){return title;}
+    public void setDescription(String description){ this.description = description;}
+    String getDescription() {return description;}
+    public void setRegion(String region){this.region =region;}
+    String getRegion() {return region;}
+    public void setTotalTrail(String totalTrail){this.totalTrail = totalTrail;}
+    String getTotalTrail() {return totalTrail;}
+    public void setOwnerUserName(String ownerUserName){this.ownerUserName = ownerUserName;}
+    String getOwnerUserName() {return ownerUserName;}
     String getStatus() {return status;}
 
     public void setStatus(String status) {

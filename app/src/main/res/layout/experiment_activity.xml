@@ -16,9 +16,16 @@
     <ListView
         android:id="@+id/experimentList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="450dp"
         android:layout_below="@+id/searchLayout">
     </ListView>
+
+    <Button
+        android:id="@+id/myExperimentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/experimentList"
+        android:text="My Experiment"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_button"
