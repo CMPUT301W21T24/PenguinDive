@@ -21,7 +21,7 @@
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/experiment_description"
@@ -38,7 +38,7 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/experiment_name"></TextView>
+        app:layout_constraintTop_toBottomOf="@+id/experiment_name" />
 
 
     <TextView
@@ -54,7 +54,7 @@
         android:text="Experiment Owner"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/experiment_description"></TextView>
+        app:layout_constraintTop_toBottomOf="@+id/experiment_description" />
 
     <TextView
         android:id="@+id/experiment_status"

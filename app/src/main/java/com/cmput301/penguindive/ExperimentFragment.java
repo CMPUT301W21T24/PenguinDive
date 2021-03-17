@@ -13,12 +13,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.UUID;
+
 public class ExperimentFragment extends DialogFragment {
     private EditText experimentTitle;
     private EditText experimentDescription;
     private EditText experimentRegion;
+    private EditText experimentCount;
+    private EditText experimentOwner;
+    private EditText experimentStatus;
     private OnFragmentInteractionListener listener;
-    private Experiment experiment;
+    public Experiment experiment;
+    private String experimentID;
     private int position;
 
     public interface OnFragmentInteractionListener {
@@ -48,15 +54,21 @@ public class ExperimentFragment extends DialogFragment {
         experimentTitle = view.findViewById(R.id.editTitle);
         experimentDescription = view.findViewById(R.id.editDescription);
         experimentRegion = view.findViewById(R.id.editRegion);
-
+        experimentCount = view.findViewById(R.id.editCount);
+        experimentOwner = view.findViewById(R.id.editOwner);
+        experimentStatus = view.findViewById(R.id.editStatus);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             experiment = (Experiment) bundle.getSerializable("experiment");
             position = (int) bundle.getSerializable("pos");
+            experimentID = experiment.getExperimentId();
             experimentTitle.setText(experiment.getTitle());
             experimentDescription.setText(experiment.getDescription());
             experimentRegion.setText(experiment.getRegion());
+            experimentOwner.setText(experiment.getOwnerUserName());
+            experimentCount.setText(experiment.getTotalTrail());
+            experimentStatus.setText(experiment.getStatus());
         }
 
 
@@ -74,9 +86,15 @@ public class ExperimentFragment extends DialogFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        if (experimentID == null){
+                            experimentID = UUID.randomUUID().toString();
+                        }
                         String title = experimentTitle.getText().toString();
                         String description = experimentDescription.getText().toString();
                         String region = experimentRegion.getText().toString();
+                        String totalTrail = experimentCount.getText().toString();
+                        String ownerUserName = experimentOwner.getText().toString();
+                        String status = experimentStatus.getText().toString();
                         if(description.length()==0){
                             listener.nullValueError();
                         }
@@ -90,10 +108,10 @@ public class ExperimentFragment extends DialogFragment {
                             listener.extraStringError();
                         }
                         if(experiment != null){
-                            listener.onEditPressed(new Experiment(title,description,region,totalTrail,ownerUserName), position);
+                            listener.onEditPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status), position);
                         }
                         else{
-                            listener.onOkPressed(new Experiment(title,description,region,totalTrail,ownerUserName));
+                            listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status));
                         }
 
 
