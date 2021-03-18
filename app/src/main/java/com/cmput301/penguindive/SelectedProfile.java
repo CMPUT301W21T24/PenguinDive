@@ -31,7 +31,6 @@ public class SelectedProfile extends AppCompatActivity {
         email = findViewById(R.id.searchedEmail);
 
         String docID = getIntent().getStringExtra("profile_ID");
-        Log.d("cheese",docID);
 
         DocumentReference docRef = profileCollectionReference.document(docID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -47,7 +47,7 @@ public class Profile extends AppCompatActivity {
 
         uid = sharedPref.getString("UID", "");
 
-        //make a query on the given profile to display the contact information
+        //make a query on the given profile to display the id, name, contact information of the instance's user
         DocumentReference docRef = profileCollectionReference.document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -58,11 +58,9 @@ public class Profile extends AppCompatActivity {
                     name.setText(document.getString("name"));
                     email.setText(document.getString("email"));
 
-                } else {
-                    Log.d("TAG", "Error getting documents: ", task.getException());
                 }
-                    }
-                });
+            }
+        });
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override

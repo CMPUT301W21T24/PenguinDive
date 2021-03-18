@@ -59,14 +59,11 @@ public class SearchProfile extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             profileArray.clear();
                             profileID.clear();
-                            Log.d("Cheese",task.getResult().toString());
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("name")));
                                 profileID.add((document.getId()));
-                                Log.d("Cheese",profileArray.toString());
                             }
                             profileAdapter.notifyDataSetChanged();
-
                         }
                     }
                 });
