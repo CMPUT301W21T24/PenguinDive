@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">penguindive</string>
+    <string name="experiment_search_text">Search Experiments</string>
 </resources>

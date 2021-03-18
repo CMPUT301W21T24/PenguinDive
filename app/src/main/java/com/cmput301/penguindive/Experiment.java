@@ -37,10 +37,10 @@ public class Experiment implements Serializable {
     String getTotalTrail() {return totalTrail;}
     public void setOwnerUserName(String ownerUserName){this.ownerUserName = ownerUserName;}
     String getOwnerUserName() {return ownerUserName;}
-    String getStatus() {return status;}
     public void setStatus(String status) {
         this.status = status;
     }
+    String getStatus() {return status;}
     public void setExperimenters(List<String> experimenters) {this.experimenters = experimenters;}
     List<String> getExperimenters() {return experimenters;}
 
