@@ -1,6 +1,8 @@
 package com.cmput301.penguindive;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,14 +22,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class Profile extends AppCompatActivity {
-    private String phoneNumber;
-    private Boolean experimenter = false;
-    private Boolean owner = false;
     private EditText name;
     private EditText email;
     private TextView id;
     Button saveButton;
     Button searchButton;
+    String uid;
 
     //private ArrayList<Experiment> ownedExperiments;
     //private ArrayList<Experiment> subscribedExperiments;
@@ -43,9 +43,12 @@ public class Profile extends AppCompatActivity {
         email = findViewById(R.id.Email);
         saveButton = findViewById(R.id.saveButton);
         searchButton = findViewById(R.id.searchButton);
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+
+        uid = sharedPref.getString("UID", "");
 
         //make a query on the given profile to display the contact information
-        DocumentReference docRef = profileCollectionReference.document("Test");
+        DocumentReference docRef = profileCollectionReference.document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

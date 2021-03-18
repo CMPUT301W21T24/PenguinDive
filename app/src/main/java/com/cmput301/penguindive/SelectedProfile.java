@@ -39,8 +39,8 @@ public class SelectedProfile extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    name.setText(document.getString("name"));
-                    email.setText(document.getString("email"));
+                    name.setText("Name: " + document.getString("name"));
+                    email.setText("Email: " + document.getString("email"));
 
                 }
             }

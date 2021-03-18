@@ -4,6 +4,7 @@ package com.cmput301.penguindive;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,14 +52,35 @@ public class SearchProfile extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 db.collection("Experimenter")
-                        .whereEqualTo("name", s).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        .whereEqualTo("name", s)
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            profileArray.clear();
+                            profileID.clear();
+                            Log.d("Cheese",task.getResult().toString());
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                profileArray.add((document.getString("name")));
+                                profileID.add((document.getId()));
+                                Log.d("Cheese",profileArray.toString());
+                            }
+                            profileAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+                });
+
+                db.collection("Experimenter")
+                        .whereEqualTo("email", s)
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             profileArray.clear();
                             profileID.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                profileArray.add((document.getString("name")));
+                                profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
                             }
                             profileAdapter.notifyDataSetChanged();
