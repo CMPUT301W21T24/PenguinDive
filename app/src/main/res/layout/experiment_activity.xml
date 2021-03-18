@@ -26,6 +26,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/experimentList"
         android:text="My Experiment"/>
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/myExperimentButton"
+        android:text="User Profiles"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_button"

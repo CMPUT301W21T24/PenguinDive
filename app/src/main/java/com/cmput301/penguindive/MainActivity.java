@@ -19,8 +19,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,6 +31,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
     Button myExperiment;
+    Button profileButton;
     String uid;
 
     @Override
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         experimentList = findViewById(R.id.experimentList);
         myExperiment = findViewById(R.id.myExperimentButton);
+        profileButton = findViewById(R.id.profileButton);
 
         experimentDataList = new ArrayList<Experiment>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
@@ -114,6 +119,15 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             }
         });
 
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Profile.class);
+                startActivity(intent);
+                finishAffinity();
+            }
+        });
+
     }
 
     //changes after clicking OK/Edit/Delete button
@@ -157,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     public void nullValueError() {
         Toast.makeText(MainActivity.this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();
     }
+
+
+
 
 
 //    @Override
