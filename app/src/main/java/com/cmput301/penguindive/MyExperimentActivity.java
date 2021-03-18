@@ -27,7 +27,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class MyExperimentActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener {
@@ -105,11 +104,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         docData.put("TotalTrail", newExperiment.getTotalTrail());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
 
-        db.collection("Experiments").document(experimentId)
+        experimentCollectionReference.document(experimentId)
                 .set(docData)
                 .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
-
     }
 
     @Override
@@ -177,8 +175,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 // ****** CURRENTLY ONLY WORKS WITH TITLE SEARCHING ******
                 else{
                     // Query the database
-                    db.collection("Experiments")
-                            .whereEqualTo("Title", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    experimentCollectionReference.whereEqualTo("Title", query)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {

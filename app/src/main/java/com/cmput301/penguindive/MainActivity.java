@@ -31,7 +31,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener{
@@ -122,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 .set(docData)
                 .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
-
     }
 
     @Override
@@ -183,8 +181,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 // If there is input, filter based on input
                 // ****** CURRENTLY ONLY WORKS WITH TITLE SEARCHING ******
                 else{
-                    db.collection("Experiments")
-                            .whereEqualTo("Title", query)
+                    experimentCollectionReference.whereEqualTo("Title", query)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 
