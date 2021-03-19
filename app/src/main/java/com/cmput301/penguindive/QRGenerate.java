@@ -48,6 +48,8 @@ Created by: Saiful Alam
 Date created: Sept 29, 2015
 licence: unknown (bottom of page says copyright 2016)
 URL: https://android--code.blogspot.com/2015/09/android-how-to-save-image-to-gallery.html
+
+This function allows a user to generate a QR code and save it to their photo gallery
  */
 public class QRGenerate extends AppCompatActivity {
 
