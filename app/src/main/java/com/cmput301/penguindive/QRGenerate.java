@@ -30,10 +30,18 @@ import androidmads.library.qrgenearator.QRGEncoder;
 
 /*
 Developed with help from:
-https://github.com/androidmads/QRGenerator
-https://www.youtube.com/watch?v=NpVRUhEpRI8
-https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+Date created: Nov 10, 2019
+Create by: SmallAcademy: https://www.youtube.com/channel/UCR1t5eSmLxLUdBnK2XwZOuw
+licence: creative commons or standard YouTube licence
+URL: https://www.youtube.com/watch?v=NpVRUhEpRI8
+
+Date created: Nov 14, 2012
+Created by: user1820528, edited by: A-Sharabiani
+answered by: Nicolas Tyler: https://stackoverflow.com/users/2027232/nicolas-tyler
 using this answer: https://stackoverflow.com/a/17650125
+Licence: CC BY-SA 3.0
+URL: https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
+
  */
 public class QRGenerate extends AppCompatActivity {
 
@@ -52,6 +60,7 @@ public class QRGenerate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_q_r_generate);
 
+        // initialize variables
         experName = findViewById(R.id.experiment_name);
         trialType = findViewById(R.id.trial_type);
         QRCode = findViewById(R.id.QR_code);
@@ -68,10 +77,12 @@ public class QRGenerate extends AppCompatActivity {
         trialType.setAdapter(typeAdapt);
         passfail.setAdapter(passFailAdapt);
 
-
+        // hide buttons until QR code is generated
         save.setVisibility(Button.GONE);
         back.setVisibility(Button.GONE);
 
+        // upon button click, take information from dropdowns and text box
+        // and combine into data for the QR code
         generate.setOnClickListener(v -> {
 
             String name = experName.getText().toString();
@@ -79,6 +90,7 @@ public class QRGenerate extends AppCompatActivity {
             String passFail = passfail.getSelectedItem().toString();
             QRString = name + "-" + type + "-" + passFail;
 
+            // generate QR code and display to user
             QRGEncoder QRcode = new QRGEncoder(QRString, QRGContents.Type.TEXT, 500);
             QRcode.setColorBlack(Color.BLACK);
             QRcode.setColorWhite(Color.WHITE);

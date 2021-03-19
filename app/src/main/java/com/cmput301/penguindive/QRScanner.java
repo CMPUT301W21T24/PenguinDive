@@ -23,9 +23,19 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 /*
 developed with help from
-https://github.com/yuriy-budiyev/code-scanner
-https://github.com/bikashthapa01/QR-APP/tree/master/app
-https://www.youtube.com/watch?v=Iuj4CuWjYF8
+used for camera access
+Date Created: Nov 10, 2019
+Created by: SmallAcademy: https://www.youtube.com/channel/UCR1t5eSmLxLUdBnK2XwZOuw
+licence: Creative commons or Youtube standard licence
+URL: https://www.youtube.com/watch?v=Iuj4CuWjYF8
+
+used for basic setup of a QR scanner
+Date created: Nov 14, 2019
+Date last modified: Nov 14, 2019
+Created by: bikashthapa01: https://github.com/bikashthapa01
+Licence: unknown (could not find)
+URL: https://github.com/bikashthapa01/QR-APP/tree/master/app
+
  */
 public class QRScanner extends AppCompatActivity {
 
@@ -39,10 +49,12 @@ public class QRScanner extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_q_r_scanner);
 
+        // initialize variables
         scannerView = findViewById(R.id.scanner_view);
         qrText = findViewById(R.id.QR_text);
         btn = findViewById(R.id.btn_id);
 
+        // setup a scanner object to scan a QR code when it is centered on the camera on screen
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
@@ -55,6 +67,7 @@ public class QRScanner extends AppCompatActivity {
                 });
             }
         });
+        
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +82,7 @@ public class QRScanner extends AppCompatActivity {
         requestCam();
     }
 
+    // function requests access to the phone camera
     protected void requestCam() {
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA).withListener(new PermissionListener() {
             @Override
