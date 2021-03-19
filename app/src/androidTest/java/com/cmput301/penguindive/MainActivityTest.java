@@ -165,6 +165,37 @@ public class MainActivityTest {
     }
 
     /**
+     * Ensures the user Generate QR button brings us to QRGenerate
+     */
+    @Test
+    public void qrCodeGenerateButton(){
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnButton("Generate QR");
+        solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
+    }
+
+    /**
+     * Ensures the Scan QR button brings us to QRScanner
+     */
+    @Test
+    public void qrCodeSannerButton(){
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnButton("Scan QR");
+        solo.assertCurrentActivity("Wrong Activity", QRScanner.class);
+    }
+
+    /**
+     * Ensures the user profile button brings us to our user profile
+     */
+    @Test
+    public void userProfilesButton(){
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnButton("User Profiles");
+        solo.assertCurrentActivity("Wrong Activity", Profile.class);
+        }
+
+
+    /**
      * Closes the activity after each test
      * @throws Exception
      */

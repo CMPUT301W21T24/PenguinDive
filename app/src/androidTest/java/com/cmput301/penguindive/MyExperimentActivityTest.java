@@ -79,9 +79,6 @@ public class MyExperimentActivityTest {
         // Asserts that the current activity is the MyExperimentActivity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
 
-        // Add experiments first
-        solo.clickOnButton("All Experiments");
-
         // Get floating action button for published
         View fab_pub = solo.getCurrentActivity().findViewById(R.id.add_button);
 
@@ -105,23 +102,34 @@ public class MyExperimentActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Check to see if we have experiments
-        solo.clickOnButton("My Experiments");
         assertTrue(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000));
         assertTrue(solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000));
     }
 
     /**
+     * Ensure the questions button takes us to QuestionActivity
+     */
+    @Test
+    public void dQuestionButton(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnButton("Questions");
+        solo.assertCurrentActivity("Wrong Activity", QuestionActivity.class);
+
+    }
+    /**
      * Search the MyExperimentActivity and ensure the proper results are given
      */
     @Test
-    public void dSearchExperiment(){
+    public void eSearchExperiment(){
         solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
 
         // Get searchBar
         View searchBar = solo.getView(R.id.experimentSearchBar); //get the element
 
+        // Search for something that doesn't exist
         searchBar.performClick(); //click on search bar
         solo.enterText(0, "soloTest");
+
         // Ensure both experiments are not present
         assertFalse((solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000)));
         assertFalse((solo.waitForText("soloPublishTest-MyExperiment", 2, 1000)));
@@ -130,6 +138,7 @@ public class MyExperimentActivityTest {
         // Search for something that exists
         searchBar.performClick();
         solo.enterText(0, "soloPublishTest-MyExperiment");
+
         // Ensure published item is present and unpublished is not
         assertTrue(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000)); // Should be results
         assertFalse((solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000)));
