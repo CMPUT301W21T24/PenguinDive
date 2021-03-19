@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
     Button myExperiment;
+    Button profileButton;
     SearchView searchBar;
     String uid;
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         experimentList = findViewById(R.id.experimentList);
         myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
+        profileButton = findViewById(R.id.profileButton);
 
         // Setup list and adapter
         experimentDataList = new ArrayList<Experiment>();
@@ -92,6 +94,14 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, MyExperimentActivity.class);
+                startActivity(intent);
+                finishAffinity();
+            }
+        });
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Profile.class);
                 startActivity(intent);
                 finishAffinity();
             }
