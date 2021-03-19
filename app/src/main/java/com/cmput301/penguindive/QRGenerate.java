@@ -69,7 +69,7 @@ public class QRGenerate extends AppCompatActivity {
         passfail = findViewById(R.id.pass_fail);
         back = findViewById(R.id.goBack);
 
-        // set the dorpdown menu entries
+        // set the dropdown menu entries
         String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
         String[] passOrFail = {"Pass", "Fail"};
         ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);

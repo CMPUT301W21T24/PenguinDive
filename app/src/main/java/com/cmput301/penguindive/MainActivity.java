@@ -1,5 +1,11 @@
 package com.cmput301.penguindive;
 
+/*
+Searching was developed with help from:
+
+ */
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,10 +38,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents an activity that will show all published experiments and act as the main activity to reach other features
+ */
 public class MainActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener{
 
     private ListView experimentList;
-    private ArrayList<Experiment> experimentDataList;
+    protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");

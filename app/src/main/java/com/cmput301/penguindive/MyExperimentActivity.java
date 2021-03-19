@@ -29,10 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents an activity that will show all the user's experiments
+ */
 public class MyExperimentActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener {
 
     private ListView experimentList;
-    private ArrayList<Experiment> experimentDataList;
+    protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     private SearchView searchBar;
 

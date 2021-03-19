@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This class represents a dialog fragment for experiments
+ */
 public class ExperimentFragment extends DialogFragment {
     private EditText experimentTitle;
     private EditText experimentDescription;
