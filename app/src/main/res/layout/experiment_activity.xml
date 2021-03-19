@@ -20,11 +20,11 @@
         android:id="@+id/experimentList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/experimentSearchBar"
-        android:layout_marginBottom="0dp"
-        android:layout_margin="10dp"
         android:layout_above="@id/myExperimentButton"
-    ></ListView>
+        android:layout_below="@+id/experimentSearchBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"></ListView>
 
     <Button
         android:id="@+id/myExperimentButton"
@@ -61,5 +61,25 @@
         android:layout_alignParentBottom="true"
         android:backgroundTint="#858A4D"
         app:srcCompat="@android:drawable/ic_input_add" />
+
+    <Button
+        android:id="@+id/qr_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="86dp"
+        android:layout_marginBottom="104dp"
+        android:text="Scan QR" />
+
+    <Button
+        android:id="@+id/qr_gen"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="108dp"
+        android:text="Generate QR" />
 
 </RelativeLayout>

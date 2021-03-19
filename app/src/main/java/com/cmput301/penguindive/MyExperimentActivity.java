@@ -39,7 +39,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
     Button myExperiment;
-
     String uid;
 
     @Override
@@ -54,6 +53,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
 
+
         // Setup list and adapter
         experimentDataList = new ArrayList<Experiment>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
@@ -62,6 +62,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         // create a clickListener on the existing experiment
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             Experiment trail = experimentDataList.get(position);
+
             ExperimentFragment.newInstance(trail, position).show(getSupportFragmentManager(), "Edit");
         });
 

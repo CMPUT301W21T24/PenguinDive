@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +110,20 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
+
+        // on click listeners for qr generation and scanning
+        Button QRGen = findViewById(R.id.qr_gen);
+        Button QRScan = findViewById(R.id.qr_scan);
+
+        QRGen.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, QRGenerate.class);
+            startActivity(intent);
+        });
+
+        QRScan.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, QRScanner.class);
+            startActivity(intent);
+        });
     }
 
     //changes after clicking OK/Edit/Delete button
