@@ -25,6 +25,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents an activity that allows
+ * the user to search for other user's profiles
+ */
+
 public class SearchProfile extends AppCompatActivity {
     private ListView profileList;
     private ArrayList<String> profileArray;
@@ -36,17 +41,21 @@ public class SearchProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set view
         setContentView(R.layout.search_profile);
-        searchBar = findViewById(R.id.searchLayout);
 
+        // initialise elements
+        searchBar = findViewById(R.id.searchLayout);
         profileList = findViewById(R.id.profileList);
 
+        //create an array adapter for the list of profiles
         profileArray = new ArrayList<>();
         profileID = new ArrayList<>();
 
         profileAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, profileArray);
         profileList.setAdapter(profileAdapter);
 
+        // set up search bar
         searchBar.setIconified(true);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -96,6 +105,7 @@ public class SearchProfile extends AppCompatActivity {
                 return false;
             }
         });
+        // send to selected profile activity when a profile is clicked on the list of profiles
         profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,6 +117,7 @@ public class SearchProfile extends AppCompatActivity {
         });
     }
 
+    // return to the profile activity on back button press
     @Override
     public void onBackPressed(){
         Intent intent = new Intent(SearchProfile.this, Profile.class);
