@@ -18,16 +18,12 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -45,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
     Button myExperiment;
-    Button profileButton;
     SearchView searchBar;
     String uid;
 
@@ -59,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
         myExperiment = findViewById(R.id.myExperimentButton);
-        profileButton = findViewById(R.id.profileButton);
-
         searchBar = findViewById(R.id.experimentSearchBar);
 
         // Setup list and adapter
@@ -104,20 +97,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             }
         });
 
-        profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Profile.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
-
         // Call fragment to add experiment
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
-
     }
 
     //changes after clicking OK/Edit/Delete button
@@ -229,17 +212,5 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             }
         });
     } // End of checkSearchBar()
-
-
-//    @Override
-//    public boolean onQueryTextSubmit(String query) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextChange(String newText) {
-//        experimentAdapter.filter(newText);
-//        return false;
-//    }
 
 }
