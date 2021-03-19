@@ -29,10 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents an activity that will show all the user's experiments
+ */
 public class MyExperimentActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener {
 
     private ListView experimentList;
-    private ArrayList<Experiment> experimentDataList;
+    protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     private SearchView searchBar;
 
@@ -138,7 +141,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         Toast.makeText(this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();
     }
 
-    // Load all experiments that are relevant to the user
+    /**
+     * This method will load all experiments that the current user owns into experimentDataList
+     */
     public void loadData(){
         experimentCollectionReference.addSnapshotListener((value, error) -> {
             experimentDataList.clear();
@@ -158,6 +163,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         });
     }
 
+    /**
+     * This method will modify the experimentDataList when text is entered into the searchBox
+     * Only experiments that are owned by the user and match the query will be put into the experimentDataList
+     */
     public void checkSearchBar(){
         // Searching, currently only scans title
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

@@ -1,5 +1,8 @@
 package com.cmput301.penguindive;
 
+/**
+ * This class represents an Answer object
+ */
 public class Answer {
 
     private String answerText;

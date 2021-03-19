@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This class
+ */
 public class WelcomeActivity extends AppCompatActivity {
     String uid;
     TextView uidText;

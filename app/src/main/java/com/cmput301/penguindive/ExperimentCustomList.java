@@ -15,6 +15,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * This class is a custom list for experiments
+ */
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private ArrayList<Experiment> experiments;
     private Context context;
@@ -31,7 +34,6 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     public Experiment getItem(int position) {
         return super.getItem(position);
     }
-
 
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

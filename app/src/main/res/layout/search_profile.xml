@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,16 +9,18 @@
         android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="false" >
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/profile_search_text"
+        android:layout_margin="10dp">
     </SearchView>
 
     <ListView
         android:id="@+id/profileList"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_below="@+id/searchLayout">
+        android:layout_height="0dp"
+        android:layout_below="@+id/searchLayout"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true">
     </ListView>
 
-
-
-</LinearLayout>
+</RelativeLayout>
