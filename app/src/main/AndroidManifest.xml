@@ -17,5 +17,8 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".MyExperimentActivity"/>
+        <activity android:name=".Profile"/>
+        <activity android:name=".SearchProfile"/>
+        <activity android:name=".SelectedProfile"/>
     </application>
 </manifest>
