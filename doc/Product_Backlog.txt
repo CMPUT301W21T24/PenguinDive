@@ -100,6 +100,12 @@ US 04.03.01: As an owner or experimenter, I want to retrieve and show the profil
 	Risk level (low, medium, high): low
 	Status: complete
 
+US 04.03.01: As an owner or experimenter, I do not want to log into my application using a username and password.
+	Rationale: Users should not have to create a profile to use the application, they can add personal information to their generated profile if they'd like.
+	Weight (1-10): 5 Will take 3-5 days to build userID generation and profile persistence.
+	Risk level (low, medium, high): medium
+	Status: complete
+
 
 US 05.01.01: As an experimenter, I want to specify a keyword, and search for all experiments that are available.
 	Rationale:	Search functionality to allow for quicker access to desired experiments
