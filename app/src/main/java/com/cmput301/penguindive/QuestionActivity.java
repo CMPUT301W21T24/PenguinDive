@@ -48,11 +48,12 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
+        // fetch intent
         Intent intent = getIntent();
         expID = intent.getStringExtra("EXPID");
 
+        // get views
         questionList = findViewById(R.id.question_list);
-
         addQuestionButton = findViewById(R.id.add_question_button);
         addQuestionEditText = findViewById(R.id.add_question_detail_field);
         addQuestionSubjectText = findViewById(R.id.add_question_subject_field);
@@ -69,6 +70,7 @@ public class QuestionActivity extends AppCompatActivity {
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Questions");
 
+        // push question to DB
         addQuestionButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,6 +114,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         });
 
+        // pull question from DB
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
@@ -136,18 +139,19 @@ public class QuestionActivity extends AppCompatActivity {
                 questionAdapter.notifyDataSetChanged();
             }
         });
+
+        // click on question
         questionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Question question = questionDataList.get(position);
 
+                // pass intent and start new activity
                 Intent intent = new Intent(QuestionActivity.this, AnswerActivity.class);
-
                 // putting id
                 intent.putExtra("ID", question.getQuestionId());
                 intent.putExtra("TITLE", question.getQuestionTitle());
                 intent.putExtra("TEXT", question.getQuestion());
-
                 startActivity(intent);
 
             }

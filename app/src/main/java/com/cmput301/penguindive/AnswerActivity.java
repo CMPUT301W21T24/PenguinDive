@@ -44,11 +44,13 @@ public class AnswerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_answer);
 
+        // getting intent
         Intent intent = getIntent();
         final String ID = intent.getStringExtra("ID");
         final String q_title = intent.getStringExtra("TITLE");
         final String q_text = intent.getStringExtra("TEXT");
 
+        // fetching views
         answerList = findViewById(R.id.answer_list);
         subjectField = findViewById(R.id.question_subject);
         questionField = findViewById(R.id.question_text);
@@ -69,7 +71,7 @@ public class AnswerActivity extends AppCompatActivity {
 
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Answers");
-
+        // push to DB
         addAnswerButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,6 +105,7 @@ public class AnswerActivity extends AppCompatActivity {
             }
         });
 
+        // pull from db
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
