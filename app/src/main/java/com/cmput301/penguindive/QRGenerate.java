@@ -9,11 +9,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -42,6 +44,10 @@ using this answer: https://stackoverflow.com/a/17650125
 Licence: CC BY-SA 3.0
 URL: https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
 
+Created by: Saiful Alam
+Date created: Sept 29, 2015
+licence: unknown (bottom of page says copyright 2016)
+URL: https://android--code.blogspot.com/2015/09/android-how-to-save-image-to-gallery.html
  */
 public class QRGenerate extends AppCompatActivity {
 
@@ -54,6 +60,7 @@ public class QRGenerate extends AppCompatActivity {
     Button save;
     Button back;
     Bitmap bMap;
+    TextView imSaved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,7 @@ public class QRGenerate extends AppCompatActivity {
         save = findViewById(R.id.saveButton);
         passfail = findViewById(R.id.pass_fail);
         back = findViewById(R.id.goBack);
+        imSaved = findViewById(R.id.image_saved);
 
         // set the dropdown menu entries
         String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
@@ -107,7 +115,7 @@ public class QRGenerate extends AppCompatActivity {
             passfail.setVisibility(Spinner.GONE);
             trialType.setVisibility(Spinner.GONE);
 
-            //save.setVisibility(Button.VISIBLE);
+            save.setVisibility(Button.VISIBLE);
             back.setVisibility(Button.VISIBLE);
         });
 
@@ -117,21 +125,12 @@ public class QRGenerate extends AppCompatActivity {
         });
 
         // TODO: save files to photo gallery
-//        save.setOnClickListener(v -> {
-//            String location = Context.getExternalFilesDir(null);
-//            String filename = "QRCode-" + QRString;
-//            File file = new File(location, filename + ".png");
-//
-//            try {
-//                FileOutputStream fileOut = new FileOutputStream(file);
-//                bMap.compress(Bitmap.CompressFormat.PNG, 100, fileOut);
-//                fileOut.close();
-//
-//                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                intent.setData
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
+        save.setOnClickListener(v -> {
+            String filename = "QRCode-" + QRString;
+
+            String saved = MediaStore.Images.Media.insertImage(getContentResolver(), bMap, filename, "Trial QR code");
+            imSaved.setText("Image " + filename + " saved to photos.  Click back to return to main");
+            save.setVisibility(Button.GONE);
+        });
    }
 }
