@@ -35,6 +35,7 @@ public class AnswerCustomList extends ArrayAdapter<Answer> {
             view = LayoutInflater.from(context).inflate(R.layout.answer_content,parent,false);
         }
 
+        // getting and setting answer
         Answer answer = answerArrayList.get(position);
         TextView answerText = view.findViewById(R.id.answer_text);
         answerText.setText(answer.getAnswerText());
