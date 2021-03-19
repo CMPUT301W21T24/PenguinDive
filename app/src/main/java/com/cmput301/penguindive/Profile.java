@@ -20,6 +20,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This class represents an activity that will show the user's profile
+ */
 
 public class Profile extends AppCompatActivity {
     private EditText name;
@@ -37,14 +40,15 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set view
         setContentView(R.layout.show_profile);
+        //initialize elements
         id = findViewById(R.id.UserID);
         name = findViewById(R.id.userName);
         email = findViewById(R.id.Email);
         saveButton = findViewById(R.id.saveButton);
         searchButton = findViewById(R.id.searchButton);
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
-
         uid = sharedPref.getString("UID", "");
 
         //make a query on the given profile to display the id, name, contact information of the instance's user
@@ -62,6 +66,7 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        // On press update the profile collection of the Firestore Database
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +84,7 @@ public class Profile extends AppCompatActivity {
             }
         });
     }
+    // return to the main activity on back button press
     @Override
     public void onBackPressed(){
         Intent intent = new Intent(Profile.this, MainActivity.class);
