@@ -39,6 +39,7 @@ public class QuestionActivity extends AppCompatActivity {
     Button addQuestionButton;
     EditText addQuestionSubjectText;
     EditText addQuestionEditText;
+    String expID;
 
 
 
@@ -47,22 +48,17 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
+        Intent intent = getIntent();
+        expID = intent.getStringExtra("EXPID");
+
         questionList = findViewById(R.id.question_list);
 
         addQuestionButton = findViewById(R.id.add_question_button);
         addQuestionEditText = findViewById(R.id.add_question_detail_field);
         addQuestionSubjectText = findViewById(R.id.add_question_subject_field);
 
-        //String []questions = {"gfgf","fsfsd"};
 
         questionDataList = new ArrayList<>();
-
-//        for (int i = 0; i < questions.length; i++){
-//            questionDataList.add(new Question(questions[i]));
-//
-//
-//        }
-
         questionAdapter = new QuestionCustomList(this,R.layout.question_content, questionDataList);
 
         questionList.setAdapter(questionAdapter);
@@ -87,6 +83,7 @@ public class QuestionActivity extends AppCompatActivity {
                     data.put("Text", questionText);
                     data.put("question_title",questionSubject);
                     data.put("question_id",questionId);
+                    data.put("experiment_id",expID);
 
                     collectionReference
 
@@ -126,13 +123,16 @@ public class QuestionActivity extends AppCompatActivity {
                     String question = (String)doc.getData().get("Text");
                     String questionId = doc.getId();
                     String questionTitle = (String)doc.getData().get("question_title");
+                    String experimentID = (String)doc.getData().get("experiment_id");
 
                     //add new question
-                    questionDataList.add(new Question(question, questionId, questionTitle));
+                    if(experimentID.equals(expID)){
+                        questionDataList.add(new Question(question, questionId, questionTitle));
+                    }
+
 
                 }
-                //Notifying the adapter to render any new data fetched
-                //from the cloud
+                //Notifying the adapter to render any new data fetched from the cloud
                 questionAdapter.notifyDataSetChanged();
             }
         });
