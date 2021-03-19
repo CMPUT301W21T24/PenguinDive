@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -73,6 +74,11 @@ public class QRScanner extends AppCompatActivity {
             public void onClick(View view) {
                 mCodeScanner.startPreview();
             }
+        });
+
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(QRScanner.this, MainActivity.class);
+            startActivity(intent);
         });
     }
 

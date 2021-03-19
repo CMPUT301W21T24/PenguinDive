@@ -107,8 +107,13 @@ public class QRGenerate extends AppCompatActivity {
             passfail.setVisibility(Spinner.GONE);
             trialType.setVisibility(Spinner.GONE);
 
-            save.setVisibility(Button.VISIBLE);
+            //save.setVisibility(Button.VISIBLE);
             back.setVisibility(Button.VISIBLE);
+        });
+
+        back.setOnClickListener(v -> {
+            Intent intent = new Intent(QRGenerate.this, MainActivity.class);
+            startActivity(intent);
         });
 
         // TODO: save files to photo gallery
