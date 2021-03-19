@@ -16,6 +16,11 @@ public class Count_Trial extends Trial{
         count = count + addedCount;
     }
 
+    // adds 1 to the count
+    public void addOne() {
+        this.count++;
+    }
+
     // getters
     public int getCount() {
         return count;

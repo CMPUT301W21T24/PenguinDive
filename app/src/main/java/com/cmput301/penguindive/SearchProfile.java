@@ -41,41 +41,44 @@ public class SearchProfile extends AppCompatActivity {
 
         profileList = findViewById(R.id.profileList);
 
-        profileArray = new ArrayList<String>();
-        profileID = new ArrayList<String>();
+        profileArray = new ArrayList<>();
+        profileID = new ArrayList<>();
 
         profileAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, profileArray);
         profileList.setAdapter(profileAdapter);
 
-
+        searchBar.setIconified(true);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                // clear the result listview so that new results will appear
+                profileArray.clear();
+                profileID.clear();
+                profileAdapter.notifyDataSetChanged();
+
+                // Search using name
                 db.collection("Experimenter")
                         .whereEqualTo("name", s)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            profileArray.clear();
-                            profileID.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                profileArray.add((document.getString("name")));
+                                String x = document.getString("name") + " " + (document.getString("email"));
+                                profileArray.add(x);
                                 profileID.add((document.getId()));
                             }
                             profileAdapter.notifyDataSetChanged();
                         }
                     }
                 });
-
+                // search using email
                 db.collection("Experimenter")
                         .whereEqualTo("email", s)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            profileArray.clear();
-                            profileID.clear();
+                        if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
