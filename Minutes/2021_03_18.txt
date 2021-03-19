@@ -1,0 +1,21 @@
+	March 18th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 3 Finalization
+______________________________________________________________________________
+
+Summary: Create tests, merge code, create javadocs, update backlog, update UML, update storyboard
+_____________________________________________________________________________
+
+News:
+	- Once everything is finished we can take the weekend off. No meeting Satuday.
+	- We can strategize how to continue the project on Monday.
+
+Goals:
+	- Intergrate everything that you have (that works)
+	- Create some tests for your work
+	- Update all existing Part 2 deliverables (UML, Backlog, etc)
+	- Close issues that you have completed in the backlog
+		- DO NOT FORGET TO ADD YOURSELF AS THE ASSIGNEE FOR THE ISSUES YOU'VE COMPLETED
+______________________________________________________________________________
+	
+Next meeting:
+	- Monday, March 22, 7:00 MST
