@@ -37,6 +37,7 @@ Created by: bikashthapa01: https://github.com/bikashthapa01
 Licence: unknown (could not find)
 URL: https://github.com/bikashthapa01/QR-APP/tree/master/app
 
+This class allows users to scan a printed QR code and will read out the text of the QR code back to the user
  */
 public class QRScanner extends AppCompatActivity {
 
