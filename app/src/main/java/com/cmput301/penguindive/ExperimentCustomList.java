@@ -12,37 +12,37 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class ExperimentCustomList extends ArrayAdapter<Experiment>{
-    private ArrayList<Experiment> experiment;
+public class ExperimentCustomList extends ArrayAdapter<Experiment> {
+    private ArrayList<Experiment> experiments;
     private Context context;
 
-    public ExperimentCustomList(Context context, ArrayList<Experiment> experiments) {
-        super(context,0,experiments);
-        this.experiment = experiments;
+    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
+        super(context,0,experiment);
         this.context = context;
+        this.experiments = experiment;
     }
 
-    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        if (view == null){
-            view = LayoutInflater.from(context).inflate(R.layout.experiment_content,parent,false);
+        if (convertView == null){
+            convertView = LayoutInflater.from(context).inflate(R.layout.experiment_row, parent, false);
         }
 
-        Experiment experiments = experiment.get(position);
+        Experiment experiment = experiments.get(position);
 
-        TextView title = view.findViewById(R.id.titleText);
-        TextView description = view.findViewById(R.id.descriptionText);
-        TextView region = view.findViewById(R.id.regionText);
-        TextView totalTrail = view.findViewById(R.id.countText);
-        TextView ownerUserName = view.findViewById(R.id.ownerUserNameText);
+        TextView experimentName = convertView.findViewById(R.id.experiment_name);
+        TextView description = convertView.findViewById(R.id.experiment_description);
+        TextView status = convertView.findViewById(R.id.experiment_status);
+        TextView owner = convertView.findViewById(R.id.experiment_owner);
 
-        title.setText(experiments.getTitle());
-        description.setText(experiments.getDescription());
-        region.setText(experiments.getRegion());
-        totalTrail.setText(experiments.getTotalTrail());
-        ownerUserName.setText(experiments.getOwnerUserName());
+        experimentName.setText(experiment.getTitle());
+        description.setText(experiment.getDescription());
+        status.setText(experiment.getStatus());
+        owner.setText(experiment.getOwnerUserName());
 
-        return view;
+        return convertView;
     }
+
 }
+
