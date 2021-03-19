@@ -123,8 +123,6 @@ public class ExperimentFragment extends DialogFragment {
                         else{
                             listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs));
                         }
-
-
                     }}).create();
     }
     static ExperimentFragment newInstance(Experiment experiment, int position){

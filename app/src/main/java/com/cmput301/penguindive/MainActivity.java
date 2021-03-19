@@ -153,7 +153,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         Toast.makeText(MainActivity.this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();
     }
 
-    // Load all experiments that are relevant to the user
+    /**
+     * This method will load all experiments that are published into experimentDataList
+     */
     public void loadData(){
         experimentCollectionReference.addSnapshotListener((value, error) -> {
             experimentDataList.clear();
@@ -174,6 +176,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         });
     }
 
+    /**
+     * This method will modify the experimentDataList when text is entered into the searchBox
+     * Only experiments that are published and match the query will be put into the experimentDataList
+     */
     public void checkSearchBar(){
         // Searching, currently only scans title
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
