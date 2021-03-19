@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private ArrayList<Experiment> experiments;
@@ -21,12 +20,6 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         super(context,0,experiment);
         this.context = context;
         this.experiments = experiment;
-    }
-    public class ViewHolder{
-        TextView titleText;
-        TextView descriptionText;
-        TextView ownerText;
-        TextView statusText;
     }
 
     @Override
@@ -51,32 +44,5 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         return convertView;
     }
 
-    // Filters what is to be shown in the experimentDataList based on user search
-//    public void filter(String charText) {
-//        // Get lowercase input
-//        charText = charText.toLowerCase(Locale.getDefault());
-//        // Clear list
-//        MainActivity.experimentDataList.clear();
-//        // If no input show all results
-//        if (charText.length() == 0) {
-//            MainActivity.experimentDataList.addAll(experiments);
-//        }
-//        // If there is an input
-//        else {
-//            // Cycle all experiments
-//            for (Experiment current : experiments) {
-//
-//                // Search Title, description and owner for matches
-//                if (current.getTitle().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                } else if (current.getDescription().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                } else if (current.getOwnerUserName().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                }
-//            }
-//        }
-//        notifyDataSetChanged();
-//    }
 }
 
