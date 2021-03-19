@@ -1,4 +1,4 @@
-package com.example.trialstuff03_11_2021;
+package com.cmput301.penguindive;
 
 public class Non_Negative_Integer_Counts_Trial extends Trial{
 

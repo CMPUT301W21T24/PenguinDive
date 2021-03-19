@@ -1,4 +1,4 @@
-package com.example.trialstuff03_11_2021;
+package com.cmput301.penguindive;
 
 import java.io.Serializable;
 

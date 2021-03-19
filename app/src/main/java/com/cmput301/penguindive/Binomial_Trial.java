@@ -1,4 +1,4 @@
-package com.example.trialstuff03_11_2021;
+package com.cmput301.penguindive;
 
 public class Binomial_Trial extends Trial {
 
