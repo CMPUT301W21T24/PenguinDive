@@ -1,0 +1,43 @@
+	March 15th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 3 Clarification
+______________________________________________________________________________
+
+Summary: Merging, Profile, Firestore, QR code and Experiment clarifications
+	
+______________________________________________________________________________
+
+Clarifications:
+	- Profile persistance between launches is not necessary for part 3 deliverable
+		- Persistence likely come from hardware ID or something related to the device it is being used on
+	- Experiment unpublishing makes them not visible to users BUT stored in DB
+		- isVisible() within the experiment class
+		- Scan through firebase "Experiment" Collection and add all Experiments that have a isVisible() return
+	- "Owners" and "Experimenters" collections will be condensed into "Users"
+		- Because an owner can also be an experimenter, thus making it tidier
+		- Appropriate fields will be added to the User documents to indicate what experiments the owner uses and which they participate in
+	- Revert broken code from MAIN branch
+		- Only merge to branch with completed segments to have a always stable MAIN
+
+News:
+	- Linray is to continue working on experiments and may require help to finalize the class during the week.
+		- Functionalities have not been implemented yet.
+	- Product Backlog has changed over to using issues
+		- Milestones have been set within the issues tab for PT 2,3,4 of the project
+	- Issues have been created for updating UML and Storyboard
+		- Both provide insight as to what to look for when making changes
+	- QR code development is moving along nicely, working out how to get camera access and read codes.
+		- Mentioned that saving the generated codes in the photo gallery might be ideal since they need to be printed (US 03.01.01)
+
+Goals (Wednesday, March 17, night):
+	- Fix main branch to have only stable code
+	- Continue developing experiments (Linray)
+	- Develop tests (Tyler & Nikita)
+	- Update UML and help Linray (Kevin)
+	- Update Storyboard (Matt and Tyler)
+	- Update wiki (Tyler)
+	- Continue QR code development (Ryan)
+	- Merge all functioning code to main branch (ALL)
+______________________________________________________________________________
+	
+	Next meeting:
+	- Thursday, March 18, 7:30 MST (After TA meeting)

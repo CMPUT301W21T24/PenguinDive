@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SearchView
+        android:id="@+id/experimentSearchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/experiment_search_text"></SearchView>
+
+    <ListView
+        android:id="@+id/experimentList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/experimentSearchBar"
+        android:layout_marginBottom="0dp"
+        android:layout_margin="10dp"
+        android:layout_above="@id/myExperimentButton"
+        ></ListView>
+
+    <Button
+        android:id="@+id/myExperimentButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:layout_toStartOf="@+id/add_button"
+        android:text="@string/all_experiments_button_text" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_margin="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#858A4D"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</RelativeLayout>
