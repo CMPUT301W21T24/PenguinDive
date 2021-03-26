@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             @Override
             public boolean onQueryTextChange(String query) {
                 // If there is no input, reset the list
-                if (query.length() == 0 || query == null) {
+                if (query.length() == 0) {
                         loadData();
                 }
                 // If there is input, filter based on input
