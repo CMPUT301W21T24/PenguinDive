@@ -1,0 +1,28 @@
+March 25th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 4
+______________________________________________________________________________
+
+Summary: Progress report, suggestions on improvements
+_____________________________________________________________________________
+
+News:
+	- We can now merge to main now that demo is completed.
+	- Current QR code scanning can already scan arbitrary codes (Though it is limited to what kind of barcode)
+	- Case insensitive keyword searching is now implemented for MainActivity and MyExperiments
+
+Goals:
+	- Add username to questions and answers UI - Nikita
+	- Q/A searching - Nikita
+	- Improve button layout on main page (toolbar or something) - Tyler
+	- Provide spinner to choose from status options (Published or Unpublished) instead of a text field (ExperimentFragment)
+	- Provide spinner to choose min-number of trials instead of text field (ExperimentFragmnet) - Tyler 
+	- Update the username on main page if the user has added a username to themselves - Tyler
+	- Trials - Kevin
+	- End experiment functionality - Kevin
+	- Continue stats (plots and histograms) - Matt
+	- Geo-location - Rui
+	- Continue QR code development - Ryan
+______________________________________________________________________________
+	
+Next meeting:
+	- Monday, March 29, 7:00 PM MST
