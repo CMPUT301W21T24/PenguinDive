@@ -236,13 +236,13 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 // https://stackoverflow.com/a/52715590
                 // https://firebase.googleblog.com/2018/08/better-arrays-in-cloud-firestore.html
                 else{
+                    experimentDataList.clear(); // Prevent duplicates
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                experimentDataList.clear(); // Prevent duplicates
                                 // Scan results and add to list
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String status = (String) doc.getData().get("Status");
