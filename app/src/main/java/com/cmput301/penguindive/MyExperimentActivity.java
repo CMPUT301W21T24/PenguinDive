@@ -25,6 +25,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,10 +184,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     loadData();
                 }
                 // If there is input, filter based on input
-                // ****** CURRENTLY ONLY WORKS WITH TITLE SEARCHING ******
                 else{
                     // Query the database
-                    experimentCollectionReference.whereEqualTo("Title", query)
+                    experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
