@@ -1,5 +1,6 @@
 package com.cmput301.penguindive;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
@@ -26,6 +33,8 @@ import com.google.zxing.qrcode.encoder.Encoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
@@ -54,7 +63,7 @@ This function allows a user to generate a QR code and save it to their photo gal
 public class QRGenerate extends AppCompatActivity {
 
     String QRString;
-    EditText experName;
+    Spinner experName;
     Spinner trialType;
     Spinner passfail;
     ImageView QRCode;
@@ -79,6 +88,28 @@ public class QRGenerate extends AppCompatActivity {
         back = findViewById(R.id.goBack);
         imSaved = findViewById(R.id.image_saved);
 
+        ArrayList<String> experimentNames = new ArrayList<>();
+        // get experiment names from database
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        if (document.get("Status").equals("publish")) {
+                            experimentNames.add(document.get("Title").toString());
+                            Log.d("experiment names", document.get("Title").toString());
+                        }
+                    }
+                } else {
+                    Log.d("Could not get data", "no Data to get");
+                }
+                String[] eNames = experimentNames.toArray(new String[0]);
+                ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRGenerate.this, R.layout.support_simple_spinner_dropdown_item, eNames);
+                experName.setAdapter(namesAdapt);
+            }
+        });
+
         // set the dropdown menu entries
         String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
         String[] passOrFail = {"Pass", "Fail"};
@@ -95,7 +126,7 @@ public class QRGenerate extends AppCompatActivity {
         // and combine into data for the QR code
         generate.setOnClickListener(v -> {
 
-            String name = experName.getText().toString();
+            String name = experName.getSelectedItem().toString();
             String type = trialType.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
             QRString = name + "-" + type + "-" + passFail;
@@ -126,7 +157,7 @@ public class QRGenerate extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // TODO: save files to photo gallery
+        // save the code to local photo gallery
         save.setOnClickListener(v -> {
             String filename = "QRCode-" + QRString;
 
