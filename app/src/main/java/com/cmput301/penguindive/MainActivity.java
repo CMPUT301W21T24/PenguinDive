@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             @Override
             public boolean onQueryTextChange(String query) {
                 // If there is no input, reset the list
-                if (query.length() == 0) {
+                if (query.length() == 0 || query == null) {
                         loadData();
                 }
                 // If there is input, filter based on input
@@ -236,13 +236,13 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 // https://stackoverflow.com/a/52715590
                 // https://firebase.googleblog.com/2018/08/better-arrays-in-cloud-firestore.html
                 else{
+                    experimentDataList.clear(); // Prevent duplicates
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                experimentDataList.clear(); // Prevent duplicates
                                 // Scan results and add to list
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String status = (String) doc.getData().get("Status");
