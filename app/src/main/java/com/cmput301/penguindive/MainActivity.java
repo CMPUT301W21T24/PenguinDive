@@ -34,6 +34,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +143,16 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         String experimentId = newExperiment.getExperimentId();
         Map<String, Object> docData = new HashMap<>();
 
+        List<String> keywords = new ArrayList<String>();
+        // For getting it to add multiple elements properly
+        // https://stackoverflow.com/a/36560577
+        // For whitespace and punctuation
+        // https://stackoverflow.com/a/28257108
+        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+
         docData.put("Status",newExperiment.getStatus());
         docData.put("ownerId",newExperiment.getOwnerUserName());
         docData.put("Region", newExperiment.getRegion());
@@ -148,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("Title", newExperiment.getTitle());
         docData.put("TotalTrail", newExperiment.getTotalTrail());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("Keywords", keywords);
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)
@@ -217,12 +230,15 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                         loadData();
                 }
                 // If there is input, filter based on input
-                // ****** CURRENTLY ONLY WORKS WITH TITLE SEARCHING ******
+                // Make query an array to allow multiple words in a search
+
+                // Idea to make keywords and use it for searching
+                // https://stackoverflow.com/a/52715590
+                // https://firebase.googleblog.com/2018/08/better-arrays-in-cloud-firestore.html
                 else{
-                    experimentCollectionReference.whereEqualTo("Title", query)
+                    experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
