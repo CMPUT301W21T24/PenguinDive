@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         });
 
         QRScan.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, QRScanner.class);
+            Intent intent = new Intent(MainActivity.this, PickScanType.class);
             startActivity(intent);
         });
     }
