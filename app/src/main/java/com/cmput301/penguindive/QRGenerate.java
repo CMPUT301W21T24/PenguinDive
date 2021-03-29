@@ -78,6 +78,7 @@ public class QRGenerate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_q_r_generate);
 
+        // TODO: add a trial name spinner for each experiment to allow choosing for which trial?
         // initialize variables
         experName = findViewById(R.id.experiment_name);
         trialType = findViewById(R.id.trial_type);
@@ -87,6 +88,8 @@ public class QRGenerate extends AppCompatActivity {
         passfail = findViewById(R.id.pass_fail);
         back = findViewById(R.id.goBack);
         imSaved = findViewById(R.id.image_saved);
+
+        String choice = getIntent().getSerializableExtra("type").toString();
 
         ArrayList<String> experimentNames = new ArrayList<>();
         // get experiment names from database
@@ -122,6 +125,11 @@ public class QRGenerate extends AppCompatActivity {
         save.setVisibility(Button.GONE);
         back.setVisibility(Button.GONE);
 
+        if (choice.equals("ad")) {
+            trialType.setVisibility(Spinner.GONE);
+            passfail.setVisibility(Spinner.GONE);
+        }
+
         // upon button click, take information from dropdowns and text box
         // and combine into data for the QR code
         generate.setOnClickListener(v -> {
@@ -129,7 +137,11 @@ public class QRGenerate extends AppCompatActivity {
             String name = experName.getSelectedItem().toString();
             String type = trialType.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
-            QRString = name + "-" + type + "-" + passFail;
+            if (choice.equals("ad")) {
+                QRString = name;
+            } else {
+                QRString = name + "-" + type + "-" + passFail;
+            }
 
             // generate QR code and display to user
             QRGEncoder QRcode = new QRGEncoder(QRString, QRGContents.Type.TEXT, 500);

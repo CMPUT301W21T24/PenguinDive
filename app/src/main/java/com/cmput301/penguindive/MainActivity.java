@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         Button QRScan = findViewById(R.id.qr_scan);
 
         QRGen.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, QRGenerate.class);
+            Intent intent = new Intent(MainActivity.this, PickQRType.class);
             startActivity(intent);
         });
 
