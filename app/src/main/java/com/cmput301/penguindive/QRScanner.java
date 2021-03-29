@@ -6,14 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -21,6 +30,35 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
+/*
+License for the QR scanning repository used
+
+MIT License
+
+Copyright (c) 2018 Yuriy Budiyev [yuriy.budiyev@yandex.ru]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
 
 /*
 developed with help from
@@ -55,6 +93,43 @@ public class QRScanner extends AppCompatActivity {
         scannerView = findViewById(R.id.scanner_view);
         qrText = findViewById(R.id.QR_text);
         btn = findViewById(R.id.btn_id);
+        final Spinner experName = findViewById(R.id.exper);
+        final Spinner trial = findViewById(R.id.trial);
+        final EditText information = findViewById(R.id.info);
+        final Button update = findViewById(R.id.update);
+        String choice = getIntent().getSerializableExtra("type").toString();
+
+        ArrayList<String> experimentNames = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        if (document.get("Status").equals("publish")) {
+                            experimentNames.add(document.get("Title").toString());
+                            Log.d("experiment names", document.get("Title").toString());
+                        }
+                    }
+                } else {
+                    Log.d("Could not get data", "no Data to get");
+                }
+                String[] eNames = experimentNames.toArray(new String[0]);
+                ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, eNames);
+                experName.setAdapter(namesAdapt);
+            }
+        });
+
+        //TODO: add trials and trial descriptions instead of trial types
+
+        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
+        ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
+        trial.setAdapter(typeAdapt);
+
+        trial.setVisibility(Spinner.GONE);
+        experName.setVisibility(Spinner.GONE);
+        information.setVisibility(EditText.GONE);
+        update.setVisibility(Button.GONE);
 
         // setup a scanner object to scan a QR code when it is centered on the camera on screen
         mCodeScanner = new CodeScanner(this, scannerView);
@@ -65,6 +140,13 @@ public class QRScanner extends AppCompatActivity {
                     @Override
                     public void run() {
                         qrText.setText(result.getText());
+                        if (choice.equals("B")) {
+                            trial.setVisibility(Spinner.VISIBLE);
+                            experName.setVisibility(Spinner.VISIBLE);
+                            information.setVisibility(EditText.VISIBLE);
+                        } else {
+                            update.setVisibility(Button.VISIBLE);
+                        }
                     }
                 });
             }
@@ -75,6 +157,13 @@ public class QRScanner extends AppCompatActivity {
             public void onClick(View view) {
                 mCodeScanner.startPreview();
             }
+        });
+
+        update.setOnClickListener(v -> {
+            //TODO: go to experiment trial given by QR code and update trial
+            String[] experToUpdate = qrText.getText().toString().split("-");
+            qrText.setText("trial updated per QR Code");
+            update.setVisibility(Button.GONE);
         });
 
         btn.setOnClickListener(v -> {
