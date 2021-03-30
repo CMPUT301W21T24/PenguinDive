@@ -3,11 +3,13 @@ US 01.01.01: As an owner, I want to publish an experiment with a description, a 
 			   This information includes: description, region, trial count.
 	Weight (1-10): 7 (because this will likely become a core class for our design).  Will likely take 2-3 days to build
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 01.02.01: As an owner, I want to unpublish an experiment.
 	Rationale: Owner should be able to unpublish an experiment if they wish.
 	Weight (1-10): 4 (In addition to the core functionality of US 01.01.01.) Will take 2-3 days to build.
 	Risk level (low, medium, high): medium
+	Status: complete
 
 US 01.03.01: As an owner, I want to end an experiment. This leaves the results available and public but does not allow new results to be added.
 	Rationale: Owners would like to close experiments from collecting more data. Useful when the owner has gathered they data they want or no longer wishes to continue trials. Thus, leaving only the results viewable.
@@ -18,6 +20,7 @@ US 01.04.01: As an owner or experimenter, I want to subscribe to an experiment t
 	Rationale: Owners would like to join in on experiments.
 	Weight (1-10): 5 (Users will need to be able to join other experiments for the experiments to work). 2-5 days to build
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 01.05.01: As an experimenter, I want to be able to execute trials for an experiment and upload them to the experiment.
 	Rationale: Experimenters need to be able to execute trials for an experiment from the app and upload them to the experiment for Owner. 
@@ -50,11 +53,13 @@ US 02.01.01: As an experimenter, I want to ask a question about an experiment.
 	Rationale: Asking questions about a given experiment may help a user understand why the experiment is being performed and 				may also help the user decide if they want to participate in the experiment
 	Weight (1-10): 8, 1-2 weeks to build (will likely be in the form of a forum)
 	Risk level (low, medium, high): medium
+	Status: complete
 
 US 02.02.01: As an experimenter or owner, I want to ask to reply to questions about an experiment.
 	Rationale: Replying to the questions about an experiment will help to get in a conversation about an experiment and the user will able to understand more in depth.
 	Weight (1-10): 4 (Extension to US 2.01.01) 2-5 days.
 	Risk level (low, medium, high): low
+	Status: complete
 
 US 02.03.01: As an experimenter or owner, I want to browse questions and replies about an experiment.
 	Rationale: With questions and replies visible to the owner, the owner can gather valuable feedback in regards to his/her experiment and aid others by answering questions. Experiementers can look into whether the experiment interests them and view the experiences of others.
@@ -65,11 +70,13 @@ US 03.01.01: As an experimenter, I want to be able to generate QR codes that I c
 	Rationale: An experimenter can take a QR code to anywhere and show their experiment results to others.
 	Weight (1-10): 8 (may take a significant portion of time to get working) 14 days to build
 	Risk level (low, medium, high): low
+	Status: complete
 
 US 03.02.01: As an experimenter, I want to be able scan QR codes to indicate success or failure, or increment counts for trials I subscribed to.
 	Rationale: Experimenter should be able to scan QR codes to indicate success or failure, or increment counts for trials experimenter subscribed to for convenience. 
 	Weight (1-10): 8 (Will need to use some API to scan the QR code) 7-14 days to build.
 	Risk level (low, medium, high): medium
+	Status: complete
 
 US 03.03.01: As an experimenter, I want to be able to register an arbitrary bar code (such as one off of your favourite book) to act a specific experiment result for a trial.
 	Rationale: An experimenter can register a barcode to their specific result/outcome and share it to others for them to scan and view. 
@@ -91,17 +98,26 @@ US 04.03.01: As an owner or experimenter, I want to retrieve and show the profil
 	Rationale: Users wants the ability to view other user profiles
 	Weight (1-10): 3, 2-3 days
 	Risk level (low, medium, high): low
+	Status: complete
+
+US 04.03.01: As an owner or experimenter, I do not want to log into my application using a username and password.
+	Rationale: Users should not have to create a profile to use the application, they can add personal information to their generated profile if they'd like.
+	Weight (1-10): 5 Will take 3-5 days to build userID generation and profile persistence.
+	Risk level (low, medium, high): medium
+	Status: complete
 
 
 US 05.01.01: As an experimenter, I want to specify a keyword, and search for all experiments that are available.
 	Rationale:	Search functionality to allow for quicker access to desired experiments
 	Weight (1-10): 7, (searching backbone) 2-3 days
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 05.02.91: As an experimenter, I want search results to show each experiment with its description, owner username, and status.
 	Rationale: more advanced search functionality
 	Weight (1-10): 7, (extension of US 05.01.01) 1 week
 	Risk level (low, medium, high): high
+	Status: complete
 
 
 US 06.01.01: As an owner, I want to specify a Geo-location is required or not for trials.

@@ -1,32 +1,38 @@
 package com.cmput301.penguindive;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
+/**
+ * This class is a custom list for experiments
+ */
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private ArrayList<Experiment> experiments;
     private Context context;
+    Button questions_button;
 
     public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
         super(context,0,experiment);
         this.context = context;
         this.experiments = experiment;
     }
-    public class ViewHolder{
-        TextView titleText;
-        TextView descriptionText;
-        TextView ownerText;
-        TextView statusText;
+
+    @Nullable
+    @Override
+    public Experiment getItem(int position) {
+        return super.getItem(position);
     }
 
     @Override
@@ -42,7 +48,19 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         TextView description = convertView.findViewById(R.id.experiment_description);
         TextView status = convertView.findViewById(R.id.experiment_status);
         TextView owner = convertView.findViewById(R.id.experiment_owner);
+        Button questions_button = convertView.findViewById(R.id.questions_experiment);
 
+        questions_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, QuestionActivity.class);
+                Experiment exp = getItem(position);
+                String exp_id = exp.getExperimentId();
+                intent.putExtra("EXPID", exp_id);
+
+                context.startActivity(intent);
+            }
+        });
         experimentName.setText(experiment.getTitle());
         description.setText(experiment.getDescription());
         status.setText(experiment.getStatus());
@@ -51,32 +69,5 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         return convertView;
     }
 
-    // Filters what is to be shown in the experimentDataList based on user search
-//    public void filter(String charText) {
-//        // Get lowercase input
-//        charText = charText.toLowerCase(Locale.getDefault());
-//        // Clear list
-//        MainActivity.experimentDataList.clear();
-//        // If no input show all results
-//        if (charText.length() == 0) {
-//            MainActivity.experimentDataList.addAll(experiments);
-//        }
-//        // If there is an input
-//        else {
-//            // Cycle all experiments
-//            for (Experiment current : experiments) {
-//
-//                // Search Title, description and owner for matches
-//                if (current.getTitle().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                } else if (current.getDescription().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                } else if (current.getOwnerUserName().toLowerCase(Locale.getDefault()).contains(charText)) {
-//                    MainActivity.experimentDataList.add(current);
-//                }
-//            }
-//        }
-//        notifyDataSetChanged();
-//    }
 }
 

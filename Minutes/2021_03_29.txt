@@ -1,0 +1,27 @@
+March 29th, 2021
+CMPUT 301 Team 24 Meeting on Project Part 4
+______________________________________________________________________________
+
+Summary: Progress report, inquiring is others need help.
+_____________________________________________________________________________
+
+News:
+	- QR Code functionality is nearly complete, just needs to be nicely integrated into the UI
+	- Some have nearly completed their parts, if Rui needs help with location, feel free to ask!
+	
+Goals (same as last thursday):
+	- Add username to questions and answers UI - Nikita
+	- Q/A searching - Nikita
+	- Improve button layout on main page (toolbar or something) - Tyler
+	- Provide spinner to choose from status options (Published or Unpublished) instead of a text field (ExperimentFragment)
+	- Provide spinner to choose min-number of trials instead of text field (ExperimentFragmnet) - Tyler 
+	- Update the username on main page if the user has added a username to themselves - Tyler
+	- Trials - Kevin
+	- End experiment functionality - Kevin
+	- Continue stats (plots and histograms) - Matt
+	- Geo-location - Rui
+	- Continue QR code development - Ryan
+______________________________________________________________________________
+	
+Next meeting:
+	- Thursday, Arpil 1st, 7:30 PM MST

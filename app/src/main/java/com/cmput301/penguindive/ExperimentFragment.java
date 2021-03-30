@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This class represents a dialog fragment for experiments
+ */
 public class ExperimentFragment extends DialogFragment {
     private EditText experimentTitle;
     private EditText experimentDescription;
@@ -123,8 +126,6 @@ public class ExperimentFragment extends DialogFragment {
                         else{
                             listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs));
                         }
-
-
                     }}).create();
     }
     static ExperimentFragment newInstance(Experiment experiment, int position){

@@ -1,9 +1,11 @@
 package com.cmput301.penguindive;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a Experiment object
+ */
 public class Experiment implements Serializable {
     private String experimentId;
     private String title;
@@ -25,22 +27,28 @@ public class Experiment implements Serializable {
         this.experimenters = experimenters;
     }
 
+    // Getters and Setters
     public void setExperimentId(String experimentId) {this.experimentId = experimentId;}
     String getExperimentId(){return experimentId;}
+
     public void setTitle(String title){ this.title = title;}
     String getTitle(){return title;}
+
     public void setDescription(String description){ this.description = description;}
     String getDescription() {return description;}
-    public void setRegion(String region){this.region =region;}
+
+    public void setRegion(String region){this.region = region;}
     String getRegion() {return region;}
+
     public void setTotalTrail(String totalTrail){this.totalTrail = totalTrail;}
     String getTotalTrail() {return totalTrail;}
+
     public void setOwnerUserName(String ownerUserName){this.ownerUserName = ownerUserName;}
     String getOwnerUserName() {return ownerUserName;}
+
+    public void setStatus(String status) {this.status = status;}
     String getStatus() {return status;}
-    public void setStatus(String status) {
-        this.status = status;
-    }
+
     public void setExperimenters(List<String> experimenters) {this.experimenters = experimenters;}
     List<String> getExperimenters() {return experimenters;}
 

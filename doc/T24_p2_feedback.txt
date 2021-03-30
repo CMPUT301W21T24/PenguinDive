@@ -1,0 +1,22 @@
+Requirements Specification: 
+#Numbered and Comprehensive use cases
+#Clearly demonstrates requirements
+#Explicit mapping of user stories to use cases
+
+User Interface Mockup:
+#Complete UI mockups
+#Labeled actions on storyboard transitions
+#Displays understanding of UI mockups and storyboarding
+-Maybe have a better UI design for future (personal advise, this won't deduce your mark down in part2)
+
+Release Planning
+#Refers to requirements
+#Displays regular and frequent pacing of working software
+
+Tool practices
+#All team members commit to Git/Wiki regularly
+
+Meeting Attendance
+#All members attend all meetings
+
+Total mark: 8 / 8
