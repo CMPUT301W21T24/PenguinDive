@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,11 +33,13 @@ public class ExperimentFragment extends DialogFragment {
     private EditText experimentCount;
     private TextView experimentOwner;
     private EditText experimentStatus;
+    private ToggleButton experimentLocation;
     private OnFragmentInteractionListener listener;
     public Experiment experiment;
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+    public Boolean locationStatus;
 
     public interface OnFragmentInteractionListener {
         //check the validity of input
@@ -65,6 +71,7 @@ public class ExperimentFragment extends DialogFragment {
         experimentCount = view.findViewById(R.id.editCount);
         experimentOwner = view.findViewById(R.id.editOwner);
         experimentStatus = view.findViewById(R.id.editStatus);
+        experimentLocation = view.findViewById(R.id.location_switch);
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
@@ -72,6 +79,7 @@ public class ExperimentFragment extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             experiment = (Experiment) bundle.getSerializable("experiment");
+            locationStatus = experiment.getLocationState();
             position = (int) bundle.getSerializable("pos");
             experimentID = experiment.getExperimentId();
             experimentTitle.setText(experiment.getTitle());
@@ -80,6 +88,7 @@ public class ExperimentFragment extends DialogFragment {
             experimentOwner.setText(experiment.getOwnerUserName());
             experimentCount.setText(experiment.getTotalTrail());
             experimentStatus.setText(experiment.getStatus());
+            experimentLocation.setChecked(locationStatus);
             experimenterIDs = experiment.getExperimenters();
         }
 
@@ -100,6 +109,7 @@ public class ExperimentFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (experimentID == null){
                             experimentID = UUID.randomUUID().toString();
+                            locationStatus = false;
                         }
                         String title = experimentTitle.getText().toString();
                         String description = experimentDescription.getText().toString();
@@ -108,6 +118,7 @@ public class ExperimentFragment extends DialogFragment {
                         String ownerUserName = experimentOwner.getText().toString();
                         String status = experimentStatus.getText().toString();
                         experimenterIDs = new ArrayList<String>();
+
                         if(description.length()==0){
                             listener.nullValueError();
                         }
@@ -120,11 +131,14 @@ public class ExperimentFragment extends DialogFragment {
                         else if(title.length() >40){
                             listener.extraStringError();
                         }
+                        // set the location status
+                        locationStatus = experimentLocation.isChecked();
+
                         if(experiment != null){
-                            listener.onEditPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs), position);
+                            listener.onEditPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs, locationStatus), position);
                         }
                         else{
-                            listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs));
+                            listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs, locationStatus));
                         }
                     }}).create();
     }

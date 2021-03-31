@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     SearchView searchBar;
     String uid;
 
+    Button Map;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +69,16 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
         profileButton = findViewById(R.id.profileButton);
+        Map = findViewById(R.id.map);
 
+        Map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
+                finishAffinity();
+            }
+        });
         // Setup list and adapter
         experimentDataList = new ArrayList<Experiment>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
@@ -76,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Get UID
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         uid = sharedPref.getString("UID", "");
-
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -161,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("TotalTrail", newExperiment.getTotalTrail());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
         docData.put("Keywords", keywords);
+        docData.put("LocationStatus", newExperiment.getLocationState());
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)
@@ -204,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     String totalTrail = (String) doc.getData().get("TotalTrail");
                     String ownerId = (String) doc.getData().get("ownerId");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                    Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
+                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -254,7 +266,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                         String totalTrail = (String) doc.getData().get("TotalTrail");
                                         String ownerId = (String) doc.getData().get("ownerId");
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                                        Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
+                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();

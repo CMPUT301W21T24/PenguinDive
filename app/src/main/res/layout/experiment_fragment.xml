@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">>
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/testCount"
+            android:id="@+id/textCount"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:text="Total trail: "
@@ -120,6 +120,27 @@
             android:ems="10"
             android:inputType="text"
             android:importantForAutofill="no" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Location: "
+            android:textSize="18sp"/>
+
+        <ToggleButton
+            android:id="@+id/location_switch"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textOn="On"
+            android:textOff="Off"
+            android:checked="true"/>
+
     </LinearLayout>
 
 </LinearLayout>
