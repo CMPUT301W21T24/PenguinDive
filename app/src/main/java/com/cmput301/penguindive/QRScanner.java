@@ -32,6 +32,8 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /*
@@ -144,6 +146,7 @@ public class QRScanner extends AppCompatActivity {
                             trial.setVisibility(Spinner.VISIBLE);
                             experName.setVisibility(Spinner.VISIBLE);
                             information.setVisibility(EditText.VISIBLE);
+                            update.setVisibility(Button.VISIBLE);
                         } else {
                             update.setVisibility(Button.VISIBLE);
                         }
@@ -160,10 +163,17 @@ public class QRScanner extends AppCompatActivity {
         });
 
         update.setOnClickListener(v -> {
-            //TODO: go to experiment trial given by QR code and update trial
-            String[] experToUpdate = qrText.getText().toString().split("-");
-            qrText.setText("trial updated per QR Code");
-            update.setVisibility(Button.GONE);
+            if (choice.equals("B")) {
+                String barcode = qrText.getText().toString();
+                HashMap<String, String> choiceMap = new HashMap<>();
+                String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + information.getText().toString();
+                update.setVisibility(Button.GONE);
+            } else {
+                //TODO: go to experiment trial given by QR code and update trial
+                String[] experToUpdate = qrText.getText().toString().split("-");
+                qrText.setText("trial updated per QR Code");
+                update.setVisibility(Button.GONE);
+            }
         });
 
         btn.setOnClickListener(v -> {
