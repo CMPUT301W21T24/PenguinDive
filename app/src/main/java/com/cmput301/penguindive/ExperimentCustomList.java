@@ -48,6 +48,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         TextView description = convertView.findViewById(R.id.experiment_description);
         TextView status = convertView.findViewById(R.id.experiment_status);
         TextView owner = convertView.findViewById(R.id.experiment_owner);
+        TextView Location = convertView.findViewById(R.id.experiment_locationStatus);
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
 
         questions_button.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +66,11 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         description.setText(experiment.getDescription());
         status.setText(experiment.getStatus());
         owner.setText(experiment.getOwnerUserName());
+        if (experiment.getLocationState()){
+            Location.setText("ON");
+        }else{
+            Location.setText("OFF");
+        }
 
         return convertView;
     }

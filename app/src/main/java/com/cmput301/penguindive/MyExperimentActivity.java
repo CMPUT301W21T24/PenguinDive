@@ -109,6 +109,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         docData.put("Title", newExperiment.getTitle());
         docData.put("TotalTrail", newExperiment.getTotalTrail());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("LocationStatus", newExperiment.getLocationState());
 
         experimentCollectionReference.document(experimentId)
                 .set(docData)
@@ -124,7 +125,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "TotalTrail", newExperiment.getTotalTrail());
+                "TotalTrail", newExperiment.getTotalTrail(),
+                "LocationStatus", newExperiment.getLocationState());
     }
 
     @Override
@@ -159,7 +161,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     String totalTrail = (String) doc.getData().get("TotalTrail");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));                }
+                    Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
+                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -204,7 +207,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                         String title = (String) doc.getData().get("Title");
                                         String totalTrail = (String) doc.getData().get("TotalTrail");
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                                        Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
+                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();

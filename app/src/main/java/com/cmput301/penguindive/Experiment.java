@@ -15,8 +15,9 @@ public class Experiment implements Serializable {
     private String ownerUserName;
     private String status;
     private List<String> experimenters;
+    private Boolean locationState;
 
-    public Experiment(String experimentId, String title, String description, String region, String totalTrail, String ownerUserName, String status, List<String> experimenters) {
+    public Experiment(String experimentId, String title, String description, String region, String totalTrail, String ownerUserName, String status, List<String> experimenters, Boolean locationState) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;
@@ -25,6 +26,7 @@ public class Experiment implements Serializable {
         this.ownerUserName = ownerUserName;
         this.status = status;
         this.experimenters = experimenters;
+        this.locationState = locationState;
     }
 
     // Getters and Setters
@@ -51,5 +53,12 @@ public class Experiment implements Serializable {
 
     public void setExperimenters(List<String> experimenters) {this.experimenters = experimenters;}
     List<String> getExperimenters() {return experimenters;}
+
+    public void setLocationState(boolean locationState) {
+        this.locationState = locationState;
+    }
+    Boolean getLocationState() {
+        return locationState;
+    }
 
 }
