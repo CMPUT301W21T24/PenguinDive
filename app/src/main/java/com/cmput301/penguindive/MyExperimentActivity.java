@@ -66,9 +66,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
         // create a clickListener on the existing experiment
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
-            Experiment trail = experimentDataList.get(position);
+            Experiment trial = experimentDataList.get(position);
 
-            ExperimentFragment.newInstance(trail, position).show(getSupportFragmentManager(), "Edit");
+            ExperimentFragment.newInstance(trial, position).show(getSupportFragmentManager(), "Edit");
         });
 
         // Get UID
@@ -107,7 +107,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
-        docData.put("TotalTrail", newExperiment.getTotalTrail());
+        docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
 
         experimentCollectionReference.document(experimentId)
@@ -124,7 +124,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "TotalTrail", newExperiment.getTotalTrail());
+                "MinimumTrials", newExperiment.getMinTrials());
     }
 
     @Override
@@ -157,9 +157,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String region = (String) doc.getData().get("Region");
                     String status = (String) doc.getData().get("Status");
                     String title = (String) doc.getData().get("Title");
-                    String totalTrail = (String) doc.getData().get("TotalTrail");
+                    Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));                }
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -202,9 +202,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                         String region = (String) doc.getData().get("Region");
                                         String status = (String) doc.getData().get("Status");
                                         String title = (String) doc.getData().get("Title");
-                                        String totalTrail = (String) doc.getData().get("TotalTrail");
+                                        Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();

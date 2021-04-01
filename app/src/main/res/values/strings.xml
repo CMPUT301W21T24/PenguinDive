@@ -5,4 +5,11 @@
     <string name="all_experiments_button_text">All Experiments</string>
     <string name="profile_button_text">User Profiles</string>
     <string name="profile_search_text">Search Profiles</string>
+    <string name="exp_description">Enter a description...</string>
+    <string name="exp_title">Enter a Title...</string>
+    <string-array name="status_array">
+        <item>Published</item>
+        <item>Unpublished</item>
+        <item>Ended</item>
+    </string-array>
 </resources>

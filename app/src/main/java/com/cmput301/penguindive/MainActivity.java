@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
-        docData.put("TotalTrail", newExperiment.getTotalTrail());
+        docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
         docData.put("Keywords", keywords);
 
@@ -196,15 +196,15 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             experimentDataList.clear();
             for(QueryDocumentSnapshot doc: value) {
                 String status = (String) doc.getData().get("Status"); // Use status to see if it should be visible
-                if (status.equals("publish")) {
+                if (status.equals("Published")||status.equals("Ended")) {
                     String expID = doc.getId();
                     String description = (String) doc.getData().get("Description");
                     String region = (String) doc.getData().get("Region");
                     String title = (String) doc.getData().get("Title");
-                    String totalTrail = (String) doc.getData().get("TotalTrail");
+                    Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     String ownerId = (String) doc.getData().get("ownerId");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -246,15 +246,17 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                 // Scan results and add to list
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String status = (String) doc.getData().get("Status");
-                                    if (status.equals("publish")) {
+                                    if (status.equals("Published")||status.equals("Ended")) {
                                         String expID = doc.getId();
                                         String description = (String) doc.getData().get("Description");
                                         String region = (String) doc.getData().get("Region");
                                         String title = (String) doc.getData().get("Title");
-                                        String totalTrail = (String) doc.getData().get("TotalTrail");
+
+                                        // For casting long to int, https://stackoverflow.com/a/32869210
+                                        Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                         String ownerId = (String) doc.getData().get("ownerId");
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();
