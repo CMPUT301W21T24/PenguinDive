@@ -102,6 +102,16 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         String experimentId = newExperiment.getExperimentId();
         Map<String, Object> docData = new HashMap<>();
 
+        List<String> keywords = new ArrayList<String>();
+        // For getting it to add multiple elements properly
+        // https://stackoverflow.com/a/36560577
+        // For whitespace and punctuation
+        // https://stackoverflow.com/a/28257108
+        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+
         docData.put("Status",newExperiment.getStatus());
         docData.put("ownerId",newExperiment.getOwnerUserName());
         docData.put("Region", newExperiment.getRegion());
@@ -109,8 +119,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         docData.put("Title", newExperiment.getTitle());
         docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("Keywords", keywords);
 
-        experimentCollectionReference.document(experimentId)
+        db.collection("Experiments").document(experimentId)
                 .set(docData)
                 .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));

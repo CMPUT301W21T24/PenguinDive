@@ -7,6 +7,8 @@
     <string name="profile_search_text">Search Profiles</string>
     <string name="exp_description">Enter a description...</string>
     <string name="exp_title">Enter a Title...</string>
+    <string name="scan_qr_button_text">Scan QR</string>
+    <string name="generate_qr_button_text">Generate QR</string>
     <string-array name="status_array">
         <item>Published</item>
         <item>Unpublished</item>

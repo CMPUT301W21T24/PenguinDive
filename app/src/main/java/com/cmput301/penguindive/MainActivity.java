@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
             @Override
             public boolean onQueryTextChange(String query) {
+                Log.d("HELP ME", "IM HERE");
                 // If there is no input, reset the list
                 if (query.length() == 0) {
                         loadData();
@@ -237,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 // https://firebase.googleblog.com/2018/08/better-arrays-in-cloud-firestore.html
                 else{
                     experimentDataList.clear(); // Prevent duplicates
+                    Log.d("AAAA", query.trim().toLowerCase());
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
