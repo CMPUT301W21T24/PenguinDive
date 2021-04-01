@@ -9,7 +9,10 @@ Searching was developed with help from:
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -35,7 +38,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +52,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
-    Button myExperiment;
-    Button profileButton;
     SearchView searchBar;
     String uid;
+    DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
-        myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
-        profileButton = findViewById(R.id.profileButton);
+
 
         // Setup list and adapter
         experimentDataList = new ArrayList<Experiment>();
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         uid = sharedPref.getString("UID", "");
 
+        // Assign drawer
+        drawerLayout = findViewById(R.id.experiment_activity);
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -99,42 +102,11 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         loadData(); // All results that are published
         checkSearchBar(); // Check search bar and populate list accordingly
 
-        // Jump to MyExperimentActivity (User's Experiments list)
-        myExperiment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MyExperimentActivity.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
-        profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Profile.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
-
         // Call fragment to add experiment
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
 
-        // on click listeners for qr generation and scanning
-        Button QRGen = findViewById(R.id.qr_gen);
-        Button QRScan = findViewById(R.id.qr_scan);
-
-        QRGen.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, PickQRType.class);
-            startActivity(intent);
-        });
-
-        QRScan.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, PickScanType.class);
-            startActivity(intent);
-        });
     }
 
     //changes after clicking OK/Edit/Delete button
@@ -271,4 +243,58 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         });
     } // End of checkSearchBar()
 
+    public void ClickMenu(View view){
+        // open the drawer
+        openDrawer(drawerLayout);
+    }
+
+    public static void openDrawer(DrawerLayout drawerLayout) {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public void ClickLogo(View view){
+        closeDrawer(drawerLayout);
+    }
+
+    public static void closeDrawer(DrawerLayout drawerLayout){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
+    public void ClickHome(View view){
+        recreate();
+    }
+
+    public void ClickMyExperiments(View view){
+        redirectActivity(this,MyExperimentActivity.class);
+    }
+
+    public void ClickScanQrCode(View view){
+        redirectActivity(this,PickScanType.class);
+    }
+
+    public void ClickGenerateQrCode(View view){
+        redirectActivity(this,PickQRType.class);
+    }
+
+    public void ClickMyProfile(View view){
+        redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){
+        redirectActivity(this,SearchProfile.class);
+    }
+
+    public static void redirectActivity(Activity activity, Class aClass){
+        Intent intent = new Intent(activity,aClass);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        closeDrawer(drawerLayout);
+    }
 }

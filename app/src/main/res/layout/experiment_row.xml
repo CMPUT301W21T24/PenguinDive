@@ -55,6 +55,7 @@
         android:layout_toEndOf="@+id/experiment_description"
         android:text="Experiment Owner"
         android:textSize="15sp"
+        android:textStyle="italic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/experiment_description" />
 
@@ -70,6 +71,7 @@
         android:layout_toEndOf="@+id/experiment_description"
         android:text="Status"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/experiment_owner"
         app:layout_constraintTop_toBottomOf="@+id/experiment_description">
 
@@ -79,10 +81,14 @@
         android:id="@+id/questions_experiment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/experiment_owner"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="78dp"
-        android:layout_marginEnd="31dp"
-        android:text="Questions" />
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@+id/experiment_description"
+        android:text="Questions"
+        android:textSize="12sp"
+        />
 
 </RelativeLayout>

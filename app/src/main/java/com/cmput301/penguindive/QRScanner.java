@@ -2,6 +2,7 @@ package com.cmput301.penguindive;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Intent;
@@ -83,11 +84,16 @@ public class QRScanner extends AppCompatActivity {
     private CodeScannerView scannerView;
     private TextView qrText;
     private Button btn;
+    DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_q_r_scanner);
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.qrscanner);
 
         // initialize variables
         scannerView = findViewById(R.id.scanner_view);
@@ -204,4 +210,21 @@ public class QRScanner extends AppCompatActivity {
         mCodeScanner.releaseResources();
         super.onPause();
     }
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 }

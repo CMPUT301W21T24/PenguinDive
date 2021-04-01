@@ -7,13 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +27,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +40,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     private SearchView searchBar;
+    DrawerLayout drawerLayout;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
-    Button myExperiment;
     String uid;
 
     @Override
@@ -55,7 +55,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
-        myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
 
 
@@ -75,6 +74,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         uid = sharedPref.getString("UID", "");
 
+        // Assign drawer
+        drawerLayout = findViewById(R.id.my_experiment_activity);
+
         // Populate list from firestore
         loadData(); // All results related to userID
         checkSearchBar(); // Check search bar and populate list accordingly
@@ -83,16 +85,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
-
-        // Jump to MainActivity (Experiment list)
-        myExperiment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyExperimentActivity.this, MainActivity.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
 
     }
 
@@ -196,6 +188,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 }
                 // If there is input, filter based on input
                 else{
+                    experimentDataList.clear(); // Prevent duplicates
                     // Query the database
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
@@ -203,7 +196,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                experimentDataList.clear(); // Prevent duplicates
+
                                 // Scan query results and add to list
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String ownerId = (String) doc.getData().get("ownerId");
@@ -228,4 +221,21 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         });
     } // End of checkSearchBar()
 
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ recreate(); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class); }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class); }
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 }
