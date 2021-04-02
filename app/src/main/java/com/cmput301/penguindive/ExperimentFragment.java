@@ -73,6 +73,7 @@ public class ExperimentFragment extends DialogFragment {
         experimentOwner.setText(userID);
 
         // Set status spinner adapter and link it to the list of options in strings.xml
+        ///https://developer.android.com/guide/topics/ui/controls/spinner
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.status_array));
@@ -129,7 +130,7 @@ public class ExperimentFragment extends DialogFragment {
                         if(description.length()==0){
                             listener.nullValueError();
                         }
-                        else if(description.length() >40){
+                        else if(description.length() >250){
                             listener.extraStringError();
                         }
                         else if(title.length()==0){
@@ -138,10 +139,10 @@ public class ExperimentFragment extends DialogFragment {
                         else if(title.length() >40){
                             listener.extraStringError();
                         }
-                        if(experiment != null){
+                        else if(experiment != null){
                             listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerUserName,status,experimenterIDs), position);
                         }
-                        else{
+                        else {
                             listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerUserName,status,experimenterIDs));
                         }
                     }}).create();

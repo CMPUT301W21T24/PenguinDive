@@ -227,4 +227,6 @@ public class QRScanner extends AppCompatActivity {
     }
 
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
+
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
 }
