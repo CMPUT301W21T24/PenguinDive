@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,9 +29,9 @@ public class ExperimentFragment extends DialogFragment {
     private EditText experimentTitle;
     private EditText experimentDescription;
     private EditText experimentRegion;
-    private EditText experimentCount;
+    private NumberPicker experimentMinimumTrials;
     private TextView experimentOwner;
-    private EditText experimentStatus;
+    private Spinner experimentStatus;
     private OnFragmentInteractionListener listener;
     public Experiment experiment;
     private String experimentID;
@@ -62,12 +65,24 @@ public class ExperimentFragment extends DialogFragment {
         experimentTitle = view.findViewById(R.id.editTitle);
         experimentDescription = view.findViewById(R.id.editDescription);
         experimentRegion = view.findViewById(R.id.editRegion);
-        experimentCount = view.findViewById(R.id.editCount);
+        experimentMinimumTrials = view.findViewById(R.id.editCount);
         experimentOwner = view.findViewById(R.id.editOwner);
         experimentStatus = view.findViewById(R.id.editStatus);
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
+
+        // Set status spinner adapter and link it to the list of options in strings.xml
+        ///https://developer.android.com/guide/topics/ui/controls/spinner
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.status_array));
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        experimentStatus.setAdapter(statusAdapter);
+
+        // Set minTrials number picker
+        experimentMinimumTrials.setMinValue(1);
+        experimentMinimumTrials.setMaxValue(999);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -78,8 +93,12 @@ public class ExperimentFragment extends DialogFragment {
             experimentDescription.setText(experiment.getDescription());
             experimentRegion.setText(experiment.getRegion());
             experimentOwner.setText(experiment.getOwnerUserName());
-            experimentCount.setText(experiment.getTotalTrail());
-            experimentStatus.setText(experiment.getStatus());
+            // Return number picker to last choice
+            experimentMinimumTrials.setValue(experiment.getMinTrials());
+            // Return spinner to last choice
+            int spinnerPosition = statusAdapter.getPosition(experiment.getStatus());
+            experimentStatus.setSelection(spinnerPosition);
+
             experimenterIDs = experiment.getExperimenters();
         }
 
@@ -104,14 +123,14 @@ public class ExperimentFragment extends DialogFragment {
                         String title = experimentTitle.getText().toString();
                         String description = experimentDescription.getText().toString();
                         String region = experimentRegion.getText().toString();
-                        String totalTrail = experimentCount.getText().toString();
+                        Integer minTrials = experimentMinimumTrials.getValue();
                         String ownerUserName = experimentOwner.getText().toString();
-                        String status = experimentStatus.getText().toString();
+                        String status = experimentStatus.getSelectedItem().toString();
                         experimenterIDs = new ArrayList<String>();
                         if(description.length()==0){
                             listener.nullValueError();
                         }
-                        else if(description.length() >40){
+                        else if(description.length() >250){
                             listener.extraStringError();
                         }
                         else if(title.length()==0){
@@ -120,11 +139,11 @@ public class ExperimentFragment extends DialogFragment {
                         else if(title.length() >40){
                             listener.extraStringError();
                         }
-                        if(experiment != null){
-                            listener.onEditPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs), position);
+                        else if(experiment != null){
+                            listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerUserName,status,experimenterIDs), position);
                         }
-                        else{
-                            listener.onOkPressed(new Experiment(experimentID, title,description,region,totalTrail,ownerUserName,status,experimenterIDs));
+                        else {
+                            listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerUserName,status,experimenterIDs));
                         }
                     }}).create();
     }

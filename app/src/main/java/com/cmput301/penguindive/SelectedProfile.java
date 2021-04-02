@@ -3,10 +3,12 @@ package com.cmput301.penguindive;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class SelectedProfile extends AppCompatActivity {
     private TextView name;
     private TextView email;
-
+    DrawerLayout drawerLayout;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference profileCollectionReference = db.collection("Experimenter");
 
@@ -29,6 +31,9 @@ public class SelectedProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //set view
         setContentView(R.layout.selected_profile);
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.selectedprofile);
 
         // initialize elements
         name = findViewById(R.id.searchedName);
@@ -58,4 +63,24 @@ public class SelectedProfile extends AppCompatActivity {
         startActivity(intent);
         finishAffinity();
     }
+
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
+
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
 }

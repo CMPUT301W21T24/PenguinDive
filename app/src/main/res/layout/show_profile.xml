@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/showprofile">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include
+            layout="@layout/secondary_toolbar"/>
+
 
     <TextView
         android:id="@+id/UserID"
@@ -75,5 +83,18 @@
             android:text="Search Profiles" />
     </LinearLayout>
 
+    </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/background_light">
+
+        <include
+            layout = "@layout/main_nav_drawer"/>
+
+    </RelativeLayout>
+
+
+</androidx.drawerlayout.widget.DrawerLayout>

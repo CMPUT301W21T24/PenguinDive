@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +32,8 @@ public class Profile extends AppCompatActivity {
     Button saveButton;
     Button searchButton;
     String uid;
+    DrawerLayout drawerLayout;
+
 
     //private ArrayList<Experiment> ownedExperiments;
     //private ArrayList<Experiment> subscribedExperiments;
@@ -50,6 +53,9 @@ public class Profile extends AppCompatActivity {
         searchButton = findViewById(R.id.searchButton);
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         uid = sharedPref.getString("UID", "");
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.showprofile);
 
         //make a query on the given profile to display the id, name, contact information of the instance's user
         DocumentReference docRef = profileCollectionReference.document(uid);
@@ -91,5 +97,21 @@ public class Profile extends AppCompatActivity {
         startActivity(intent);
         finishAffinity();
     }
+
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){ MainActivity.closeDrawer(drawerLayout); }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
 }
