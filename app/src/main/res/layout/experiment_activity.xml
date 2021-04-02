@@ -1,85 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/experiment_activity">
 
-    <SearchView
-        android:id="@+id/experimentSearchBar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:iconifiedByDefault="false"
-        android:queryHint="@string/experiment_search_text"></SearchView>
+        android:layout_height="wrap_content">
+        <include
+            layout = "@layout/experiment_toolbar"/>
 
-    <ListView
-        android:id="@+id/experimentList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@id/myExperimentButton"
-        android:layout_below="@+id/experimentSearchBar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"></ListView>
+        <ListView
+            android:id="@+id/experimentList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/experiment_toolbar"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
 
-    <Button
-        android:id="@+id/myExperimentButton"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_above="@id/profileButton"
-        android:layout_alignEnd="@+id/profileButton"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:text="@string/my_experiment_button_text" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="#858A4D"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:contentDescription="TODO" />
 
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/profileButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_toStartOf="@+id/add_button"
-        android:text="@string/profile_button_text" />
+    <!--    For the drawer itself-->
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/background_light">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_margin="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:backgroundTint="#858A4D"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        <include
+            layout = "@layout/main_nav_drawer"/>
 
-    <Button
-        android:id="@+id/qr_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="86dp"
-        android:layout_marginBottom="104dp"
-        android:text="Scan QR" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/qr_gen"
-        android:layout_width="150dp"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginBottom="108dp"
-        android:text="Generate QR" />
-
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -14,6 +14,7 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,12 +38,16 @@ public class SearchProfile extends AppCompatActivity {
     private ArrayList<String> profileID;
     SearchView searchBar;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set view
         setContentView(R.layout.search_profile);
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.searchprofile);
 
         // initialise elements
         searchBar = findViewById(R.id.searchLayout);
@@ -124,4 +129,22 @@ public class SearchProfile extends AppCompatActivity {
         startActivity(intent);
         finishAffinity();
     }
+
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ recreate(); }
 }

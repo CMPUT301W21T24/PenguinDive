@@ -7,13 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +27,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +40,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     private SearchView searchBar;
+    DrawerLayout drawerLayout;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
-    Button myExperiment;
     String uid;
 
     @Override
@@ -55,7 +55,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
-        myExperiment = findViewById(R.id.myExperimentButton);
         searchBar = findViewById(R.id.experimentSearchBar);
 
 
@@ -66,14 +65,17 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
         // create a clickListener on the existing experiment
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
-            Experiment trail = experimentDataList.get(position);
+            Experiment trial = experimentDataList.get(position);
 
-            ExperimentFragment.newInstance(trail, position).show(getSupportFragmentManager(), "Edit");
+            ExperimentFragment.newInstance(trial, position).show(getSupportFragmentManager(), "Edit");
         });
 
         // Get UID
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         uid = sharedPref.getString("UID", "");
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.my_experiment_activity);
 
         // Populate list from firestore
         loadData(); // All results related to userID
@@ -84,16 +86,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
 
-        // Jump to MainActivity (Experiment list)
-        myExperiment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyExperimentActivity.this, MainActivity.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
-
     }
 
     //changes after clicking OK/Edit/Delete button
@@ -102,15 +94,26 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         String experimentId = newExperiment.getExperimentId();
         Map<String, Object> docData = new HashMap<>();
 
+        List<String> keywords = new ArrayList<String>();
+        // For getting it to add multiple elements properly
+        // https://stackoverflow.com/a/36560577
+        // For whitespace and punctuation
+        // https://stackoverflow.com/a/28257108
+        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+
         docData.put("Status",newExperiment.getStatus());
         docData.put("ownerId",newExperiment.getOwnerUserName());
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
-        docData.put("TotalTrail", newExperiment.getTotalTrail());
+        docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("Keywords", keywords);
 
-        experimentCollectionReference.document(experimentId)
+        db.collection("Experiments").document(experimentId)
                 .set(docData)
                 .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
@@ -124,7 +127,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "TotalTrail", newExperiment.getTotalTrail());
+                "MinimumTrials", newExperiment.getMinTrials());
     }
 
     @Override
@@ -157,9 +160,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String region = (String) doc.getData().get("Region");
                     String status = (String) doc.getData().get("Status");
                     String title = (String) doc.getData().get("Title");
-                    String totalTrail = (String) doc.getData().get("TotalTrail");
+                    Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));                }
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -185,6 +188,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 }
                 // If there is input, filter based on input
                 else{
+                    experimentDataList.clear(); // Prevent duplicates
                     // Query the database
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
@@ -192,7 +196,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                experimentDataList.clear(); // Prevent duplicates
+
                                 // Scan query results and add to list
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String ownerId = (String) doc.getData().get("ownerId");
@@ -202,9 +206,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                         String region = (String) doc.getData().get("Region");
                                         String status = (String) doc.getData().get("Status");
                                         String title = (String) doc.getData().get("Title");
-                                        String totalTrail = (String) doc.getData().get("TotalTrail");
+                                        Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters));
+                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();
@@ -217,4 +221,21 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         });
     } // End of checkSearchBar()
 
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ recreate(); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class); }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class); }
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 }
