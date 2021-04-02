@@ -6,6 +6,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.budiyev.android.codescanner.ScanMode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -82,12 +84,15 @@ This class allows users to scan a printed QR code and will read out the text of 
  */
 public class QRScanner extends AppCompatActivity {
 
-    private CodeScanner mCodeScanner;
+    private CodeScanner codeScanner;
     private CodeScannerView scannerView;
     private TextView qrText;
-    private Button btn;
     DrawerLayout drawerLayout;
-
+    Spinner experName;
+    Spinner trueFalse;
+    Button update;
+    String choice;
+    ArrayList<String> experimentNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,85 +105,94 @@ public class QRScanner extends AppCompatActivity {
         // initialize variables
         scannerView = findViewById(R.id.scanner_view);
         qrText = findViewById(R.id.QR_text);
-        btn = findViewById(R.id.btn_id);
-        final Spinner experName = findViewById(R.id.exper);
-        final Spinner trial = findViewById(R.id.trial);
-        final EditText information = findViewById(R.id.info);
-        final Button update = findViewById(R.id.update);
-        String choice = getIntent().getSerializableExtra("type").toString();
+        Button btn = findViewById(R.id.btn_id);
+        experName = findViewById(R.id.exper);
+        trueFalse = findViewById(R.id.true_false);
+        update = findViewById(R.id.update);
+        choice = getIntent().getSerializableExtra("type").toString();
 
-        ArrayList<String> experimentNames = new ArrayList<>();
+        experimentNames = new ArrayList<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("publish")) {
-                            experimentNames.add(document.get("Title").toString());
-                            Log.d("experiment names", document.get("Title").toString());
-                        }
+        db.collection("Experiments").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    if (document.get("Status").equals("Published")) {
+                        experimentNames.add(document.get("Title").toString());
+                        Log.d("experiment names", document.get("Title").toString());
                     }
-                } else {
-                    Log.d("Could not get data", "no Data to get");
                 }
-                String[] eNames = experimentNames.toArray(new String[0]);
-                ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, eNames);
-                experName.setAdapter(namesAdapt);
+            } else {
+                Log.d("Could not get data", "no Data to get");
             }
+            String[] eNames = experimentNames.toArray(new String[0]);
+            ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, eNames);
+            experName.setAdapter(namesAdapt);
         });
 
         //TODO: add trials and trial descriptions instead of trial types
-
-        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
+        String[] trialTypes = {"TRUE", "FALSE"};
         ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
-        trial.setAdapter(typeAdapt);
+        trueFalse.setAdapter(typeAdapt);
 
-        trial.setVisibility(Spinner.GONE);
+        trueFalse.setVisibility(Spinner.GONE);
         experName.setVisibility(Spinner.GONE);
-        information.setVisibility(EditText.GONE);
         update.setVisibility(Button.GONE);
 
         // setup a scanner object to scan a QR code when it is centered on the camera on screen
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setDecodeCallback(new DecodeCallback() {
-            @Override
-            public void onDecoded(@NonNull final Result result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        qrText.setText(result.getText());
-                        if (choice.equals("B")) {
-                            trial.setVisibility(Spinner.VISIBLE);
-                            experName.setVisibility(Spinner.VISIBLE);
-                            information.setVisibility(EditText.VISIBLE);
-                            update.setVisibility(Button.VISIBLE);
-                        } else {
-                            update.setVisibility(Button.VISIBLE);
-                        }
-                    }
-                });
+        codeScanner = new CodeScanner(this, scannerView);
+        codeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
+            qrText.setText(result.getText());
+            qrText.setTextColor(Color.WHITE);
+
+            // show only relevant information based on scan choice
+            switch (choice) {
+                case "SQ":
+                    update.setText("Update");
+                    update.setVisibility(Button.VISIBLE);
+                    break;
+                case "SB":
+                    update.setText("Update");
+                    update.setVisibility(Button.VISIBLE);
+                    break;
+                case "BR":
+                    update.setText("Register");
+                    update.setVisibility(Button.VISIBLE);
+                    trueFalse.setVisibility(Spinner.VISIBLE);
+                    experName.setVisibility(Spinner.VISIBLE);
+                    break;
             }
-        });
+        }));
         
-        scannerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCodeScanner.startPreview();
-            }
-        });
+        scannerView.setOnClickListener(view -> codeScanner.startPreview());
 
         update.setOnClickListener(v -> {
-            if (choice.equals("B")) {
-                String barcode = qrText.getText().toString();
-                HashMap<String, String> choiceMap = new HashMap<>();
-                String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + information.getText().toString();
-                update.setVisibility(Button.GONE);
-            } else {
-                //TODO: go to experiment trial given by QR code and update trial
-                String[] experToUpdate = qrText.getText().toString().split("-");
-                qrText.setText("trial updated per QR Code");
-                update.setVisibility(Button.GONE);
+            switch (choice) {
+                case "BR":
+                    String barcode = qrText.getText().toString();
+                    HashMap<String, String> choiceMap = new HashMap<>();
+                    String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + trueFalse.getSelectedItem();
+                    update.setVisibility(Button.GONE);
+                    break;
+                case "SQ":
+                    //TODO: go to experiment trial given by QR code and update trial
+                    String[] experToUpdate = qrText.getText().toString().split("-");
+                    // TODO: update trial result if QR code contains PASS
+                    if (experToUpdate[2].equals("PASS")) {
+                        // update trial result
+                        qrText.setText("trial updated per QR Code");
+                    } else {
+                        qrText.setText("QR code not applicable for updating trials");
+                    }
+                    update.setVisibility(Button.GONE);
+                    break;
+                case "SB":
+                    // TODO: check database to see if barcode is already registered
+                    // if barcode is registered then update trial, else ask if they want to register the barcode
+                    String barCodeText = qrText.getText().toString();
+                    if (true/*barcode does not exist*/) {
+                        qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
+                    }
+                    break;
             }
         });
 
@@ -199,7 +213,7 @@ public class QRScanner extends AppCompatActivity {
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse response) {
-                mCodeScanner.startPreview();
+                codeScanner.startPreview();
             }
 
             @Override
@@ -217,7 +231,7 @@ public class QRScanner extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mCodeScanner.releaseResources();
+        codeScanner.releaseResources();
         super.onPause();
     }
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}

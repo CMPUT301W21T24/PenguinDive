@@ -20,7 +20,7 @@
             android:id="@+id/QR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="164dp"
+            android:layout_marginTop="488dp"
             android:text="QR Code"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -28,13 +28,24 @@
             app:layout_constraintTop_toBottomOf="@+id/include2" />
 
         <Button
+            android:id="@+id/bar_reg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="324dp"
+            android:text="Register BarCode"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
             android:id="@+id/bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="392dp"
+            android:layout_marginBottom="496dp"
             android:text="barcode"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.516"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

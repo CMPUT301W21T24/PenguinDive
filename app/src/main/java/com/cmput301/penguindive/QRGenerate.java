@@ -120,8 +120,9 @@ public class QRGenerate extends AppCompatActivity {
         });
 
         // set the dropdown menu entries
+        // TODO: should trial type be kept?
         String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
-        String[] passOrFail = {"Pass", "Fail"};
+        String[] passOrFail = {"PASS", "FAIL"};
         ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
         ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
         trialType.setAdapter(typeAdapt);
