@@ -194,7 +194,7 @@ public class QRGenerate extends AppCompatActivity {
 
     public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
 
-    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+    public void ClickGenerateQrCode(View view){ MainActivity.closeDrawer(drawerLayout); }
 
     public void ClickMyProfile(View view){
         MainActivity.redirectActivity(this,Profile.class);
@@ -202,5 +202,5 @@ public class QRGenerate extends AppCompatActivity {
 
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
-    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this);}
 }
