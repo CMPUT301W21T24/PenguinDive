@@ -40,6 +40,8 @@ public class QuestionActivity extends AppCompatActivity {
     EditText addQuestionSubjectText;
     EditText addQuestionEditText;
     String expID;
+    EditText searchQuestion;
+    Button searchQuestionButton;
 
 
 
@@ -57,6 +59,8 @@ public class QuestionActivity extends AppCompatActivity {
         addQuestionButton = findViewById(R.id.add_question_button);
         addQuestionEditText = findViewById(R.id.add_question_detail_field);
         addQuestionSubjectText = findViewById(R.id.add_question_subject_field);
+        searchQuestion = findViewById(R.id.search_question);
+        searchQuestionButton = findViewById(R.id.search_question_button);
 
 
         questionDataList = new ArrayList<>();
@@ -69,6 +73,21 @@ public class QuestionActivity extends AppCompatActivity {
 
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Questions");
+
+        searchQuestionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyword = searchQuestion.getText().toString();
+                if(keyword.length() > 0){
+                    // pass intent and start new activity
+                    Intent intent = new Intent(QuestionActivity.this, SearchQuestionActivity.class);
+                    // putting word
+                    intent.putExtra("KEYWORD", keyword);
+                    intent.putExtra("EXPID",expID);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // push question to DB
         addQuestionButton.setOnClickListener( new View.OnClickListener() {
