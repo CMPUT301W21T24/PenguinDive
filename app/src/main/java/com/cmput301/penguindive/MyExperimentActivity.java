@@ -238,4 +238,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     }
 
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
+
+    public void ClickGitHub(View view){
+        MainActivity.openGitHub(this);
+    }
 }

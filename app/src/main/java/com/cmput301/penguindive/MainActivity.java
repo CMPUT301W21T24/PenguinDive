@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -284,6 +285,18 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
     public void ClickSearchUsers(View view){
         redirectActivity(this,SearchProfile.class);
+    }
+
+    // Courtesy of Parag Chauhan
+    // https://stackoverflow.com/a/4930319
+    public void ClickGitHub(View view){
+        openGitHub(this);
+    }
+
+    public static void openGitHub(Activity activity){
+        Uri uri = Uri.parse("https://github.com/CMPUT301W21T24/PenguinDive");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        activity.startActivity(intent);
     }
 
     public static void redirectActivity(Activity activity, Class aClass){

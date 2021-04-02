@@ -147,4 +147,6 @@ public class SearchProfile extends AppCompatActivity {
     }
 
     public void ClickSearchUsers(View view){ recreate(); }
+
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
 }
