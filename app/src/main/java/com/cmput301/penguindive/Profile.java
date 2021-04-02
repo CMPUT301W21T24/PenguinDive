@@ -110,9 +110,7 @@ public class Profile extends AppCompatActivity {
 
     public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
 
-    public void ClickMyProfile(View view){
-        MainActivity.redirectActivity(this,Profile.class);
-    }
+    public void ClickMyProfile(View view){ MainActivity.closeDrawer(drawerLayout); }
 
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 

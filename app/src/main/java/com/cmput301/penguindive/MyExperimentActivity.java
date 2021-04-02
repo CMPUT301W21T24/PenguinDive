@@ -227,7 +227,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
     public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
 
-    public void ClickMyExperiments(View view){ recreate(); }
+    public void ClickMyExperiments(View view){ MainActivity.closeDrawer(drawerLayout); }
 
     public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class); }
 

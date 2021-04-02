@@ -42,9 +42,9 @@ public class PickScanType extends AppCompatActivity {
 
     public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
 
-    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+    public void ClickScanQrCode(View view){ MainActivity.closeDrawer(drawerLayout); }
 
-    public void ClickGenerateQrCode(View view){ recreate();}
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this, PickQRType.class); }
 
     public void ClickMyProfile(View view){
         MainActivity.redirectActivity(this,Profile.class);

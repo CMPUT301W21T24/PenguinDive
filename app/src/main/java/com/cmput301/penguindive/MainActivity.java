@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     }
 
     public void ClickHome(View view){
-        recreate();
+        MainActivity.closeDrawer(drawerLayout);
     }
 
     public void ClickMyExperiments(View view){
