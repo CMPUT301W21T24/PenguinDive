@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,7 +44,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
-    CollectionReference profileCollectionReference = db.collection("Experimenter");
     String uid;
 
     @Override
@@ -101,13 +99,13 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         // https://stackoverflow.com/a/36560577
         // For whitespace and punctuation
         // https://stackoverflow.com/a/28257108
-        keywords.add(newExperiment.getOwnerId().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
         keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
 
         docData.put("Status",newExperiment.getStatus());
-        docData.put("ownerId",newExperiment.getOwnerId());
+        docData.put("ownerId",newExperiment.getOwnerUserName());
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
@@ -125,7 +123,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     public void onEditPressed(Experiment newExperiment, int position) {
         DocumentReference docRe = experimentCollectionReference.document(newExperiment.getExperimentId());
         docRe.update("Status", newExperiment.getStatus(),
-                "ownerId", newExperiment.getOwnerId(),
+                "ownerId", newExperiment.getOwnerUserName(),
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
@@ -164,31 +162,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-
-
-                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
-
-                    // Update username if it's available
-                    DocumentReference docRef = profileCollectionReference.document(ownerId);
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                String ownerName = document.getString("name");
-                                if (ownerName.equals("")){
-                                    newExperiment.setOwnerUserName(uid);
-                                }
-                                else{
-                                    newExperiment.setOwnerUserName(ownerName);
-                                }
-                                experimentDataList.add(newExperiment);
-                                experimentArrayAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
-                }
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));                }
             }
+            experimentArrayAdapter.notifyDataSetChanged();
         });
     }
 

@@ -92,7 +92,6 @@ public class SearchProfile extends AppCompatActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        profileArray.clear();
                         if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
@@ -112,7 +111,6 @@ public class SearchProfile extends AppCompatActivity {
             }
         });
         // send to selected profile activity when a profile is clicked on the list of profiles
-
         profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
