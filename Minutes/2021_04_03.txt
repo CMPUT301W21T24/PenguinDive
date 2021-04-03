@@ -8,8 +8,12 @@ Discussed:
   
   Also discussed how we are storing barcodes, associating them to the experiment or experimentor. 
   A new collection will be created to store trial data.
+  
  
- 
+To Be Implemented:
+  The majoruty of the work to do with trials is already completed, the entire functionality will most likely be uploaded to the main branch by sunday evening.
+  From there, geo-locations, barcodes and statistical data can be added on.
+  
  
  ______________________________________________________________________________
 	
