@@ -17,13 +17,14 @@ public class Experiment implements Serializable {
     private String status;
     private List<String> experimenters;
 
-    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String status, List<String> experimenters) {
+    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String ownerUserName , String status, List<String> experimenters) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;
         this.region = region;
         this.minTrials = minTrials;
         this.ownerId = ownerId;
+        this.ownerUserName = ownerUserName;
         this.status = status;
         this.experimenters = experimenters;
     }

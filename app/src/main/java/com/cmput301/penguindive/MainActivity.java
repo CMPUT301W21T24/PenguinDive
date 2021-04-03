@@ -9,7 +9,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -23,8 +22,6 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -36,19 +33,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class represents an activity that will show all published experiments and act as the main activity to reach other features
  */
 public class MainActivity extends AppCompatActivity implements ExperimentFragment.OnFragmentInteractionListener{
 
-    private ListView experimentList;
     protected ArrayList<Experiment> experimentDataList;
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -67,12 +63,12 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         setContentView(R.layout.experiment_activity);
 
         // Initialize elements
-        experimentList = findViewById(R.id.experimentList);
+        ListView experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
 
 
         // Setup list and adapter
-        experimentDataList = new ArrayList<Experiment>();
+        experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
         experimentList.setAdapter(experimentArrayAdapter);
 
@@ -87,13 +83,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Subscribe Conformation")
                     .setMessage("Do you want to be an experimenter of this experiment?")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
-                                    .update("experimenterIDs", FieldValue.arrayUnion(uid));
-                            dialog.cancel();
-                        }
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                        dialog.cancel();
                     })
                     .setNegativeButton("Cancel", null)
                     .create()
@@ -115,28 +108,41 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     @Override
     public void onOkPressed(Experiment newExperiment) {
         String experimentId = newExperiment.getExperimentId();
-
-        // Add the owner's name to the experiment
-        updateExperimentUserName(newExperiment);
-
+        String ownerId = newExperiment.getOwnerId();
         Map<String, Object> docData = new HashMap<>();
 
-        // Get all the keywords from the experiment
-        List<String> keywords = getKeywords(newExperiment);
+        // Query the ownerId in Profiles collection
+        DocumentReference docRef = profileCollectionReference.document(ownerId);
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                DocumentSnapshot document = task.getResult();
+                // Get the given name
+                String ownerName = document.getString("name");
 
-        docData.put("Status",newExperiment.getStatus());
-        docData.put("ownerId",newExperiment.getOwnerId());
-        docData.put("Region", newExperiment.getRegion());
-        docData.put("Description", newExperiment.getDescription());
-        docData.put("Title", newExperiment.getTitle());
-        docData.put("MinimumTrials", newExperiment.getMinTrials());
-        docData.put("experimenterIDs", newExperiment.getExperimenters());
-        docData.put("Keywords", keywords);
+                // Check to see if there is a name available and that it is different
+                if (ownerName != null && !ownerName.equals(newExperiment.getOwnerUserName())) {
+                    newExperiment.setOwnerUserName(ownerName);
+                }//Otherwise keep the ownerId assigned from the fragment
 
-        db.collection("Experiments").document(experimentId)
-                .set(docData)
-                .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
-                .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
+                // Get all the keywords from the experiment
+                List<String> keywords = getKeywords(newExperiment);
+
+                docData.put("Status",newExperiment.getStatus());
+                docData.put("ownerId",ownerId);
+                docData.put("ownerName", newExperiment.getOwnerUserName());
+                docData.put("Region", newExperiment.getRegion());
+                docData.put("Description", newExperiment.getDescription());
+                docData.put("Title", newExperiment.getTitle());
+                docData.put("MinimumTrials", newExperiment.getMinTrials());
+                docData.put("experimenterIDs", newExperiment.getExperimenters());
+                docData.put("Keywords", keywords);
+
+                db.collection("Experiments").document(experimentId)
+                        .set(docData)
+                        .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
+                        .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
+            }
+        });
     }
 
     @Override
@@ -165,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     public void loadData(){
         experimentCollectionReference.addSnapshotListener((value, error) -> {
             experimentDataList.clear();
-            for(QueryDocumentSnapshot doc: value) {
+            for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
                 String status = (String) doc.getData().get("Status"); // Use status to see if it should be visible
                 if (status.equals("Published")||status.equals("Ended")) {
                     String expID = doc.getId();
@@ -174,13 +180,14 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     String ownerId = (String) doc.getData().get("ownerId");
+                    String ownerName = (String) doc.getData().get("ownerName");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
 
                     // Make new experiment object that can be added and passed to methods
-                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
+                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                     experimentDataList.add(newExperiment);
 
-                    // Add username to the experiment
+                    // Realtime updates to keywords and ownerName
                     updateExperimentUserName(newExperiment);
                 }
             }
@@ -217,17 +224,14 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     experimentDataList.clear(); // Prevent duplicates
 
                     // Turn query into proper list
-                    List<String> queryList = new ArrayList<String>();
-                    queryList.addAll(Arrays.asList(query.trim().toLowerCase().split("\\W+")));
+                    List<String> queryList = new ArrayList<>(Arrays.asList(query.trim().toLowerCase().split("\\W+")));
 
                     // Do not query if only a non-char has been entered
                     if (!queryList.isEmpty()) {
                         experimentCollectionReference.whereArrayContainsAny("Keywords", queryList)
                                 .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful() && task.getResult() != null) {
                                         // Scan results and add to list
                                         for (QueryDocumentSnapshot doc : task.getResult()) {
                                             String status = (String) doc.getData().get("Status");
@@ -240,17 +244,20 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 // For casting long to int, https://stackoverflow.com/a/32869210
                                                 Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                                 String ownerId = (String) doc.getData().get("ownerId");
+                                                String ownerName = (String) doc.getData().get("ownerName");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
 
                                                 // Check to see if it has been added before
+                                                // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
                                                 boolean isAdded = false;
                                                 for (Experiment experiment : experimentDataList) {
                                                     if (experiment.getExperimentId().equals(expID)) {
                                                         isAdded = true;
+                                                        break;
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                                                     experimentDataList.add(newExperiment);
                                                     updateExperimentUserName(newExperiment);
                                                 }
@@ -258,8 +265,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                         }
                                     experimentArrayAdapter.notifyDataSetChanged();
                                     }
-                                }
-                        });
+                                });
                     }
                 }
                 return false;
@@ -272,33 +278,22 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
      * This method updates the experiment's ownerUserName by querying the Experimenter collection for the owner's ID
      * It will then update the firestore accordingly
      * @param newExperiment
+     * An experiment object to reference when required values
      */
     public void updateExperimentUserName(Experiment newExperiment){
         String ownerId = newExperiment.getOwnerId();
 
         DocumentReference docRef = profileCollectionReference.document(ownerId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    String ownerName = document.getString("name");
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                DocumentSnapshot document = task.getResult();
+                String ownerName = document.getString("name");
 
-                    // If the user hasn't set a name, assign ownerId
-                    Integer nameLength = ownerName.length();
-                    if (ownerName.equals(null)){
-                        newExperiment.setOwnerUserName(ownerId);
-                        updateFirestoreData(newExperiment);
-                    }
-
-                    // Otherwise assign the new ownerName
-                    else if (!ownerName.equals(newExperiment.getOwnerUserName())){
-                        newExperiment.setOwnerUserName(ownerName);
-                        updateFirestoreData(newExperiment);
-                    }
-
-                    experimentArrayAdapter.notifyDataSetChanged(); //Reflect changes
-                }
+                // Check to see if there is a name available and that it is different
+                if (ownerName != null && !ownerName.equals(newExperiment.getOwnerUserName())) {
+                    newExperiment.setOwnerUserName(ownerName);
+                    updateFirestoreData(newExperiment); // Call changes to firestore
+                }//Otherwise keep the ownerId assigned from the fragment
             }
         });
     }
@@ -307,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
      * This method updates Keywords and ownerName in firestore
      * This ensures the keywords remain relevant after the user edits them
      * @param newExperiment
+     * An experiment object to reference when required values
      */
     public void updateFirestoreData(Experiment newExperiment){
         List<String> newKeywords = getKeywords(newExperiment);
@@ -319,45 +315,26 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         // Update keywords field with username and all other fields
         docRef.update("Keywords", newKeywords)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("MainActivity:", "Error updating document with new keywords", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!"))
+                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new keywords", e));
 
         // Update ownerName field
         docRef.update("ownerName", newUserName)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("MainActivity:", "DocumentSnapshot successfully updated new username!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("MainActivity:", "Error updating document with new username", e);
-                    }
-                });
-        return;
+                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated new username!"))
+                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new username", e));
     }
 
     /**
      * This method gets all searchable keywords from an experiment.
      * This includes it's title, description, ownerId, ownerUserName and region
      * @param newExperiment
+     * An experiment object to reference when required values
      * @return
-     * Returns a list of strings containing all keywords gathered within the experiment
+     * A list of strings containing all keywords gathered within the experiment
      */
     public List<String> getKeywords(Experiment newExperiment){
-        List<String> keywords = new ArrayList<String>();
+        List<String> keywords;
+        keywords = new ArrayList<>();
         // For getting it to add multiple elements properly
         // https://stackoverflow.com/a/36560577
         // For whitespace and punctuation

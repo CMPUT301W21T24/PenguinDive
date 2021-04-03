@@ -136,6 +136,8 @@ public class ExperimentFragment extends DialogFragment {
                         String region = experimentRegion.getText().toString();
                         Integer minTrials = experimentMinimumTrials.getValue();
                         String ownerId = experimentOwner.getText().toString();
+                        // Set username to userId to begin
+                        String ownerName = experimentOwner.getText().toString();
                         String status = experimentStatus.getSelectedItem().toString();
                         experimenterIDs = new ArrayList<String>();
 
@@ -152,13 +154,13 @@ public class ExperimentFragment extends DialogFragment {
                             listener.extraStringError();
                         }
                         else if(experiment != null){
-                            Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId,status,experimenterIDs);
+                            Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs);
                             newExperiment.setOwnerUserName(ownerId);
                             listener.onEditPressed(newExperiment, position);
 
                         }
                         else {
-                            Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId,status,experimenterIDs);
+                            Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs);
                             newExperiment.setOwnerUserName(ownerId);
 
                             listener.onOkPressed(newExperiment);
