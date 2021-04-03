@@ -32,6 +32,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
+    CollectionReference profileCollectionReference = db.collection("Experimenter");
     SearchView searchBar;
     String uid;
     DrawerLayout drawerLayout;
@@ -121,13 +124,13 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // https://stackoverflow.com/a/36560577
         // For whitespace and punctuation
         // https://stackoverflow.com/a/28257108
-        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.add(newExperiment.getOwnerId().trim().toLowerCase()); // Full Username will need to be searched
         keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
 
         docData.put("Status",newExperiment.getStatus());
-        docData.put("ownerId",newExperiment.getOwnerUserName());
+        docData.put("ownerId",newExperiment.getOwnerId());
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
@@ -177,10 +180,30 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     String ownerId = (String) doc.getData().get("ownerId");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
+
+                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
+
+                    // Update username if it's available
+                    DocumentReference docRef = profileCollectionReference.document(ownerId);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                         @Override
+                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                             if (task.isSuccessful()) {
+                                 DocumentSnapshot document = task.getResult();
+                                     String ownerName = document.getString("name");
+                                     if (ownerName.equals("")){
+                                         newExperiment.setOwnerUserName(uid);
+                                     }
+                                     else{
+                                         newExperiment.setOwnerUserName(ownerName);
+                                     }
+                                 experimentDataList.add(newExperiment);
+                                 experimentArrayAdapter.notifyDataSetChanged();
+                                 }
+                             }
+                         });
                 }
             }
-            experimentArrayAdapter.notifyDataSetChanged();
         });
     }
 
@@ -198,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
             @Override
             public boolean onQueryTextChange(String query) {
-                Log.d("HELP ME", "IM HERE");
+
                 // If there is no input, reset the list
                 if (query.length() == 0) {
                         loadData();
@@ -211,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 // https://firebase.googleblog.com/2018/08/better-arrays-in-cloud-firestore.html
                 else{
                     experimentDataList.clear(); // Prevent duplicates
-                    Log.d("AAAA", query.trim().toLowerCase());
                     experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
