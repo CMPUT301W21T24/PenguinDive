@@ -17,10 +17,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -44,6 +47,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
+    CollectionReference profileCollectionReference = db.collection("Experimenter");
     String uid;
 
     @Override
@@ -89,23 +93,21 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     }
 
     //changes after clicking OK/Edit/Delete button
+    //changes after clicking OK/Edit/Delete button
     @Override
     public void onOkPressed(Experiment newExperiment) {
         String experimentId = newExperiment.getExperimentId();
+
+        // Add the owner's name to the experiment
+        updateExperimentUserName(newExperiment);
+
         Map<String, Object> docData = new HashMap<>();
 
-        List<String> keywords = new ArrayList<String>();
-        // For getting it to add multiple elements properly
-        // https://stackoverflow.com/a/36560577
-        // For whitespace and punctuation
-        // https://stackoverflow.com/a/28257108
-        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
-        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
-        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
-        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+        // Get all the keywords from the experiment
+        List<String> keywords = getKeywords(newExperiment);
 
         docData.put("Status",newExperiment.getStatus());
-        docData.put("ownerId",newExperiment.getOwnerUserName());
+        docData.put("ownerId",newExperiment.getOwnerId());
         docData.put("Region", newExperiment.getRegion());
         docData.put("Description", newExperiment.getDescription());
         docData.put("Title", newExperiment.getTitle());
@@ -123,7 +125,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     public void onEditPressed(Experiment newExperiment, int position) {
         DocumentReference docRe = experimentCollectionReference.document(newExperiment.getExperimentId());
         docRe.update("Status", newExperiment.getStatus(),
-                "ownerId", newExperiment.getOwnerUserName(),
+                "ownerId", newExperiment.getOwnerId(),
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
@@ -150,6 +152,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
      * This method will load all experiments that the current user owns into experimentDataList
      */
     public void loadData(){
+
         experimentCollectionReference.addSnapshotListener((value, error) -> {
             experimentDataList.clear();
             for(QueryDocumentSnapshot doc: value) {
@@ -162,7 +165,14 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));                }
+
+
+                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
+                    experimentDataList.add(newExperiment);
+                    // Add username to experiment
+
+                    updateExperimentUserName(newExperiment);
+                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -189,37 +199,159 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 // If there is input, filter based on input
                 else{
                     experimentDataList.clear(); // Prevent duplicates
-                    // Query the database
-                    experimentCollectionReference.whereArrayContainsAny("Keywords", Arrays.asList(query.trim().toLowerCase()))
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
 
-                                // Scan query results and add to list
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
-                                    String ownerId = (String) doc.getData().get("ownerId");
-                                    if (ownerId.equals(uid)) {
-                                        String expID = doc.getId();
-                                        String description = (String) doc.getData().get("Description");
-                                        String region = (String) doc.getData().get("Region");
-                                        String status = (String) doc.getData().get("Status");
-                                        String title = (String) doc.getData().get("Title");
-                                        Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
-                                        List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
+                    // Turn query into proper list
+                    List<String> queryList = new ArrayList<String>();
+                    queryList.addAll(Arrays.asList(query.trim().toLowerCase().split("\\W+")));
+
+                    // Do not query if only a non-char has been entered
+                    if (!queryList.isEmpty()) {
+                        // Query the database
+                        experimentCollectionReference.whereArrayContainsAny("Keywords", queryList)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        // Scan query results and add to list
+                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                            String ownerId = (String) doc.getData().get("ownerId");
+                                            if (ownerId.equals(uid)) {
+                                                String expID = doc.getId();
+                                                String description = (String) doc.getData().get("Description");
+                                                String region = (String) doc.getData().get("Region");
+                                                String status = (String) doc.getData().get("Status");
+                                                String title = (String) doc.getData().get("Title");
+                                                Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
+                                                List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                                                Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters);
+
+                                                // Check to see if it has been added before
+                                                boolean isAdded = false;
+                                                for (Experiment experiment : experimentDataList) {
+                                                    if (experiment.getExperimentId().equals(expID)) {
+                                                        isAdded = true;
+                                                    }
+                                                }
+                                                if (!isAdded) {
+                                                    experimentDataList.add(newExperiment);
+                                                    updateExperimentUserName(newExperiment);
+                                                }
+                                            }
+                                        }
+                                        experimentArrayAdapter.notifyDataSetChanged();
                                     }
                                 }
-                                experimentArrayAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
                 return false;
             }
         });
     } // End of checkSearchBar()
+
+    /**
+     * This method updates the experiment's ownerUserName by querying the Experimenter collection for the owner's ID
+     * It will then update the firestore accordingly
+     * @param newExperiment
+     */
+    public void updateExperimentUserName(Experiment newExperiment){
+
+        String ownerId = newExperiment.getOwnerId();
+
+        DocumentReference docRef = profileCollectionReference.document(ownerId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    DocumentSnapshot document = task.getResult();
+                    String ownerName = document.getString("name");
+
+                    // If the user hasn't set a name, assign ownerId
+                    if (ownerName.equals(null)){
+                        newExperiment.setOwnerUserName(ownerId);
+                        updateFirestoreData(newExperiment);
+                    }
+
+                    // Otherwise assign the new ownerName
+                    else if (!ownerName.equals(newExperiment.getOwnerUserName())){
+                        newExperiment.setOwnerUserName(ownerName);
+                        updateFirestoreData(newExperiment);
+                    }
+                    experimentArrayAdapter.notifyDataSetChanged(); //Reflect changes
+                }
+            }
+        });
+    }
+
+    /**
+     * This method updates Keywords and ownerName in firestore
+     * This ensures the keywords remain relevant after the user edits them
+     * @param newExperiment
+     */
+    public void updateFirestoreData(Experiment newExperiment){
+
+        List<String> newKeywords = getKeywords(newExperiment);
+        String experimentId = newExperiment.getExperimentId();
+
+        String newUserName = newExperiment.getOwnerUserName();
+
+        DocumentReference docRef = experimentCollectionReference.document(experimentId);
+        docRef.get();
+
+        // Update keywords field with username and all other fields
+        docRef.update("Keywords", newKeywords)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("MainActivity:", "Error updating document with new keywords", e);
+                    }
+                });
+
+        // Update ownerName field
+        docRef.update("ownerName", newUserName)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("MainActivity:", "Error updating document with new keywords", e);
+                    }
+                });
+    }
+
+    /**
+     * This method gets all searchable keywords from an experiment.
+     * This includes it's title, description, ownerId, ownerUserName and region
+     * @param newExperiment
+     * @return
+     * Returns a list of strings containing all keywords gathered within the experiment
+     */
+    public List<String> getKeywords(Experiment newExperiment){
+        List<String> keywords = new ArrayList<String>();
+        // For getting it to add multiple elements properly
+        // https://stackoverflow.com/a/36560577
+        // For whitespace and punctuation
+        // https://stackoverflow.com/a/28257108
+        keywords.add(newExperiment.getOwnerId().trim().toLowerCase()); // Full UserId will need to be searched
+        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
+        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
+        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+
+        return keywords;
+    }
 
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 

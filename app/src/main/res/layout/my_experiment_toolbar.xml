@@ -30,7 +30,7 @@
             android:layout_toStartOf="@+id/more_icon"
             android:layout_toEndOf="@+id/menu_icon"
             android:iconifiedByDefault="false"
-            android:queryHint="@string/experiment_search_text"
+            android:queryHint="@string/my_experiment_search_text"
             android:textAlignment="center"/>
 
         <ImageView
