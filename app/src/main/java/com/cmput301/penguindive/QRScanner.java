@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +24,7 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.budiyev.android.codescanner.ScanMode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,6 +35,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,6 +97,7 @@ public class QRScanner extends AppCompatActivity {
     Button update;
     String choice;
     ArrayList<String> experimentNames;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +117,6 @@ public class QRScanner extends AppCompatActivity {
         choice = getIntent().getSerializableExtra("type").toString();
 
         experimentNames = new ArrayList<>();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Experiments").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
@@ -194,7 +198,48 @@ public class QRScanner extends AppCompatActivity {
     private void registerBar() {
         String barcode = qrText.getText().toString();
         HashMap<String, String> choiceMap = new HashMap<>();
-        String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + trueFalse.getSelectedItem();
+        String experTrial = qrText.getText().toString() + "-exp:-" + experName.getSelectedItem().toString() + "-add trial result:-" + trueFalse.getSelectedItem();
+        //TODO: add new field to experimenters or experiments document with registered barcodes
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = null;
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        if (document.get("Title").toString().equals(experName.getSelectedItem())) {
+                            doc = document;
+                        }
+                    }
+                    Log.d("experiment data", String.valueOf(doc.getData()));
+                    Map<String, Object> existingData = doc.getData();
+                    boolean barExist = false;
+                    ArrayList<String> barcodes = new ArrayList<>();
+                    String removed = "";
+                    for (Map.Entry<String, Object> e : existingData.entrySet()) {
+                        if (e.getKey().equals("Barcodes")) {
+                            barExist = true;
+                            barcodes = (ArrayList<String>) e.getValue();
+                            removed = e.getKey();
+                        }
+                    }
+                    if (barExist) {
+                        existingData.remove(removed);
+                    }
+                    barcodes.add(experTrial);
+                    existingData.put("Barcodes", barcodes);
+                    db.collection("Experiments").document(doc.getId()).set(existingData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("data", "data successfully updated");
+                            } else {
+                                Log.d("data", "could not update experiment");
+                            }
+                        }
+                    });
+                }
+            }
+        });
         update.setVisibility(Button.GONE);
     }
 
@@ -203,7 +248,8 @@ public class QRScanner extends AppCompatActivity {
         codeScanner = new CodeScanner(this, scannerView);
         codeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
             qrText.setText(result.getText());
-            qrText.setTextColor(Color.BLACK);
+            qrText.setTextColor(Color.WHITE);
+            Log.d("qrText", qrText.getText().toString());
 
             // show only relevant information based on scan choice
             switch (choice) {
@@ -229,6 +275,10 @@ public class QRScanner extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         requestCam();
+        trueFalse.setVisibility(Spinner.GONE);
+        experName.setVisibility(Spinner.GONE);
+        update.setVisibility(Button.GONE);
+        qrText.setText("");
     }
 
     // function requests access to the phone camera
@@ -255,6 +305,10 @@ public class QRScanner extends AppCompatActivity {
     @Override
     protected void onPause() {
         codeScanner.releaseResources();
+        trueFalse.setVisibility(Spinner.GONE);
+        experName.setVisibility(Spinner.GONE);
+        update.setVisibility(Button.GONE);
+        qrText.setText("");
         super.onPause();
     }
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
