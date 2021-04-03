@@ -20,10 +20,10 @@
             android:id="@+id/QR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="488dp"
+            android:layout_marginTop="448dp"
             android:text="QR Code"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.514"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include2" />
 
@@ -41,11 +41,11 @@
             android:id="@+id/bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="496dp"
+            android:layout_marginBottom="456dp"
             android:text="barcode"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.516"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

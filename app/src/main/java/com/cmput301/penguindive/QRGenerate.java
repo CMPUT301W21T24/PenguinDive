@@ -105,7 +105,7 @@ public class QRGenerate extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("publish")) {
+                        if (document.get("Status").equals("Published")) {
                             experimentNames.add(document.get("Title").toString());
                             Log.d("experiment names", document.get("Title").toString());
                         }
@@ -147,7 +147,7 @@ public class QRGenerate extends AppCompatActivity {
             if (choice.equals("ad")) {
                 QRString = name;
             } else {
-                QRString = name + "-" + type + "-" + passFail;
+                QRString = "QR-" + name + "-" + type + "-" + passFail;
             }
 
             // generate QR code and display to user

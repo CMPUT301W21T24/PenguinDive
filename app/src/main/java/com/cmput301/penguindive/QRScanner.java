@@ -138,11 +138,72 @@ public class QRScanner extends AppCompatActivity {
         experName.setVisibility(Spinner.GONE);
         update.setVisibility(Button.GONE);
 
+        // setup the scanner and read the code
+        scanSetup();
+        
+        scannerView.setOnClickListener(view -> codeScanner.startPreview());
+
+        update.setOnClickListener(v -> {
+            switch (choice) {
+                case "BR":
+                    registerBar();
+                    break;
+                case "SQ":
+                    QRScanned();
+                    break;
+                case "SB":
+                    barcodeScanned();
+                    break;
+            }
+        });
+
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(QRScanner.this, MainActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void barcodeScanned() {
+        // TODO: check database to see if barcode is already registered
+        // if barcode is registered then update trial, else ask if they want to register the barcode
+        String barCodeText = qrText.getText().toString();
+        if (true/*barcode does not exist*/) {
+            qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
+        }
+    }
+
+    private void QRScanned() {
+        //TODO: go to experiment trial given by QR code and update trial
+        if (qrText.getText().toString().contains("QR-")) {
+            String[] experToUpdate = qrText.getText().toString().split("-");
+            // TODO: update trial result if QR code contains PASS
+            if (experToUpdate[3].equals("PASS")) {
+                // update trial result
+                qrText.setText("trial updated per QR Code");
+            } else {
+                qrText.setText("QR code not applicable for updating trials");
+            }
+        } else {
+            qrText.setText("Invalid QR code");
+        }
+
+
+        update.setVisibility(Button.GONE);
+    }
+
+    private void registerBar() {
+        String barcode = qrText.getText().toString();
+        HashMap<String, String> choiceMap = new HashMap<>();
+        String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + trueFalse.getSelectedItem();
+        update.setVisibility(Button.GONE);
+    }
+
+    private void scanSetup() {
         // setup a scanner object to scan a QR code when it is centered on the camera on screen
         codeScanner = new CodeScanner(this, scannerView);
         codeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
             qrText.setText(result.getText());
-            qrText.setTextColor(Color.WHITE);
+            qrText.setTextColor(Color.BLACK);
 
             // show only relevant information based on scan choice
             switch (choice) {
@@ -162,44 +223,6 @@ public class QRScanner extends AppCompatActivity {
                     break;
             }
         }));
-        
-        scannerView.setOnClickListener(view -> codeScanner.startPreview());
-
-        update.setOnClickListener(v -> {
-            switch (choice) {
-                case "BR":
-                    String barcode = qrText.getText().toString();
-                    HashMap<String, String> choiceMap = new HashMap<>();
-                    String experTrial = "exp: " + experName.getSelectedItem() + "add trial result: " + trueFalse.getSelectedItem();
-                    update.setVisibility(Button.GONE);
-                    break;
-                case "SQ":
-                    //TODO: go to experiment trial given by QR code and update trial
-                    String[] experToUpdate = qrText.getText().toString().split("-");
-                    // TODO: update trial result if QR code contains PASS
-                    if (experToUpdate[2].equals("PASS")) {
-                        // update trial result
-                        qrText.setText("trial updated per QR Code");
-                    } else {
-                        qrText.setText("QR code not applicable for updating trials");
-                    }
-                    update.setVisibility(Button.GONE);
-                    break;
-                case "SB":
-                    // TODO: check database to see if barcode is already registered
-                    // if barcode is registered then update trial, else ask if they want to register the barcode
-                    String barCodeText = qrText.getText().toString();
-                    if (true/*barcode does not exist*/) {
-                        qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
-                    }
-                    break;
-            }
-        });
-
-        btn.setOnClickListener(v -> {
-            Intent intent = new Intent(QRScanner.this, MainActivity.class);
-            startActivity(intent);
-        });
     }
 
     @Override
