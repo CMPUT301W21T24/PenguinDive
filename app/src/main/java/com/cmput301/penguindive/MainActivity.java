@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     DrawerLayout drawerLayout;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,38 +112,24 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         String ownerId = newExperiment.getOwnerId();
         Map<String, Object> docData = new HashMap<>();
 
-        // Query the ownerId in Profiles collection
-        DocumentReference docRef = profileCollectionReference.document(ownerId);
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentSnapshot document = task.getResult();
-                // Get the given name
-                String ownerName = document.getString("name");
+        // Get all the keywords from the experiment
+        List<String> keywords = getKeywords(newExperiment);
 
-                // Check to see if there is a name available and that it is different
-                if (ownerName != null && !ownerName.equals(newExperiment.getOwnerUserName())) {
-                    newExperiment.setOwnerUserName(ownerName);
-                }//Otherwise keep the ownerId assigned from the fragment
+        docData.put("Status",newExperiment.getStatus());
+        docData.put("ownerId",ownerId);
+        docData.put("ownerName", newExperiment.getOwnerUserName());
+        docData.put("Region", newExperiment.getRegion());
+        docData.put("Description", newExperiment.getDescription());
+        docData.put("Title", newExperiment.getTitle());
+        docData.put("MinimumTrials", newExperiment.getMinTrials());
+        docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("Keywords", keywords);
 
-                // Get all the keywords from the experiment
-                List<String> keywords = getKeywords(newExperiment);
+        db.collection("Experiments").document(experimentId)
+                .set(docData)
+                .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
+                .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
 
-                docData.put("Status",newExperiment.getStatus());
-                docData.put("ownerId",ownerId);
-                docData.put("ownerName", newExperiment.getOwnerUserName());
-                docData.put("Region", newExperiment.getRegion());
-                docData.put("Description", newExperiment.getDescription());
-                docData.put("Title", newExperiment.getTitle());
-                docData.put("MinimumTrials", newExperiment.getMinTrials());
-                docData.put("experimenterIDs", newExperiment.getExperimenters());
-                docData.put("Keywords", keywords);
-
-                db.collection("Experiments").document(experimentId)
-                        .set(docData)
-                        .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
-                        .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
-            }
-        });
     }
 
     @Override
@@ -186,9 +173,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     // Make new experiment object that can be added and passed to methods
                     Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                     experimentDataList.add(newExperiment);
-
-                    // Realtime updates to keywords and ownerName
-                    updateExperimentUserName(newExperiment);
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -259,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 if (!isAdded) {
                                                     Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                                                     experimentDataList.add(newExperiment);
-                                                    updateExperimentUserName(newExperiment);
                                                 }
                                             }
                                         }
@@ -273,60 +256,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         });
     } // End of checkSearchBar()
 
-
-    /**
-     * This method updates the experiment's ownerUserName by querying the Experimenter collection for the owner's ID
-     * It will then update the firestore accordingly
-     * @param newExperiment
-     * An experiment object to reference when required values
-     */
-    public void updateExperimentUserName(Experiment newExperiment){
-        String ownerId = newExperiment.getOwnerId();
-
-        DocumentReference docRef = profileCollectionReference.document(ownerId);
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentSnapshot document = task.getResult();
-                String ownerName = document.getString("name");
-
-                // Check to see if there is a name available and that it is different
-                if (ownerName != null && !ownerName.equals(newExperiment.getOwnerUserName())) {
-                    newExperiment.setOwnerUserName(ownerName);
-                    updateFirestoreData(newExperiment); // Call changes to firestore
-                }//Otherwise keep the ownerId assigned from the fragment
-            }
-        });
-    }
-
-    /**
-     * This method updates Keywords and ownerName in firestore
-     * This ensures the keywords remain relevant after the user edits them
-     * @param newExperiment
-     * An experiment object to reference when required values
-     */
-    public void updateFirestoreData(Experiment newExperiment){
-        List<String> newKeywords = getKeywords(newExperiment);
-        String experimentId = newExperiment.getExperimentId();
-
-        String newUserName = newExperiment.getOwnerUserName();
-
-        DocumentReference docRef = experimentCollectionReference.document(experimentId);
-        docRef.get();
-
-        // Update keywords field with username and all other fields
-        docRef.update("Keywords", newKeywords)
-                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!"))
-                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new keywords", e));
-
-        // Update ownerName field
-        docRef.update("ownerName", newUserName)
-                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated new username!"))
-                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new username", e));
-    }
-
     /**
      * This method gets all searchable keywords from an experiment.
-     * This includes it's title, description, ownerId, ownerUserName and region
+     * This includes it's title, description, ownerId, ownerUserName, status and region
      * @param newExperiment
      * An experiment object to reference when required values
      * @return
@@ -344,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+        keywords.add(newExperiment.getStatus().trim().toLowerCase());
 
         return keywords;
     }

@@ -182,13 +182,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-
-
                     Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                     experimentDataList.add(newExperiment);
-
-                    // Realtime updates to keywords and ownerName
-                    updateExperimentUserName(newExperiment);
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -254,7 +249,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 if (!isAdded) {
                                                     Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
                                                     experimentDataList.add(newExperiment);
-                                                    updateExperimentUserName(newExperiment);
                                                 }
                                             }
                                         }
@@ -269,58 +263,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     } // End of checkSearchBar()
 
     /**
-     * This method updates the experiment's ownerUserName by querying the Experimenter collection for the owner's ID
-     * It will then update the firestore accordingly
-     * @param newExperiment
-     * An experiment object to reference when required values
-     */
-    public void updateExperimentUserName(Experiment newExperiment){
-        String ownerId = newExperiment.getOwnerId();
-
-        DocumentReference docRef = profileCollectionReference.document(ownerId);
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentSnapshot document = task.getResult();
-                String ownerName = document.getString("name");
-
-                // Check to see if there is a name available and that it is different
-                if (ownerName != null && !ownerName.equals(newExperiment.getOwnerUserName())) {
-                    newExperiment.setOwnerUserName(ownerName);
-                    updateFirestoreData(newExperiment); // Call changes to firestore
-                }//Otherwise keep the ownerId assigned from the fragment
-            }
-        });
-    }
-
-    /**
-     * This method updates Keywords and ownerName in firestore
-     * This ensures the keywords remain relevant after the user edits them
-     * @param newExperiment
-     * An experiment object to reference when required values
-     */
-    public void updateFirestoreData(Experiment newExperiment){
-        List<String> newKeywords = getKeywords(newExperiment);
-        String experimentId = newExperiment.getExperimentId();
-
-        String newUserName = newExperiment.getOwnerUserName();
-
-        DocumentReference docRef = experimentCollectionReference.document(experimentId);
-        docRef.get();
-
-        // Update keywords field with username and all other fields
-        docRef.update("Keywords", newKeywords)
-                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated with new keywords!"))
-                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new keywords", e));
-
-        // Update ownerName field
-        docRef.update("ownerName", newUserName)
-                .addOnSuccessListener(aVoid -> Log.d("MainActivity:", "DocumentSnapshot successfully updated new username!"))
-                .addOnFailureListener(e -> Log.w("MainActivity:", "Error updating document with new username", e));
-    }
-
-    /**
      * This method gets all searchable keywords from an experiment.
-     * This includes it's title, description, ownerId, ownerUserName and region
+     * This includes it's title, description, ownerId, ownerUserName, status and region
      * @param newExperiment
      * An experiment object to reference when required values
      * @return
@@ -337,6 +281,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
+        keywords.add(newExperiment.getStatus().trim().toLowerCase()); // Full UserId will need to be searched
 
         return keywords;
     }
