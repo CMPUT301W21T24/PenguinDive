@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +45,9 @@ public class ExperimentFragment extends DialogFragment {
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference profileCollectionReference = db.collection("Experimenter");
 
     public interface OnFragmentInteractionListener {
         //check the validity of input
@@ -92,7 +103,7 @@ public class ExperimentFragment extends DialogFragment {
             experimentTitle.setText(experiment.getTitle());
             experimentDescription.setText(experiment.getDescription());
             experimentRegion.setText(experiment.getRegion());
-            experimentOwner.setText(experiment.getOwnerUserName());
+            experimentOwner.setText(experiment.getOwnerId());
             // Return number picker to last choice
             experimentMinimumTrials.setValue(experiment.getMinTrials());
             // Return spinner to last choice
@@ -124,9 +135,10 @@ public class ExperimentFragment extends DialogFragment {
                         String description = experimentDescription.getText().toString();
                         String region = experimentRegion.getText().toString();
                         Integer minTrials = experimentMinimumTrials.getValue();
-                        String ownerUserName = experimentOwner.getText().toString();
+                        String ownerId = experimentOwner.getText().toString();
                         String status = experimentStatus.getSelectedItem().toString();
                         experimenterIDs = new ArrayList<String>();
+
                         if(description.length()==0){
                             listener.nullValueError();
                         }
@@ -140,10 +152,11 @@ public class ExperimentFragment extends DialogFragment {
                             listener.extraStringError();
                         }
                         else if(experiment != null){
-                            listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerUserName,status,experimenterIDs), position);
+
+                            listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerId,status,experimenterIDs), position);
                         }
                         else {
-                            listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerUserName,status,experimenterIDs));
+                            listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerId,status,experimenterIDs));
                         }
                     }}).create();
     }
@@ -155,4 +168,6 @@ public class ExperimentFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+
 }
