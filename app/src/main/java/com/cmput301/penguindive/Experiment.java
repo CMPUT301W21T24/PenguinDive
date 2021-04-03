@@ -12,18 +12,17 @@ public class Experiment implements Serializable {
     private String description;
     private String region;
     private Integer minTrials;
-    private String ownerId;
     private String ownerUserName;
     private String status;
     private List<String> experimenters;
 
-    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String status, List<String> experimenters) {
+    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerUserName, String status, List<String> experimenters) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;
         this.region = region;
         this.minTrials = minTrials;
-        this.ownerId = ownerId;
+        this.ownerUserName = ownerUserName;
         this.status = status;
         this.experimenters = experimenters;
     }
@@ -71,12 +70,12 @@ public class Experiment implements Serializable {
         this.minTrials = minTrials;
     }
 
-    public String getOwnerId() {
-        return ownerId;
+    public String getOwnerUserName() {
+        return ownerUserName;
     }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setOwnerUserName(String ownerUserName) {
+        this.ownerUserName = ownerUserName;
     }
 
     public String getStatus() {
@@ -94,13 +93,4 @@ public class Experiment implements Serializable {
     public void setExperimenters(List<String> experimenters) {
         this.experimenters = experimenters;
     }
-
-    public String getOwnerUserName() {
-        return ownerUserName;
-    }
-
-    public void setOwnerUserName(String ownerUserName) {
-        this.ownerUserName = ownerUserName;
-    }
-
 }
