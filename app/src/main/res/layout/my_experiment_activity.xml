@@ -11,7 +11,7 @@
             android:layout_height="match_parent">
 
             <include
-                layout = "@layout/experiment_toolbar"/>
+                layout = "@layout/my_experiment_toolbar"/>
 
             <ListView
                 android:id="@+id/experimentList"

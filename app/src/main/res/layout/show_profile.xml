@@ -34,13 +34,18 @@
             android:textSize="18dp"
             android:layout_margin="10dp"/>
 
+        <!--            Courtesy of Ajeet Singh-->
+        <!--            https://stackoverflow.com/a/40335501-->
         <EditText
             android:id="@+id/userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:layout_margin="10dp"
+            android:hint="@string/profile_edittext_hint"
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
             />
+
 
     </LinearLayout>
 

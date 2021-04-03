@@ -1,17 +1,19 @@
 <resources>
     <string name="app_name">penguindive</string>
-    <string name="experiment_search_text">Search Experiments</string>
+    <string name="my_experiment_search_text">Search My Experiments…</string>
     <string name="my_experiment_button_text">My Experiments</string>
     <string name="all_experiments_button_text">All Experiments</string>
     <string name="profile_button_text">User Profiles</string>
     <string name="profile_search_text">Search Profiles</string>
-    <string name="exp_description">Enter a description...</string>
-    <string name="exp_title">Enter a Title...</string>
+    <string name="exp_description">Enter a description…</string>
+    <string name="exp_title">Enter a Title…</string>
     <string name="scan_qr_button_text">Scan QR</string>
     <string name="generate_qr_button_text">Generate QR</string>
     <string name="menu_icon_description">Opens Drawer</string>
     <string name="secondary_toolbar_header_text">PenguinDive</string>
     <string name="more_icon_description">Opens popup for more options</string>
+    <string name="home_search_text">Search Experiments…</string>
+    <string name="profile_edittext_hint">Alphanumeric only</string>
     <string-array name="status_array">
         <item>Published</item>
         <item>Unpublished</item>
