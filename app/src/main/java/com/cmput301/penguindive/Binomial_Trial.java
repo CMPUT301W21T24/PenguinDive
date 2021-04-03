@@ -1,6 +1,6 @@
 package com.cmput301.penguindive;
 
-public class Binomial_Trial extends Trial {
+public class Binomial_Trial {
 
     // passes/fails count
     private int numPasses;

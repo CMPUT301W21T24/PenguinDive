@@ -21,10 +21,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -56,6 +59,18 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     SearchView searchBar;
     String uid;
     DrawerLayout drawerLayout;
+
+
+    // TRIALS initialize variables
+    // Count_Trial
+    private Count_TrialCustomAdapter countTrialAdapter;
+    private TextView countView;
+    private Count_Trial countTrial;
+    private Button countAddButton;
+    private Button countSubtractButton;
+    // Binomial_Trial
+    // NNIC_Trial
+    // Measurement_Trial
 
 
     @Override
@@ -107,6 +122,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
+
+
+        // TRIALS onCreate methods here
+
 
     }
 
