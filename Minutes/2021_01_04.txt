@@ -4,5 +4,6 @@ ______________________________________________________________________________
 Minutes
 
 Everyone continues working on given duties. The main concerns are trails being show, as well as geo-location handling.
+Also set up a potential date to have all the code finished by Monday the 5th.
 
 Next Meeting: 4/03/2021.
