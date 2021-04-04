@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -39,6 +41,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -171,14 +174,61 @@ public class QRScanner extends AppCompatActivity {
         // TODO: check database to see if barcode is already registered
         // if barcode is registered then update trial, else ask if they want to register the barcode
         String barCodeText = qrText.getText().toString();
-        if (true/*barcode does not exist*/) {
-            qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
-        }
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = null;
+                    boolean barRegistered = false;
+                    for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        Map<String, Object> m = document.getData();
+                        if (m.containsKey("Barcodes")) {
+                            ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
+                            for (int i = 0; i < s.size(); i++) {
+                                if (s.get(i).contains(barCodeText) && s.get(i).contains(uid)) {
+                                    doc = document;
+                                    barRegistered = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (barRegistered) {
+                        Map<String, Object> existingData = doc.getData();
+                        String[] s = new String[4];
+                        for (Map.Entry<String, Object> e : existingData.entrySet()) {
+                            if (e.getKey().equals("Barcodes")) {
+                                s = e.getValue().toString().split("\\.");
+                                if (s[0].contains(barCodeText) && s[2].equals(uid)) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (s[4].contains("TRUE")) {
+                            qrText.setText("adding success to trial result for experiment");
+                        } else if (s[4].contains("FALSE")) {
+                            qrText.setText("adding failure to trial result for experiment");
+                        } else {
+                            qrText.setText("Could not determine result of barcode");
+                        }
+                        update.setVisibility(Button.GONE);
+                    } else {
+                        qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
+                        update.setVisibility(Button.GONE);
+                    }
+
+                }
+            }
+        });
     }
 
     private void QRScanned() {
         //TODO: go to experiment trial given by QR code and update trial
         if (qrText.getText().toString().contains("QR-")) {
+            SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+            String uid = sharedPref.getString("UID", "");
             String[] experToUpdate = qrText.getText().toString().split("-");
             // TODO: update trial result if QR code contains PASS
             if (experToUpdate[3].equals("PASS")) {
@@ -198,7 +248,9 @@ public class QRScanner extends AppCompatActivity {
     private void registerBar() {
         String barcode = qrText.getText().toString();
         HashMap<String, String> choiceMap = new HashMap<>();
-        String experTrial = qrText.getText().toString() + "-exp:-" + experName.getSelectedItem().toString() + "-add trial result:-" + trueFalse.getSelectedItem();
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
+        String experTrial = qrText.getText().toString() + ".exp:." + uid + ".add trial result:." + trueFalse.getSelectedItem();
         //TODO: add new field to experimenters or experiments document with registered barcodes
         db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -225,22 +277,33 @@ public class QRScanner extends AppCompatActivity {
                     if (barExist) {
                         existingData.remove(removed);
                     }
-                    barcodes.add(experTrial);
-                    existingData.put("Barcodes", barcodes);
-                    db.collection("Experiments").document(doc.getId()).set(existingData).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("data", "data successfully updated");
-                            } else {
-                                Log.d("data", "could not update experiment");
-                            }
+                    boolean alreadyReg = false;
+                    for (int i = 0; i < barcodes.size(); i++) {
+                        if (barcodes.get(i).equals(experTrial) && barcodes.get(i).contains(uid)) {
+                            qrText.setText("barcode already registered");
+                            alreadyReg = true;
+                            break;
                         }
-                    });
+                    }
+                    if (!alreadyReg) {
+                        barcodes.add(experTrial);
+                        existingData.put("Barcodes", barcodes);
+                        db.collection("Experiments").document(doc.getId()).set(existingData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    qrText.setText("Barcode registered Successfully");
+                                    update.setVisibility(Button.GONE);
+                                    Log.d("data", "data successfully updated");
+                                } else {
+                                    Log.d("data", "could not update experiment");
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
-        update.setVisibility(Button.GONE);
     }
 
     private void scanSetup() {
