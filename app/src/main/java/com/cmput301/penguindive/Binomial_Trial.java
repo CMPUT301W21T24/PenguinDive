@@ -13,7 +13,6 @@ public class Binomial_Trial {
     }
 
     // functions that add one pass/fail when run, used bc storyboard indicates this format
-    // TODO: to be run every time the plus/minus button is clicked in the view
     public void addOnePass() {
         numPasses++;
     }

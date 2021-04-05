@@ -17,6 +17,7 @@ public class NNICFragment extends DialogFragment {
 
     // initialize variables used in the fragment
     EditText fragmentNNI;
+    EditText fragmentName;
 
     // interface to force activities to implement the NNICFragment methods
     interface OnFragmentInteractionListener {
@@ -61,8 +62,7 @@ public class NNICFragment extends DialogFragment {
 
         // get the views from the convertView
         fragmentNNI = convertView.findViewById(R.id.nnic_fragment_nni);
-        // TODO: add nni number as well
-        // fragmentNumber = convertView.findViewById(R.id.nnic_fragment_trial_number);
+        fragmentName = convertView.findViewById(R.id.nnic_fragment_name);
 
 
         // no need to edit, so start building dialog
@@ -81,13 +81,14 @@ public class NNICFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         // prepare variables to be put in class
+                        String name = fragmentName.getText().toString();
                         // try parsing NonNegativeInteger into ints, here just in case user somehow enters nonnumbers
                         try {
                             // try int
                             int NNI = Integer.parseInt(fragmentNNI.getText().toString());
 
                             // now use listener to run NNICActivity's Add Trial method and pass NNIC to activity
-                            listener.AddNNIC_Trial(new Non_Negative_Integer_Counts_Trial(NNI));
+                            listener.AddNNIC_Trial(new Non_Negative_Integer_Counts_Trial(NNI, name));
 
                         }
 

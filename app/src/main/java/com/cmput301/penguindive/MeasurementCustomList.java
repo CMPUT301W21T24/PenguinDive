@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
@@ -42,10 +44,13 @@ public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
 
         // get the view to set value for from the convertView
         TextView measurementView = (TextView) convertView.findViewById(R.id.measurement_double);
+        TextView measurementNameView = (TextView) convertView.findViewById(R.id.measurement_name);
 
         // set the value of the view with the object
         String measurementString = String.valueOf(measurementTrial.getMeasurement());
+        String measurementNameString = measurementTrial.getMeasurementName();
         measurementView.setText(measurementString);
+        measurementNameView.setText(measurementNameString);
 
         // return
         return convertView;

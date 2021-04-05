@@ -25,7 +25,5 @@ public class Count_Trial {
         return count;
     }
 
-
-
 }
 

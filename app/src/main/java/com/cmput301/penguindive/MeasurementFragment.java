@@ -17,6 +17,7 @@ public class MeasurementFragment extends DialogFragment {
 
     // initialize variables used in the fragment
     EditText fragmentMeasurementDouble;
+    EditText fragmentMeasurementName;
 
     // interface to force activities to implement the MeasurementFragment methods
     interface OnFragmentInteractionListener {
@@ -61,9 +62,7 @@ public class MeasurementFragment extends DialogFragment {
 
         // get the views from the convertView
         fragmentMeasurementDouble = convertView.findViewById(R.id.measurement_fragment_double);
-        // TODO: add measurementLetter as well
-        // fragmentLetter = convertView.findViewById(R.id.measurement_fragment_letter);
-
+        fragmentMeasurementName = convertView.findViewById(R.id.measurement_fragment_name);
 
         // no need to edit, so start building dialog
         // use AlertDialog.Builder to make the dialog
@@ -81,13 +80,14 @@ public class MeasurementFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         // prepare variables to be put in class
+                        String name = fragmentMeasurementName.getText().toString();
                         // try parsing Measurement into double, here just in case user somehow enters nonnumbers
                         try {
                             // try int
                             Double measurement = Double.parseDouble((fragmentMeasurementDouble.getText().toString()));
 
                             // now use listener to run NNICActivity's Add Trial method and pass NNIC to activity
-                            listener.AddMeasurement_Trial(new Measurement_Trial(measurement));
+                            listener.AddMeasurement_Trial(new Measurement_Trial(measurement, name));
 
                         }
 

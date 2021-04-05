@@ -37,6 +37,8 @@ public class ExperimentFragment extends DialogFragment {
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+    private Spinner spinnerTrialType;
+
 
     public interface OnFragmentInteractionListener {
         //check the validity of input
@@ -71,6 +73,7 @@ public class ExperimentFragment extends DialogFragment {
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
+        spinnerTrialType = view.findViewById(R.id.spinnerTrialType);
 
         // Set status spinner adapter and link it to the list of options in strings.xml
         ///https://developer.android.com/guide/topics/ui/controls/spinner
@@ -79,6 +82,13 @@ public class ExperimentFragment extends DialogFragment {
                 getResources().getStringArray(R.array.status_array));
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         experimentStatus.setAdapter(statusAdapter);
+
+        // Set Trial Type Spinner adapter and link it to the list of options in strings.xml
+        ArrayAdapter<String> trialtypeAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.trialtype_array));
+        trialtypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTrialType.setAdapter(trialtypeAdapter);
 
         // Set minTrials number picker
         experimentMinimumTrials.setMinValue(1);
@@ -98,6 +108,9 @@ public class ExperimentFragment extends DialogFragment {
             // Return spinner to last choice
             int spinnerPosition = statusAdapter.getPosition(experiment.getStatus());
             experimentStatus.setSelection(spinnerPosition);
+            // Trial Type Spinner
+            int trialtypeSpinnerPosition = trialtypeAdapter.getPosition(experiment.getTrialType());
+            spinnerTrialType.setSelection(trialtypeSpinnerPosition);
 
             experimenterIDs = experiment.getExperimenters();
         }
@@ -127,6 +140,8 @@ public class ExperimentFragment extends DialogFragment {
                         String ownerUserName = experimentOwner.getText().toString();
                         String status = experimentStatus.getSelectedItem().toString();
                         experimenterIDs = new ArrayList<String>();
+                        String trialType = spinnerTrialType.getSelectedItem().toString();
+
                         if(description.length()==0){
                             listener.nullValueError();
                         }
@@ -140,10 +155,10 @@ public class ExperimentFragment extends DialogFragment {
                             listener.extraStringError();
                         }
                         else if(experiment != null){
-                            listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerUserName,status,experimenterIDs), position);
+                            listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerUserName,status,experimenterIDs,trialType), position);
                         }
                         else {
-                            listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerUserName,status,experimenterIDs));
+                            listener.onOkPressed(new Experiment(experimentID, title,description,region, minTrials,ownerUserName,status,experimenterIDs,trialType));
                         }
                     }}).create();
     }

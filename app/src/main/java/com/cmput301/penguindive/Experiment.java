@@ -15,8 +15,9 @@ public class Experiment implements Serializable {
     private String ownerUserName;
     private String status;
     private List<String> experimenters;
+    private String trialType;  // string for requested type of trial
 
-    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerUserName, String status, List<String> experimenters) {
+    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerUserName, String status, List<String> experimenters, String trialType) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;
@@ -25,11 +26,10 @@ public class Experiment implements Serializable {
         this.ownerUserName = ownerUserName;
         this.status = status;
         this.experimenters = experimenters;
+        this.trialType = trialType;
     }
 
     // Getters and Setters
-
-
     public String getExperimentId() {
         return experimentId;
     }
@@ -93,4 +93,6 @@ public class Experiment implements Serializable {
     public void setExperimenters(List<String> experimenters) {
         this.experimenters = experimenters;
     }
+
+    public String getTrialType() { return trialType; }
 }

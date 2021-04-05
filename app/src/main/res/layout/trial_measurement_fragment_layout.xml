@@ -3,31 +3,26 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/measurement_fragment_letter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
-
-    </TextView>
-
     <EditText
-        android:id="@+id/measurement_fragment_double"
-        android:inputType="number"
+        android:id="@+id/measurement_fragment_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Insert measurement here"
+        android:layout_marginStart="10dp"
+        android:hint="Enter measurement name"
         >
 
     </EditText>
 
-    <Button
-        android:id="@+id/measurement_fragment_enter_button"
+    <EditText
+        android:id="@+id/measurement_fragment_double"
+        android:inputType="numberDecimal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter">
+        android:layout_marginStart="10dp"
+        android:hint="Enter measurement value"
+        >
 
-    </Button>
+    </EditText>
 
 
 </LinearLayout>

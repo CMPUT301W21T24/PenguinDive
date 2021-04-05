@@ -111,6 +111,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         docData.put("Title", newExperiment.getTitle());
         docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
+        docData.put("TrialType", newExperiment.getTrialType());
         docData.put("Keywords", keywords);
 
         db.collection("Experiments").document(experimentId)
@@ -127,7 +128,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "MinimumTrials", newExperiment.getMinTrials());
+                "MinimumTrials", newExperiment.getMinTrials(),
+                "TrialType", newExperiment.getTrialType());
     }
 
     @Override
@@ -162,7 +164,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));                }
+                    String trialType = (String) doc.getData().get("TrialType");
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters, trialType));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -208,7 +211,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                         String title = (String) doc.getData().get("Title");
                                         Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
+                                        String trialType = (String) doc.getData().get("TrialType");
+                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters, trialType));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();

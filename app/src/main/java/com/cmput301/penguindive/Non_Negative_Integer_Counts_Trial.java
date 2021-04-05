@@ -11,10 +11,12 @@ public class Non_Negative_Integer_Counts_Trial implements Serializable {
 
     // variables
     private int nonNegativeInteger;
+    private String NNICName;
 
     // constructor with check
-    public Non_Negative_Integer_Counts_Trial(int nonNegativeInteger) {
+    public Non_Negative_Integer_Counts_Trial(int nonNegativeInteger, String NNICName) {
         this.nonNegativeInteger = nonNegativeInteger;
+        this.NNICName = NNICName;
 
         // throw generic exception if nonNegativeInteger is negative
         try {
@@ -32,7 +34,5 @@ public class Non_Negative_Integer_Counts_Trial implements Serializable {
         return nonNegativeInteger;
     }
 
-    // setters
-    public int setNonNegativeInteger() { return nonNegativeInteger; }
-
+    public String getNNICName() { return NNICName; }
 }

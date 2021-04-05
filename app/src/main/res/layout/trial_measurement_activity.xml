@@ -6,20 +6,31 @@
 
     <TextView
         android:id="@+id/measurement_experiment_name"
-        android:layout_width="280dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="60dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginStart="20dp"
+        android:layout_gravity="left"
+        android:layout_marginTop="30dp">
 
     </TextView>
 
     <ListView
         android:id="@+id/measurement_trial_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp">
+        android:layout_marginStart="10dp"
+        android:layout_height="532dp"
+        android:layout_marginTop="60dp">
 
     </ListView>
 
+    <Button
+        android:id="@+id/measurement_add_trial_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Add Measurement Trial">
+
+    </Button>
 
 </LinearLayout>

@@ -61,18 +61,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     DrawerLayout drawerLayout;
 
 
-    // TRIALS initialize variables
-    // Count_Trial
-    private Count_TrialCustomAdapter countTrialAdapter;
-    private TextView countView;
-    private Count_Trial countTrial;
-    private Button countAddButton;
-    private Button countSubtractButton;
-    // Binomial_Trial
-    // NNIC_Trial
-    // Measurement_Trial
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Subscribe Conformation")
+            builder.setTitle("Subscribe Confirmation")
                     .setMessage("Do you want to be an experimenter of this experiment?")
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -122,10 +110,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
-
-
-        // TRIALS onCreate methods here
-
 
     }
 
@@ -153,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
         docData.put("Keywords", keywords);
+        docData.put("TrialType", newExperiment.getTrialType());
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)
@@ -196,7 +181,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     String ownerId = (String) doc.getData().get("ownerId");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
+                    String trialType = (String) doc.getData().get("TrialType");
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters, trialType));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -250,7 +236,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                         Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                         String ownerId = (String) doc.getData().get("ownerId");
                                         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters));
+                                        String trialType = (String) doc.getData().get("TrialType");
+                                        experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, status, experimenters, trialType));
                                     }
                                 }
                                 experimentArrayAdapter.notifyDataSetChanged();
@@ -305,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     public void ClickSearchUsers(View view){
         redirectActivity(this,SearchProfile.class);
     }
+
 
     // Courtesy of Parag Chauhan
     // https://stackoverflow.com/a/4930319

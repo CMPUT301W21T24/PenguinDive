@@ -39,12 +39,15 @@ public class NNICCustomList extends ArrayAdapter<Non_Negative_Integer_Counts_Tri
         // get object from list
         Non_Negative_Integer_Counts_Trial NNIC = NNICArrayList.get(position);
 
-        // get the view to set value for from the convertView
+        // get the views to set values for from the convertView
         TextView nniView = (TextView) convertView.findViewById(R.id.nnic_nni);
+        TextView nnicNameView = (TextView) convertView.findViewById(R.id.nnic_name);
 
         // set the value of the view with the object
         String nniString = String.valueOf(NNIC.getNonNegativeInteger());
+        String nnicName = NNIC.getNNICName();
         nniView.setText(nniString);
+        nnicNameView.setText(nnicName);
 
         // return
         return convertView;
