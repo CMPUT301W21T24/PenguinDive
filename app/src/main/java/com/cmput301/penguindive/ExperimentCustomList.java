@@ -22,6 +22,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private ArrayList<Experiment> experiments;
     private Context context;
 
+    Button questions_button;
+    Button trials_button;
+
     public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
         super(context,0,experiment);
         this.context = context;
@@ -48,6 +51,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         TextView status = convertView.findViewById(R.id.experiment_status);
         TextView owner = convertView.findViewById(R.id.experiment_owner);
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
+        Button trials_button = convertView.findViewById(R.id.trials_experiment);
 
         questions_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +64,60 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                 context.startActivity(intent);
             }
         });
+
+        // This is the OnClickListener for the Trials button
+        // It redirects the user to a different activity depending on what Trial Type the experiment is
+        trials_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // get experiment properties
+                Experiment experiment = getItem(position);
+                String experimentName = experiment.getTitle();
+                String experimentTrialType = experiment.getTrialType();
+
+                // cases for different trial types
+                // if the trial type matches, make the intent, put the name in, and redirect
+                switch (experimentTrialType) {
+                    case "Count Trial": {
+                        Intent intent = new Intent(context, CountActivity.class);
+                        intent.putExtra("Experiment Name", experimentName);
+
+                        // redirect to activity
+                        context.startActivity(intent);
+                        break;
+                    }
+                    case "Binomial Trial": {
+                        Intent intent = new Intent(context, BinomialActivity.class);
+                        intent.putExtra("Experiment Name", experimentName);
+
+                        // redirect to activity
+                        context.startActivity(intent);
+                        break;
+                    }
+                    case "Non-Negative Integer Count Trial": {
+                        Intent intent = new Intent(context, NNICActivity.class);
+                        intent.putExtra("Experiment Name", experimentName);
+
+                        // redirect to activity
+                        context.startActivity(intent);
+                        break;
+                    }
+                    case "Measurement Trial": {
+                        Intent intent = new Intent(context, MeasurementActivity.class);
+                        intent.putExtra("Experiment Name", experimentName);
+
+                        // redirect to activity
+                        context.startActivity(intent);
+                        break;
+                    }
+                    default: {
+                        System.out.println("There is no correct trial type set for this experiment!");
+                    }
+                }
+             }
+         });
+
         experimentName.setText(experiment.getTitle());
         description.setText(experiment.getDescription());
         status.setText(experiment.getStatus());
