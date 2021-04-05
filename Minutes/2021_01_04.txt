@@ -1,8 +1,0 @@
-April 01, 2021 7:50 PM 
-CMPUT 301 Team 24 Meeting Focused on Project Part 3
-______________________________________________________________________________
-Minutes
-
-Everyone continues working on given duties. The main concerns are trails being show, as well as geo-location handling.
-
-Next Meeting: 4/03/2021.

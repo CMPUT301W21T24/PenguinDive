@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private ArrayList<Experiment> experiments;
     private Context context;
-    Button questions_button;
 
     public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
         super(context,0,experiment);

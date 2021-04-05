@@ -4,7 +4,6 @@ package com.cmput301.penguindive;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
  */
 
 public class SearchProfile extends AppCompatActivity {
-    private ListView profileList;
     private ArrayList<String> profileArray;
     private ArrayAdapter<String> profileAdapter;
     private ArrayList<String> profileID;
@@ -51,7 +49,7 @@ public class SearchProfile extends AppCompatActivity {
 
         // initialise elements
         searchBar = findViewById(R.id.searchLayout);
-        profileList = findViewById(R.id.profileList);
+        ListView profileList = findViewById(R.id.profileList);
 
         //create an array adapter for the list of profiles
         profileArray = new ArrayList<>();
@@ -92,6 +90,7 @@ public class SearchProfile extends AppCompatActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        profileArray.clear();
                         if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
@@ -111,6 +110,7 @@ public class SearchProfile extends AppCompatActivity {
             }
         });
         // send to selected profile activity when a profile is clicked on the list of profiles
+
         profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

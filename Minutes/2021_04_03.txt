@@ -1,0 +1,21 @@
+April 03, 2021
+CMPUT 301 Team 24 Meeting on Project Part 4
+______________________________________________________________________________
+
+Discussed: 
+  Code should be finished by Tuesday evening, in time to divide up the speaking roles in the demo video. 
+  We will be recording the video on Thursday, after our lab meeting. The plan is to have everyone talk about the features they were in charge of creating.
+  
+  Also discussed how we are storing barcodes, associating them to the experiment or experimentor. 
+  A new collection will be created to store trial data.
+  
+ 
+To Be Implemented:
+  The majoruty of the work to do with trials is already completed, the entire functionality will most likely be uploaded to the main branch by sunday evening.
+  From there, geo-locations, barcodes and statistical data can be added on.
+  
+ 
+ ______________________________________________________________________________
+	
+Next meeting:
+	- Tuesday, Arpil 6th, 7:00 PM MST
