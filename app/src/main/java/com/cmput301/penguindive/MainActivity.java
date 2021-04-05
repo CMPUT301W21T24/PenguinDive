@@ -15,10 +15,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Subscribe Conformation")
+            builder.setTitle("Subscribe Confirmation")
                     .setMessage("Do you want to be an experimenter of this experiment?")
                     .setPositiveButton("OK", (dialog, which) -> {
                         experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
@@ -124,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
         docData.put("Keywords", keywords);
+        docData.put("TrialType", newExperiment.getTrialType());
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)
@@ -169,10 +173,11 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     String ownerId = (String) doc.getData().get("ownerId");
                     String ownerName = (String) doc.getData().get("ownerName");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                    String trialType = (String) doc.getData().get("TrialType");
 
                     // Make new experiment object that can be added and passed to methods
-                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
-                    experimentDataList.add(newExperiment);
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
+
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -230,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 String ownerId = (String) doc.getData().get("ownerId");
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                                                String trialType = (String) doc.getData().get("TrialType");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -241,12 +247,13 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
                                                     experimentDataList.add(newExperiment);
                                                 }
                                             }
                                         }
                                     experimentArrayAdapter.notifyDataSetChanged();
+
                                     }
                                 });
                     }
@@ -324,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     public void ClickSearchUsers(View view){
         redirectActivity(this,SearchProfile.class);
     }
+
 
     // Courtesy of Parag Chauhan
     // https://stackoverflow.com/a/4930319
