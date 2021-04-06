@@ -184,9 +184,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     String trialType = (String) doc.getData().get("TrialType");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));                }
-
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
                 }
+            }
             experimentArrayAdapter.notifyDataSetChanged();
         });
     }

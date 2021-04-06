@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
                     // Make new experiment object that can be added and passed to methods
                     experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
-
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();

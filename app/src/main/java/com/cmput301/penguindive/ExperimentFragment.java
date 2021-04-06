@@ -172,8 +172,17 @@ public class ExperimentFragment extends DialogFragment {
                     // If an existing experiment
                     else if(experiment != null){
                         // Re-use existing username
+<<<<<<< HEAD
                         String ownerName = experiment.getOwnerUserName();
                         listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs, trialType), position);
+=======
+                      
+                        String ownerName = experiment.getOwnerUserName();
+                        listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs), position);
+
+
+
+>>>>>>> e50900c480b744c6c48bb59ce847cbbf9dcd3737
                     }
                     // If it's a new experiment
                     else {
@@ -200,7 +209,6 @@ public class ExperimentFragment extends DialogFragment {
                             }
                         });
                     }
-
                 }).create();
     }
 
