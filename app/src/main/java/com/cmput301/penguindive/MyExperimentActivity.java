@@ -95,6 +95,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         String ownerId = newExperiment.getOwnerId();
         Map<String, Object> docData = new HashMap<>();
 
+
         // Query the ownerId in Profiles collection
         DocumentReference docRef = profileCollectionReference.document(ownerId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -121,6 +122,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     docData.put("Title", newExperiment.getTitle());
                     docData.put("MinimumTrials", newExperiment.getMinTrials());
                     docData.put("experimenterIDs", newExperiment.getExperimenters());
+                    docData.put("TrialType", newExperiment.getTrialType());
                     docData.put("Keywords", keywords);
 
                     db.collection("Experiments").document(experimentId)
@@ -132,6 +134,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 }
             }
         });
+
     }
 
     @Override
@@ -142,7 +145,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "MinimumTrials", newExperiment.getMinTrials(), "Keywords", getKeywords(newExperiment));
+                "MinimumTrials", newExperiment.getMinTrials(),
+                "TrialType", newExperiment.getTrialType());
     }
 
     @Override
@@ -179,8 +183,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters));
-                }
+
+                    String trialType = (String) doc.getData().get("TrialType");
+
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -206,6 +212,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 }
                 // If there is input, filter based on input
                 else{
+
                     experimentDataList.clear(); // Clear before writing
 
                     // Turn query into proper list
@@ -232,6 +239,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 String status = (String) doc.getData().get("Status");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                                                String trialType = (String) doc.getData().get("TrialType");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -243,12 +251,13 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
                                                     experimentDataList.add(newExperiment);
                                                 }
                                             }
                                         }
                                         experimentArrayAdapter.notifyDataSetChanged();
+
                                     }
                                 });
                     }
