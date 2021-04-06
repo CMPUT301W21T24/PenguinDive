@@ -57,6 +57,13 @@
             android:id="@+id/experiment_locationStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/map_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="map"
+            android:visibility="invisible"/>
     </LinearLayout>
 
 

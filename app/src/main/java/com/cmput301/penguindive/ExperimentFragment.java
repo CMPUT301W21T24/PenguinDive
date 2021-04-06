@@ -56,7 +56,6 @@ public class ExperimentFragment extends DialogFragment {
     public Boolean locationStatus;
     private Spinner spinnerTrialType;
 
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
 

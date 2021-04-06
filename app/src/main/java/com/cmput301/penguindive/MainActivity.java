@@ -33,6 +33,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -57,10 +58,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     String uid;
     DrawerLayout drawerLayout;
 
-
-
-//    Button Map;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,16 +68,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Initialize elements
         ListView experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
-//        Map = findViewById(R.id.map);
-//
-//        Map.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-//                startActivity(intent);
-//                finishAffinity();
-//            }
-//        });
+
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
@@ -94,17 +82,31 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         drawerLayout = findViewById(R.id.experiment_activity);
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
+            Boolean locationState = experimentDataList.get(position).getLocationState();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Subscribe Confirmation")
-                    .setMessage("Do you want to be an experimenter of this experiment?")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
-                                .update("experimenterIDs", FieldValue.arrayUnion(uid));
-                        dialog.cancel();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create()
-                    .show();
+            if (locationState){
+                builder.setTitle("Subscribe Confirmation")
+                        .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }else {
+                builder.setTitle("Subscribe Confirmation")
+                        .setMessage("Do you want to be an experimenter of this experiment?")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }
         });
 
         // Populate list from firestore
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         String experimentId = newExperiment.getExperimentId();
         String ownerId = newExperiment.getOwnerId();
         Map<String, Object> docData = new HashMap<>();
+        List<GeoPoint> locations = new ArrayList<>();
 
         // Get all the keywords from the experiment
         List<String> keywords = getKeywords(newExperiment);
@@ -139,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("Keywords", keywords);
         docData.put("LocationStatus", newExperiment.getLocationState());
         docData.put("TrialType", newExperiment.getTrialType());
+        docData.put("Locations", locations);
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)

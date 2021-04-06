@@ -25,6 +25,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -118,6 +119,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
                     // Get all the keywords from the experiment
                     List<String> keywords = getKeywords(newExperiment);
+                    List<GeoPoint> locations = new ArrayList<>();
 
                     docData.put("Status",newExperiment.getStatus());
                     docData.put("ownerId",ownerId);
@@ -130,6 +132,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     docData.put("TrialType", newExperiment.getTrialType());
                     docData.put("Keywords", keywords);
                     docData.put("LocationStatus", newExperiment.getLocationState());
+                    docData.put("Locations", locations);
 
                     db.collection("Experiments").document(experimentId)
                             .set(docData)

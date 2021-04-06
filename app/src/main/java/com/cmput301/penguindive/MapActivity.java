@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -39,15 +40,22 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
-    FirebaseFirestore db;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference experimentCollectionReference = db.collection("Experiments");
 
     private GoogleMap mMap;
     private View mapView;
@@ -82,12 +90,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LatLng locationLatLng;
 
     private String selectedLocation;
+    private String expID;
 
     private Marker mLocationMarker;
 
     private MarkerOptions oLocation;
 
     AutocompleteSupportFragment autocompleteSelectLocation;
+
+    Button mapConfirm;
+
+    MarkerOptions markerOptions;
+    LatLng latLng;
+    String address;
+    Marker marker;
+    ArrayList<Marker> markers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +120,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         autocompleteSelectLocation = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.select_location);
+        mapConfirm = (Button) findViewById(R.id.map_confirm);
 
-        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
-        final String username = sharedPref.getString("username", "");
+        Intent intent = getIntent();
+        expID = intent.getStringExtra("EXPID");
+
+        loadMap();
+
+        mapConfirm.setOnClickListener(view -> {
+            double Lat = locationLatLng.latitude;
+            double Lng = locationLatLng.longitude;
+            GeoPoint geoPoint = new GeoPoint(Lat, Lng);
+            experimentCollectionReference.document(expID).update("Locations", FieldValue.arrayUnion(geoPoint));
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            startActivity(mainIntent);
+            finishAffinity();
+        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -153,16 +183,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 oLocation.position(locationLatLng);
                 oLocation.title(selectedLocation);
                 oLocation.zIndex(1.0f);
-                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        if (mLocationMarker != null) {
-                            mLocationMarker.remove();
-                        }
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 11));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15.0f));
-                        mLocationMarker = mMap.addMarker(oLocation);
+                mMap.setOnMapLoadedCallback(() -> {
+                    if (mLocationMarker != null) {
+                        mLocationMarker.remove();
                     }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 11));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15.0f));
+                    mLocationMarker = mMap.addMarker(oLocation);
                 });
             }
 
@@ -172,32 +199,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             }
         });
-    }
-
-    private String getAddress(double LAT, double LONG){
-        String address = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try{
-            //get address in list
-            List<Address> addresses = geocoder.getFromLocation(LAT, LONG, 1);
-            //if there is address
-            if (addresses != null) {
-                //get the returned addresses
-                Address returnedAddress = addresses.get(0);
-                StringBuilder strReturnedAddress = new StringBuilder("");
-                //set the returned address in string
-                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
-                }
-                address = strReturnedAddress.toString();
-            }
-            else{
-                Log.w("My Current loction address", "No Address returned!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return address;
     }
 
     private void getLocationPermission() {
@@ -331,4 +332,60 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    private String getAddress(double LAT, double LONG){
+        String address = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try{
+            //get address in list
+            List<Address> addresses = geocoder.getFromLocation(LAT, LONG, 1);
+
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                address = strReturnedAddress.toString();
+            }
+            else{
+                Log.w("My Current loction address", "No Address returned!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return address;
+    }
+
+    public void loadMap(){
+        experimentCollectionReference.addSnapshotListener((value, error) -> {
+            for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
+                List<GeoPoint> locations = (List<GeoPoint>) doc.getData().get("Locations");
+                if (locations != null) {
+                    for (int i = 0; i < locations.size();i++){
+                        GeoPoint geoPoint = locations.get(i);
+                        double Lat = geoPoint.getLatitude();
+                        double Lng = geoPoint.getLongitude();
+                        LatLng latLng = new LatLng(Lat, Lng);
+                        String address = getAddress(Lat, Lng);
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(latLng);
+                        markerOptions.title(address);
+                        markerOptions.zIndex(1.0f);
+                        //TODO: multiple marker
+                        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                            @Override
+                            public void onMapLoaded() {
+                                if (markerOptions != null) {
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.0f));
+                                    mMap.addMarker(markerOptions);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
 }
