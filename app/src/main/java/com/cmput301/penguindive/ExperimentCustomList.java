@@ -2,7 +2,6 @@ package com.cmput301.penguindive;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import java.util.ArrayList;
  * This class is a custom list for experiments
  */
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
-    private ArrayList<Experiment> experiments;
-    private Context context;
+    private final ArrayList<Experiment> experiments;
+    private final Context context;
 
     Button questions_button;
     Button trials_button;

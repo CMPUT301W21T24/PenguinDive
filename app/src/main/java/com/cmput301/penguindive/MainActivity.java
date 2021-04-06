@@ -1,7 +1,6 @@
 package com.cmput301.penguindive;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -24,17 +23,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,12 +47,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     private ArrayAdapter<Experiment> experimentArrayAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
-    CollectionReference profileCollectionReference = db.collection("Experimenter");
     SearchView searchBar;
     String uid;
     DrawerLayout drawerLayout;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Initialize elements
         ListView experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
-
 
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
@@ -133,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                 .set(docData)
                 .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
-
     }
 
     @Override
@@ -148,12 +138,12 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     //showing message when there is any invalid input
     @Override
     public void extraStringError() {
-        Toast.makeText(MainActivity.this,"The description exceeds the maximum limitation.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this,"The description or title exceeds the maximum limitation, please try again.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void nullValueError() {
-        Toast.makeText(MainActivity.this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this,"A field has been left empty, please try again.", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -177,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
                     // Make new experiment object that can be added and passed to methods
                     experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
-
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -247,8 +236,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
-                                                    experimentDataList.add(newExperiment);
+                                                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
                                                 }
                                             }
                                         }
@@ -284,8 +272,15 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
         keywords.add(newExperiment.getStatus().trim().toLowerCase());
+        keywords.add(newExperiment.getExperimentId().trim().toLowerCase()); // Full experiment Id will need to be searched
+        keywords.add(newExperiment.getMinTrials().toString());
 
         return keywords;
+    }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        redirectActivity(this, MainActivity.class);
     }
 
     // Navigation methods
@@ -342,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     public static void openGitHub(Activity activity){
         Uri uri = Uri.parse("https://github.com/CMPUT301W21T24/PenguinDive");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        System.out.println(intent);
         activity.startActivity(intent);
     }
 
@@ -356,4 +352,5 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         super.onPause();
         closeDrawer(drawerLayout);
     }
+
 }

@@ -1,7 +1,6 @@
 package com.cmput301.penguindive;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,12 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -26,7 +22,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +59,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
 
         // Setup list and adapter
-        experimentDataList = new ArrayList<Experiment>();
+        experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
         experimentList.setAdapter(experimentArrayAdapter);
 
@@ -134,6 +129,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                             .set(docData)
                             .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                             .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
+
+                    db.collection("Experiments").document(experimentId).update("Keywords", keywords);
                 }
             }
         });
@@ -187,9 +184,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     String trialType = (String) doc.getData().get("TrialType");
-
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));                }
-
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
+                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -290,8 +286,15 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
         keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
         keywords.add(newExperiment.getStatus().trim().toLowerCase()); // Full UserId will need to be searched
+        keywords.add(newExperiment.getExperimentId().trim().toLowerCase()); // Full experiment Id will need to be searched
+        keywords.add(newExperiment.getMinTrials().toString());
 
         return keywords;
+    }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, MyExperimentActivity.class);
     }
 
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
@@ -315,4 +318,5 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
     public void ClickGitHub(View view){
         MainActivity.openGitHub(this);
     }
+
 }
