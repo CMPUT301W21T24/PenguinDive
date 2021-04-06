@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/nnic_fragment_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:hint="Enter Non-Negative Integer name"
+        >
+
+    </EditText>
+
+
+    <EditText
+        android:id="@+id/nnic_fragment_nni"
+        android:inputType="number"
+        android:digits="0123456789"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter Non-Negative Integer"
+        >
+
+    </EditText>
+
+
+</LinearLayout>
