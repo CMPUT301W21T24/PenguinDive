@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:id="@+id/experiment_toolbar"
+>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+        <ImageView
+            android:id="@+id/menu_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:onClick="ClickMenu"
+            android:src="@drawable/ic_menu"
+            android:contentDescription="@string/menu_icon_description" />
+
+        <SearchView
+            android:id="@+id/experimentSearchBar"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/more_icon"
+            android:layout_toEndOf="@+id/menu_icon"
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/my_experiment_search_text"
+            android:textAlignment="center"/>
+
+        <ImageView
+            android:id="@+id/more_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_more"
+            android:clickable="false"
+            android:contentDescription="@string/more_icon_description" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="-1dp"
+        android:background="#EEEEEE"
+        />
+</LinearLayout>

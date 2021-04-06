@@ -1,14 +1,22 @@
 package com.cmput301.penguindive;
 
-public class Non_Negative_Integer_Counts_Trial extends Trial{
+import java.io.Serializable;
+
+public class Non_Negative_Integer_Counts_Trial implements Serializable {
+
+    //referenced
+    //https://developer.android.com/reference/android/widget/TextView.html#attr_android:digits
+    // for making non negative integer
+
 
     // variables
-    // TODO: non-negative integer should be enforced non negative in the layout file, check added in constructor just in case
     private int nonNegativeInteger;
+    private String NNICName;
 
     // constructor with check
-    public Non_Negative_Integer_Counts_Trial(int nonNegativeInteger) {
+    public Non_Negative_Integer_Counts_Trial(int nonNegativeInteger, String NNICName) {
         this.nonNegativeInteger = nonNegativeInteger;
+        this.NNICName = NNICName;
 
         // throw generic exception if nonNegativeInteger is negative
         try {
@@ -26,4 +34,5 @@ public class Non_Negative_Integer_Counts_Trial extends Trial{
         return nonNegativeInteger;
     }
 
+    public String getNNICName() { return NNICName; }
 }

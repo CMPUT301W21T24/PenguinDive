@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/measurement_geolocation_fragment_letter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/measurement_geolocation_fragment_double"
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Insert measurement here"
+        >
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/measurement_geolocation_fragment_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Insert geolocation here"
+        >
+
+    </EditText>
+
+    <Button
+        android:id="@+id/measurement_geolocation_fragment_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save">
+
+    </Button>
+
+    <Button
+        android:id="@+id/measurement_geolocation_fragment_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close">
+
+    </Button>
+
+
+</LinearLayout>

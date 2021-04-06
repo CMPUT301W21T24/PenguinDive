@@ -3,6 +3,7 @@ package com.cmput301.penguindive;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class QuestionActivity extends AppCompatActivity {
     EditText addQuestionSubjectText;
     EditText addQuestionEditText;
     String expID;
+    DrawerLayout drawerLayout;
 
 
 
@@ -47,6 +49,9 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        // Assign drawer
+        drawerLayout = findViewById(R.id.questionactivity);
 
         // fetch intent
         Intent intent = getIntent();
@@ -156,9 +161,27 @@ public class QuestionActivity extends AppCompatActivity {
 
             }
         });
-        }
+    }
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
-        }
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
+
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+}
 
 
 

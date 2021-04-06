@@ -1,0 +1,13 @@
+April 01, 2021 7:50 PM 
+CMPUT 301 Team 24 Meeting Focused on Project Part 3
+______________________________________________________________________________
+Minutes
+
+- Most user stories have been completed to the best of their ability without Trials
+- Everyone continues working on given duties from previous meeting. 
+- The main concerns are trails being show, as well as geo-location handling.
+- Kevin will update us on Saturday if he need help finishing trials
+- Also set up a potential date to have all the code finished by Monday the 5th.
+______________________________________________________________________________
+
+Next Meeting: Saturday, April 3rd, 11AM MST

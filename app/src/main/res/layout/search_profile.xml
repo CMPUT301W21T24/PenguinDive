@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <SearchView
-        android:id="@+id/searchLayout"
+    android:id="@+id/searchprofile">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:queryHint="@string/profile_search_text"
-        android:layout_margin="10dp">
-    </SearchView>
+        android:layout_height="wrap_content">
+        <include
+            layout = "@layout/search_profile_toolbar"/>
 
-    <ListView
-        android:id="@+id/profileList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@+id/searchLayout"
-        android:layout_margin="10dp"
-        android:layout_alignParentBottom="true">
-    </ListView>
+        <ListView
+            android:id="@+id/profileList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/search_profile_toolbar"
+            android:layout_alignParentBottom="true"
+             />
+    </RelativeLayout>
 
-</RelativeLayout>
+    <!--    For the drawer itself-->
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/background_light">
+
+        <include
+            layout = "@layout/main_nav_drawer"/>
+
+    </RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

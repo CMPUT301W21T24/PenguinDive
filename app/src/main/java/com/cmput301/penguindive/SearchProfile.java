@@ -4,7 +4,6 @@ package com.cmput301.penguindive;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +13,7 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,12 +31,12 @@ import java.util.ArrayList;
  */
 
 public class SearchProfile extends AppCompatActivity {
-    private ListView profileList;
     private ArrayList<String> profileArray;
     private ArrayAdapter<String> profileAdapter;
     private ArrayList<String> profileID;
     SearchView searchBar;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +44,12 @@ public class SearchProfile extends AppCompatActivity {
         // set view
         setContentView(R.layout.search_profile);
 
+        // Assign drawer
+        drawerLayout = findViewById(R.id.searchprofile);
+
         // initialise elements
         searchBar = findViewById(R.id.searchLayout);
-        profileList = findViewById(R.id.profileList);
+        ListView profileList = findViewById(R.id.profileList);
 
         //create an array adapter for the list of profiles
         profileArray = new ArrayList<>();
@@ -87,6 +90,7 @@ public class SearchProfile extends AppCompatActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        profileArray.clear();
                         if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
@@ -106,6 +110,7 @@ public class SearchProfile extends AppCompatActivity {
             }
         });
         // send to selected profile activity when a profile is clicked on the list of profiles
+
         profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -124,4 +129,24 @@ public class SearchProfile extends AppCompatActivity {
         startActivity(intent);
         finishAffinity();
     }
+
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    public void ClickSearchUsers(View view){ MainActivity.closeDrawer(drawerLayout); }
+
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
 }
