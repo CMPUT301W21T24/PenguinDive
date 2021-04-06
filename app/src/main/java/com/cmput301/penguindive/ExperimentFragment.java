@@ -48,6 +48,8 @@ public class ExperimentFragment extends DialogFragment {
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+    private Spinner spinnerTrialType;
+
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
@@ -86,6 +88,7 @@ public class ExperimentFragment extends DialogFragment {
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
+        spinnerTrialType = view.findViewById(R.id.spinnerTrialType);
 
         // Set status spinner adapter and link it to the list of options in strings.xml
         ///https://developer.android.com/guide/topics/ui/controls/spinner
@@ -95,6 +98,13 @@ public class ExperimentFragment extends DialogFragment {
                 getResources().getStringArray(R.array.status_array));
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         experimentStatus.setAdapter(statusAdapter);
+
+        // Set Trial Type Spinner adapter and link it to the list of options in strings.xml
+        ArrayAdapter<String> trialtypeAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.trialtype_array));
+        trialtypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTrialType.setAdapter(trialtypeAdapter);
 
         // Set minTrials number picker
         experimentMinimumTrials.setMinValue(1);
@@ -114,6 +124,9 @@ public class ExperimentFragment extends DialogFragment {
             // Return spinner to last choice
             int spinnerPosition = statusAdapter.getPosition(experiment.getStatus());
             experimentStatus.setSelection(spinnerPosition);
+            // Trial Type Spinner
+            int trialtypeSpinnerPosition = trialtypeAdapter.getPosition(experiment.getTrialType());
+            spinnerTrialType.setSelection(trialtypeSpinnerPosition);
 
             experimenterIDs = experiment.getExperimenters();
         }
@@ -137,6 +150,7 @@ public class ExperimentFragment extends DialogFragment {
                     Integer minTrials = experimentMinimumTrials.getValue();
                     String ownerId = experimentOwner.getText().toString();
                     String status = experimentStatus.getSelectedItem().toString();
+                    String trialType = spinnerTrialType.getSelectedItem().toString();
                     experimenterIDs = new ArrayList<>();
 
                     if(description.length()==0){
@@ -155,7 +169,7 @@ public class ExperimentFragment extends DialogFragment {
                     else if(experiment != null){
                         // Re-use existing username
                         String ownerName = experiment.getOwnerUserName(); //
-                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs);
+                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,trialType);
 
                         // Update the keywords to reflect any changes
                         experimentCollectionReference.document(newExperiment.getExperimentId()).update("Keywords", getKeywords(newExperiment));
@@ -188,14 +202,16 @@ public class ExperimentFragment extends DialogFragment {
                                         ownerName = ownerId;
                                     }
 
-                                    Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs);
+                                    Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, trialType);
                                     listener.onOkPressed(newExperiment);
                                 }
                             }
                         });
                     }
+
                 }).create();
     }
+
     static ExperimentFragment newInstance(Experiment experiment, int position){
         Bundle args = new Bundle();
         args.putSerializable("experiment", experiment);

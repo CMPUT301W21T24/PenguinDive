@@ -1,6 +1,6 @@
 package com.cmput301.penguindive;
 
-public class Binomial_Trial extends Trial {
+public class Binomial_Trial {
 
     // passes/fails count
     private int numPasses;
@@ -13,7 +13,6 @@ public class Binomial_Trial extends Trial {
     }
 
     // functions that add one pass/fail when run, used bc storyboard indicates this format
-    // TODO: to be run every time the plus/minus button is clicked in the view
     public void addOnePass() {
         numPasses++;
     }
