@@ -149,7 +149,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
-                "LocationStatus", newExperiment.getLocationState());
+                "LocationStatus", newExperiment.getLocationState(),
                 "MinimumTrials", newExperiment.getMinTrials(),
                 "TrialType", newExperiment.getTrialType());
     }
@@ -190,7 +190,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));                }
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerName, ownerId, status, experimenters, locationStatus, trialType));                }
             }
             experimentArrayAdapter.notifyDataSetChanged();
         });
@@ -244,6 +244,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 String status = (String) doc.getData().get("Status");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
+                                                Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -255,7 +256,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
                                                     experimentDataList.add(newExperiment);
                                                 }
                                             }

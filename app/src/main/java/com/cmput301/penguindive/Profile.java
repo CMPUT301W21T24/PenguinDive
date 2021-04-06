@@ -159,8 +159,9 @@ public class Profile extends AppCompatActivity {
         String ownerName = (String) doc.getData().get("ownerName");
         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
         String trialType = (String) doc.getData().get("TrialType");
+        Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
-        return new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
+        return new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
     }
 
     /**

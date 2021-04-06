@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
 
 
-    Button Map;
+//    Button Map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,17 +71,16 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Initialize elements
         ListView experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
-        profileButton = findViewById(R.id.profileButton);
-        Map = findViewById(R.id.map);
-
-        Map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
+//        Map = findViewById(R.id.map);
+//
+//        Map.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+//                startActivity(intent);
+//                finishAffinity();
+//            }
+//        });
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
-                    experimentDataList.add(new Experiment(expID, title, description, region, totalTrail, ownerId, status, experimenters, locationStatus));
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -246,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
+                                                Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
                                                     experimentDataList.add(newExperiment);
                                                 }
                                             }

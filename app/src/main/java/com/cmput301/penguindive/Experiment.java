@@ -19,7 +19,7 @@ public class Experiment implements Serializable {
     private String trialType;  // string for requested type of trial
     private Boolean locationState;
 
-    public Experiment(String experimentId, String title, String description, String region, String totalTrail, String ownerId, String ownerUserName, String status, List<String> experimenters, Boolean locationState) {
+    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String ownerUserName, String status, List<String> experimenters, Boolean locationState, String trialType) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;

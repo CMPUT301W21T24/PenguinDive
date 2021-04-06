@@ -178,7 +178,9 @@ public class ExperimentFragment extends DialogFragment {
                     else if(experiment != null){
                         // Re-use existing username
                         String ownerName = experiment.getOwnerUserName(); //
-                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,trialType);
+                        // set the location status
+                        locationStatus = experimentLocation.isChecked();
+                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,locationStatus,trialType);
 
                         // Update the keywords to reflect any changes
                         experimentCollectionReference.document(newExperiment.getExperimentId()).update("Keywords", getKeywords(newExperiment));
@@ -211,7 +213,9 @@ public class ExperimentFragment extends DialogFragment {
                                         ownerName = ownerId;
                                     }
 
-                                    Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, trialType);
+                                    // set the location status
+                                    locationStatus = experimentLocation.isChecked();
+                                    Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, locationStatus, trialType);
                                     listener.onOkPressed(newExperiment);
                                 }
                             }

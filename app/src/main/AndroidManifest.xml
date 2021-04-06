@@ -60,7 +60,6 @@
         <activity
             android:name=".MapActivity"
             android:label="Map" />
-        <activity android:name=".ExperimentDetailActivity" />
         <activity android:name=".CountActivity" />
         <activity android:name=".BinomialActivity" />
         <activity android:name=".NNICActivity" />
