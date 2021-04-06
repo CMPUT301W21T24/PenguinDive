@@ -168,6 +168,7 @@ public class MainActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's in list
+        solo.scrollToTop();
         assertTrue("Ended not present", solo.waitForText("soloEndedTest-Main", 1 , 2000, true, true));
     }
 
@@ -193,6 +194,7 @@ public class MainActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's not in list
+        solo.scrollToTop();
         assertFalse("Ended not present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
     }
 
@@ -218,6 +220,7 @@ public class MainActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's in list
+        solo.scrollToTop();
         assertTrue("Ended not present", solo.waitForText("soloEndedTest-Main", 1 , 2000, true, true));
     }
 

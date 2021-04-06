@@ -158,6 +158,7 @@ public class MyExperimentActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's in list
+        solo.scrollToTop();
         assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
     }
 
@@ -183,6 +184,7 @@ public class MyExperimentActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's in list
+        solo.scrollToTop();
         assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
     }
 
@@ -206,6 +208,7 @@ public class MyExperimentActivityTest {
         solo.clickOnButton("OK"); //Select Ok Button
 
         // Make sure it's in list
+        solo.scrollToTop();
         assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
     }
 
