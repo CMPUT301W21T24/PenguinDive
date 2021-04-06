@@ -3,6 +3,7 @@ package com.cmput301.penguindive;
 import android.app.Activity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -19,6 +20,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -59,112 +62,274 @@ public class MyExperimentActivityTest {
     public void aStart() throws Exception {
         Activity activity = rule.getActivity();
     }
-
     /**
-     * Ensure the AllExpermentsButton brings us to the MyExperiment Activity
+     * Ensure the navigation drawer brings us to the MyExperimentActivity Activity
      */
     @Test
-    public void bAllExperimentsButton(){
+    public void aNavHome(){
         solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
-        solo.clickOnButton("All Experiments");
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Home");
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
     }
 
     /**
-     * Adds both a published and unpublished Experiment to the list and makes sure it's been added to the MyExperimentActivity screen
+     * Ensure the navigation drawer brings us to the MyExperiment Activity
      */
     @Test
-    public void cSeeUnpublishedExperiments(){
+    public void aNavMyExperiment(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("My Experiments");
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+    }
+
+    /**
+     * Ensure the navigation drawer brings us to the Profile Activity
+     */
+    @Test
+    public void aNavMyProfile(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("My Profile");
+        solo.assertCurrentActivity("Wrong Activity", Profile.class);
+    }
+
+    /**
+     * Ensure the navigation drawer brings us to the SearchProfile Activity
+     */
+    @Test
+    public void aNavSearchProfile(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Search Users");
+        solo.assertCurrentActivity("Wrong Activity", SearchProfile.class);
+    }
+
+    /**
+     * Ensure the navigation drawer brings us to the PickScanType Activity
+     */
+    @Test
+    public void aNavPickScanType(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Scan QR Code");
+        solo.assertCurrentActivity("Wrong Activity", PickScanType.class);
+    }
+
+    /**
+     * Ensure the navigation drawer brings us to the PickQRType Activity
+     */
+    @Test
+    public void aNavPickQRType(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Generate QR Code");
+        solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
+
+    }
+
+    /**
+     * Ensure the refresh button keeps us on the MyExperimentActivity Activity
+     */
+    @Test
+    public void aToolbarRefresh(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+        solo.clickOnImage(2);
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+    }
+
+    /**
+     * Add a published Experiment to the list and make sure it's been added to the screen
+     */
+    @Test
+    public void bAddPublishedExperiment(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+
+        // Get floating action button
+        View fab = solo.getCurrentActivity().findViewById(R.id.add_button);
+        solo.clickOnView(fab); //Click Add experiment Button
+
+        //Get view for EditText and enter a experiment name, description and status
+        solo.enterText((EditText) solo.getView(R.id.editTitle), "soloPublishedTest-MyExperiment");
+        solo.enterText((EditText) solo.getView(R.id.editDescription), "DescTest");
+        solo.enterText((EditText) solo.getView(R.id.editRegion), "RegionTest");
+        solo.pressSpinnerItem(0, 0); // Choose published
+        solo.clickOnButton("OK"); //Select Ok Button
+
+        // Make sure it's in list
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+    }
+
+
+    /**
+     * Add an unpublished Experiment to the list and make sure it has been added to the screen
+     */
+    @Test
+    public void bAddUnpublishedExperiment(){
 
         // Asserts that the current activity is the MyExperimentActivity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
 
-        // Get floating action button for published
-        View fab_pub = solo.getCurrentActivity().findViewById(R.id.add_button);
-
-        solo.clickOnView(fab_pub); //Click Add experiment Button
-
-        //Get view for EditText and enter a experiment name, description and status
-        solo.enterText((EditText) solo.getView(R.id.editTitle), "soloPublishTest-MyExperiment");
-        solo.enterText((EditText) solo.getView(R.id.editDescription), "soloPublishTest-MyExperiment");
-        solo.enterText((EditText) solo.getView(R.id.editStatus), "publish");
-        solo.clickOnButton("OK"); //Select Ok Button
-
-        // Get floating action button for unpublished
-        View fab_unpub = solo.getCurrentActivity().findViewById(R.id.add_button);
-
-        solo.clickOnView(fab_unpub); //Click Add experiment Button
+        // Get floating action button
+        View fab = solo.getCurrentActivity().findViewById(R.id.add_button);
+        solo.clickOnView(fab); //Click Add experiment Button
 
         //Get view for EditText and enter a experiment name, description and status
-        solo.enterText((EditText) solo.getView(R.id.editTitle), "soloUnpublishTest-MyExperiment");
-        solo.enterText((EditText) solo.getView(R.id.editDescription), "soloUnpublishTest-MyExperiment");
-        solo.enterText((EditText) solo.getView(R.id.editStatus), "unpublish");
+        solo.enterText((EditText) solo.getView(R.id.editTitle), "soloUnpublishedTest-MyExperiment");
+        solo.enterText((EditText) solo.getView(R.id.editDescription), "DescTest");
+        solo.enterText((EditText) solo.getView(R.id.editRegion), "RegionTest");
+        solo.pressSpinnerItem(0, 1); // Choose unpublished
         solo.clickOnButton("OK"); //Select Ok Button
 
-        // Check to see if we have experiments
-        assertTrue(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000));
-        assertTrue(solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000));
+        // Make sure it's in list
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
     }
 
     /**
-     * Ensure the questions button takes us to QuestionActivity
+     * Add an ended experiment to the list and make sure it has been added to the screen
      */
-    @Test
-    public void dQuestionButton(){
-        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
-        solo.clickOnButton("Questions");
-        solo.assertCurrentActivity("Wrong Activity", QuestionActivity.class);
 
+    @Test
+    public void bAddEndedExperiment(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
+
+        // Get floating action button
+        View fab = solo.getCurrentActivity().findViewById(R.id.add_button);
+        solo.clickOnView(fab); //Click Add experiment Button
+
+        //Get view for EditText and enter a experiment name, description and status
+        solo.enterText((EditText) solo.getView(R.id.editTitle), "soloEndedTest-MyExperiment");
+        solo.enterText((EditText) solo.getView(R.id.editDescription), "DescTest");
+        solo.enterText((EditText) solo.getView(R.id.editRegion), "RegionTest");
+        solo.pressSpinnerItem(0, 2); // Choose ended
+        solo.clickOnButton("OK"); //Select Ok Button
+
+        // Make sure it's in list
+        assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
     }
+
+
     /**
-     * Search the MyExperimentActivity and ensure the proper results are given
+     * Search the MyExperiment activity and ensure the proper results are given
      */
     @Test
-    public void eSearchExperiment(){
+    public void cSearchExperiment(){
+
         solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
 
-        // Get searchBar
-        View searchBar = solo.getView(R.id.experimentSearchBar); //get the element
+        // Get search bar
+        View searchBar = solo.getView(RelativeLayout.class, 1);
 
-        // Search for something that doesn't exist
-        searchBar.performClick(); //click on search bar
-        solo.enterText(0, "soloTest");
+        // Search by title
 
-        // Ensure both experiments are not present
-        assertFalse((solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000)));
-        assertFalse((solo.waitForText("soloPublishTest-MyExperiment", 2, 1000)));
+            // Search for something that is not our new experiments
+        solo.clickOnView(searchBar);  // Click on search bar
+        solo.enterText(0, "soloNotpublishedTest");
+
+            // Ensure all items are not present
+        assertFalse("Published is present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertFalse("Ended is present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertFalse("Unpublished is present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
         solo.clearEditText(0);
 
-        // Search for something that exists
-        searchBar.performClick();
-        solo.enterText(0, "soloPublishTest-MyExperiment");
+            // Search for something that exists
+        solo.clickOnView(searchBar);
+        solo.enterText(0, "soloPublishedTest");
 
-        // Ensure published item is present and unpublished is not
-        assertTrue(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000)); // Should be results
-        assertFalse((solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000)));
+            // Ensure published item is present
+        solo.scrollToTop();
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.clearEditText(0);
+
+        // Search by Description
+        solo.clickOnView(searchBar);
+        solo.enterText(0, "DescTest");
+
+            // Ensure all items are present
+        solo.scrollToTop();
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
+        solo.clearEditText(0);
+
+        // Search by Status
+
+            // Ensure unpublished items are present and nothing else
+        solo.clickOnView(searchBar);
+        solo.enterText(0, "Unpublished");
+
+        solo.scrollToTop();
+        assertFalse("Published is present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertFalse("Ended is present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
+        solo.clearEditText(0);
+
+        // Search by Region
+        solo.clickOnView(searchBar);
+        solo.enterText(0, "RegionTest");
+
+            // Ensure all items are present
+        solo.scrollToTop();
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
+        solo.clearEditText(0);
+
+//         Search by Minimum Trials
+        solo.clickOnView(searchBar);
+        solo.enterText(0, "1");
+
+            // Ensure all items are present
+        solo.scrollToTop();
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
+
     }
 
     /**
-     * Ensures all created experiments are deleted from MyExperimentActivity
+     * Ensures all experiments are deleted from MyExperimentActivity
      */
     @Test
-    public void fDeleteExperiment(){
+    public void dDeleteExperiment(){
+        solo.assertCurrentActivity("Wrong Activity", MyExperimentActivity.class);
 
-        // Make sure previous experiments are there
-        assertTrue(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000));
-        assertTrue(solo.waitForText("soloUnpublishTest-MyExperiment", 2, 1000));
+        // Make sure experiments are there
+        assertTrue("Published is not present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Ended is not present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
 
         // Click on published and delete
-        solo.clickOnText("soloPublishTest-MyExperiment");
+        solo.clickOnText("soloPublishedTest-MyExperiment");
+        solo.clickOnButton("Delete");
+
+        // Click on ended and delete
+        solo.clickOnText("soloEndedTest-MyExperiment");
         solo.clickOnButton("Delete");
 
         // Click on unpublished and delete
-        solo.clickOnText("soloUnpublishTest-MyExperiment");
+        solo.clickOnText("soloUnpublishedTest-MyExperiment");
         solo.clickOnButton("Delete");
 
-        // Make sure deleted
-        assertFalse(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000));
-        assertFalse(solo.waitForText("soloPublishTest-MyExperiment", 2, 1000));
+        // Ensure all experiments are gone
+        assertFalse("Published is present", solo.waitForText("soloPublishedTest", 1 , 2000, true, true));
+        solo.scrollToTop();
+        assertFalse("Ended is present", solo.waitForText("soloEndedTest-MyExperiment", 1, 2000, true, true));
+        solo.scrollToTop();
+        assertFalse("Unpublished is present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
     }
 
     /**
