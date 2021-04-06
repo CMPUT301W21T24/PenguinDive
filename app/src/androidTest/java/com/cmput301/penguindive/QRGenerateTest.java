@@ -60,17 +60,12 @@ public class QRGenerateTest {
         solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
 
         // get spinners
-        View exper = solo.getView(Spinner.class, 2);
-        View tType = solo.getView(Spinner.class, 0);
+        View exper = solo.getView(Spinner.class, 0);
         View pf = solo.getView(Spinner.class, 1);
 
         // choose experiment
         solo.clickOnView(exper);
         solo.clickOnView(solo.getView(TextView.class, 2));
-
-        //choose trial type
-        solo.clickOnView(tType);
-        solo.clickOnView(solo.getView(TextView.class, 3));
 
         //choose pass or fail
         solo.clickOnView(pf);
@@ -92,7 +87,7 @@ public class QRGenerateTest {
         solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
 
         // get spinners
-        View exper = solo.getView(Spinner.class, 2);
+        View exper = solo.getView(Spinner.class, 0);
 
         // choose experiment
         solo.clickOnView(exper);
