@@ -19,7 +19,7 @@
             android:id="@+id/exper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="188dp"
             android:text="Advertisement"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -30,10 +30,11 @@
             android:id="@+id/trial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="392dp"
+            android:layout_marginBottom="268dp"
             android:text="Trial Result"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

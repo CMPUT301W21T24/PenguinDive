@@ -66,7 +66,6 @@ public class QRGenerate extends AppCompatActivity {
 
     String QRString;
     Spinner experName;
-    Spinner trialType;
     Spinner passfail;
     ImageView QRCode;
     Button generate;
@@ -87,7 +86,6 @@ public class QRGenerate extends AppCompatActivity {
         // TODO: add a trial name spinner for each experiment to allow choosing for which trial?
         // initialize variables
         experName = findViewById(R.id.experiment_name);
-        trialType = findViewById(R.id.trial_type);
         QRCode = findViewById(R.id.QR_code);
         generate = findViewById(R.id.generate);
         save = findViewById(R.id.saveButton);
@@ -105,7 +103,7 @@ public class QRGenerate extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("publish")) {
+                        if (document.get("Status").equals("Published")) {
                             experimentNames.add(document.get("Title").toString());
                             Log.d("experiment names", document.get("Title").toString());
                         }
@@ -120,11 +118,8 @@ public class QRGenerate extends AppCompatActivity {
         });
 
         // set the dropdown menu entries
-        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
-        String[] passOrFail = {"Pass", "Fail"};
-        ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
+        String[] passOrFail = {"SUCCESS", "FAILURE"};
         ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
-        trialType.setAdapter(typeAdapt);
         passfail.setAdapter(passFailAdapt);
 
         // hide buttons until QR code is generated
@@ -132,7 +127,6 @@ public class QRGenerate extends AppCompatActivity {
         back.setVisibility(Button.GONE);
 
         if (choice.equals("ad")) {
-            trialType.setVisibility(Spinner.GONE);
             passfail.setVisibility(Spinner.GONE);
         }
 
@@ -141,12 +135,11 @@ public class QRGenerate extends AppCompatActivity {
         generate.setOnClickListener(v -> {
 
             String name = experName.getSelectedItem().toString();
-            String type = trialType.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
             if (choice.equals("ad")) {
                 QRString = name;
             } else {
-                QRString = name + "-" + type + "-" + passFail;
+                QRString = "QR-" + name + "-" + passFail;
             }
 
             // generate QR code and display to user
@@ -164,7 +157,6 @@ public class QRGenerate extends AppCompatActivity {
             generate.setVisibility(Button.GONE);
             experName.setVisibility(EditText.GONE);
             passfail.setVisibility(Spinner.GONE);
-            trialType.setVisibility(Spinner.GONE);
 
             save.setVisibility(Button.VISIBLE);
             back.setVisibility(Button.VISIBLE);
@@ -184,6 +176,7 @@ public class QRGenerate extends AppCompatActivity {
             save.setVisibility(Button.GONE);
         });
    }
+
     // Refresh method
     public void ClickRefresh(View view){
         MainActivity.redirectActivity(this, QRGenerate.class);

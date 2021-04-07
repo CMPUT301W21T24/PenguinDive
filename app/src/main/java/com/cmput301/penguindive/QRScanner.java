@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,8 +23,10 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.budiyev.android.codescanner.ScanMode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,8 +38,14 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /*
 License for the QR scanning repository used
@@ -80,12 +92,17 @@ This class allows users to scan a printed QR code and will read out the text of 
  */
 public class QRScanner extends AppCompatActivity {
 
-    private CodeScanner mCodeScanner;
+    private CodeScanner codeScanner;
     private CodeScannerView scannerView;
     private TextView qrText;
-    private Button btn;
     DrawerLayout drawerLayout;
-
+    Spinner experName;
+    Spinner trueFalse;
+    Spinner barcodeExper;
+    Button update;
+    String choice;
+    ArrayList<String> experimentNames;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,78 +115,57 @@ public class QRScanner extends AppCompatActivity {
         // initialize variables
         scannerView = findViewById(R.id.scanner_view);
         qrText = findViewById(R.id.QR_text);
-        btn = findViewById(R.id.btn_id);
-        final Spinner experName = findViewById(R.id.exper);
-        final Spinner trial = findViewById(R.id.trial);
-        final EditText information = findViewById(R.id.info);
-        final Button update = findViewById(R.id.update);
-        String choice = getIntent().getSerializableExtra("type").toString();
+        Button btn = findViewById(R.id.btn_id);
+        experName = findViewById(R.id.exper);
+        trueFalse = findViewById(R.id.true_false);
+        update = findViewById(R.id.update);
+        barcodeExper = findViewById(R.id.barcode_exper);
+        choice = getIntent().getSerializableExtra("type").toString();
 
-        ArrayList<String> experimentNames = new ArrayList<>();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("publish")) {
-                            experimentNames.add(document.get("Title").toString());
-                            Log.d("experiment names", document.get("Title").toString());
-                        }
+        experimentNames = new ArrayList<>();
+        db.collection("Experiments").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    if (document.get("Status").equals("Published")) {
+                        experimentNames.add(document.get("Title").toString());
+                        Log.d("experiment names", document.get("Title").toString());
                     }
-                } else {
-                    Log.d("Could not get data", "no Data to get");
                 }
-                String[] eNames = experimentNames.toArray(new String[0]);
-                ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, eNames);
-                experName.setAdapter(namesAdapt);
+            } else {
+                Log.d("Could not get data", "no Data to get");
             }
+            String[] eNames = experimentNames.toArray(new String[0]);
+            ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, eNames);
+            experName.setAdapter(namesAdapt);
         });
 
         //TODO: add trials and trial descriptions instead of trial types
-
-        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
+        String[] trialTypes = {"TRUE", "FALSE"};
         ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
-        trial.setAdapter(typeAdapt);
+        trueFalse.setAdapter(typeAdapt);
 
-        trial.setVisibility(Spinner.GONE);
+        trueFalse.setVisibility(Spinner.GONE);
         experName.setVisibility(Spinner.GONE);
-        information.setVisibility(EditText.GONE);
         update.setVisibility(Button.GONE);
+        barcodeExper.setVisibility(Button.GONE);
 
-        // setup a scanner object to scan a QR code when it is centered on the camera on screen
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setDecodeCallback(new DecodeCallback() {
-            @Override
-            public void onDecoded(@NonNull final Result result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        qrText.setText(result.getText());
-                        if (choice.equals("B")) {
-                            trial.setVisibility(Spinner.VISIBLE);
-                            experName.setVisibility(Spinner.VISIBLE);
-                            information.setVisibility(EditText.VISIBLE);
-                        } else {
-                            update.setVisibility(Button.VISIBLE);
-                        }
-                    }
-                });
-            }
-        });
+        // setup the scanner and read the code
+        scanSetup();
         
-        scannerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCodeScanner.startPreview();
-            }
-        });
+        scannerView.setOnClickListener(view -> codeScanner.startPreview());
 
         update.setOnClickListener(v -> {
-            //TODO: go to experiment trial given by QR code and update trial
-            String[] experToUpdate = qrText.getText().toString().split("-");
-            qrText.setText("trial updated per QR Code");
-            update.setVisibility(Button.GONE);
+            switch (choice) {
+                case "BR":
+                    registerBar();
+                    break;
+                case "SQ":
+                    QRScanned();
+                    break;
+                case "SB":
+                    barcodeScanned();
+                    break;
+            }
         });
 
         btn.setOnClickListener(v -> {
@@ -178,10 +174,386 @@ public class QRScanner extends AppCompatActivity {
         });
     }
 
+    private void populateBarcodeExper() {
+        String barcodeText = qrText.getText().toString();
+        ArrayList<String> expers = new ArrayList<>();
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
+        db.collection("Experiments").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Map<String, Object> m = document.getData();
+                    if (m.containsKey("Barcodes")) {
+                        ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
+                        for (int i = 0; i < s.size(); i++) {
+                            if (s.get(i).contains(barcodeText) && s.get(i).contains(uid)) {
+                                Log.d("experiment barcodes", (String) document.get("Title"));
+                                expers.add((String) document.get("Title"));
+                            }
+                        }
+                    }
+                }
+            } else {
+                Log.d("Could not get data", "no Data to get");
+            }
+            String[] enames = new String[expers.size()];
+            for (int i = 0; i < enames.length; i++) {
+                enames[i] = expers.get(i);
+            }
+            ArrayAdapter<String> eAdapt = new ArrayAdapter(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, enames);
+            barcodeExper.setAdapter(eAdapt);
+        });
+    }
+
+    private void barcodeScanned() {
+        // TODO: check database to see if barcode is already registered
+        // if barcode is registered then update trial, else ask if they want to register the barcode
+        String barCodeText = qrText.getText().toString();
+        String ExperTitle = (String) barcodeExper.getSelectedItem();
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = null;
+                    boolean barRegistered = false;
+                    for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        Map<String, Object> m = document.getData();
+                        if (m.containsKey("Barcodes") && document.get("Title").equals(ExperTitle)) {
+                            ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
+                            for (int i = 0; i < s.size(); i++) {
+                                if (s.get(i).contains(barCodeText) && s.get(i).contains(uid)) {
+                                    doc = document;
+                                    barRegistered = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (barRegistered) {
+                        Map<String, Object> existingData = doc.getData();
+                        String[] s = new String[4];
+                        for (Map.Entry<String, Object> e : existingData.entrySet()) {
+                            if (e.getKey().equals("Barcodes")) {
+                                Object[] barcodes = e.getValue().toString().split(",");
+                                for (int i = 0; i < barcodes.length; i++) {
+                                    s = barcodes[i].toString().split("\\.");
+                                    if (s[0].contains(barCodeText) && s[2].equals(uid)) {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        if (s[4].contains("TRUE")) {
+                            qrText.setText("adding success to trial result for experiment");
+                            db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        String tType = "";
+                                        for (DocumentSnapshot doc12 : task.getResult()) {
+                                            if (ExperTitle.equals(doc12.get("Title"))) {
+                                                tType = (String) doc12.get("TrialType");
+                                                break;
+                                            }
+                                        }
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("Experiment Name", ExperTitle);
+                                        data.put("Trial Type", tType);
+                                        switch (tType) {
+                                            case "Measurement Trial":
+                                                data.put("Measurement Name", "BarSuccess");
+                                                data.put("Measurement", 1.0);
+                                                break;
+                                            case "Non-Negative Integer Count Trial":
+                                                data.put("NNIC Name", "BarSuccess");
+                                                data.put("Non-Negative Integer", 1);
+                                                break;
+                                            case "Binomial Trial":
+                                                data.put("Binomial Type", "Pass");
+                                                break;
+                                            case "Count Trial":
+                                                data.put("Increment Count", "TRUE");
+                                                break;
+                                        }
+                                        db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    qrText.setText("Trial successfully updated (success)!");
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        } else if (s[4].contains("FALSE")) {
+                            qrText.setText("adding failure to trial result for experiment");
+                            db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        String tType = "";
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            if (ExperTitle.equals(document.get("Title"))) {
+                                                tType = (String) document.get("TrialType");
+                                                break;
+                                            }
+                                        }
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("Experiment Name", ExperTitle);
+                                        data.put("Trial Type", tType);
+                                        switch (tType) {
+                                            case "Measurement Trial":
+                                                data.put("Measurement Name", "BarFailure");
+                                                data.put("Measurement", 0.0);
+                                                break;
+                                            case "Non-Negative Integer Count Trial":
+                                                data.put("NNIC Name", "BarFailure");
+                                                data.put("Non-Negative Integer", -1);
+                                                break;
+                                            case "Binomial Trial":
+                                                data.put("Binomial Type", "Fail");
+                                                break;
+                                            case "Count Trial":
+                                                data.put("Increment Count", "FALSE");
+                                                break;
+                                        }
+                                        db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    qrText.setText("Trial successfully updated (failure)!");
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            qrText.setText("Could not determine result of barcode");
+                        }
+                        update.setVisibility(Button.GONE);
+                    } else {
+                        qrText.setText("Barcode does not seem to be registered.\nPlease register the barcode first");
+                        update.setVisibility(Button.GONE);
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void QRScanned() {
+        //TODO: go to experiment trial given by QR code and update trial
+        if (qrText.getText().toString().contains("QR-")) {
+            SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+            String uid = sharedPref.getString("UID", "");
+            String[] experToUpdate = qrText.getText().toString().split("-");
+            // TODO: update trial result if QR code contains PASS
+            if (experToUpdate.length == 2) {
+                qrText.setText("Check out this experiment: " + experToUpdate[1]);
+            } else if (experToUpdate.length == 3) {
+                if (experToUpdate[2].equals("SUCCESS")) {
+                    // update trial result
+                    qrText.setText("Adding success to: " + experToUpdate[1]);
+                    db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                String tType = "";
+                                for (DocumentSnapshot doc : task.getResult()) {
+                                    if (experToUpdate[1].equals(doc.get("Title"))) {
+                                        tType = (String) doc.get("TrialType");
+                                        break;
+                                    }
+                                }
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("Experiment Name", experToUpdate[1]);
+                                data.put("Trial Type", tType);
+                                switch (tType) {
+                                    case "Measurement Trial":
+                                        data.put("Measurement Name", "QRSuccess");
+                                        data.put("Measurement", 1.0);
+                                        break;
+                                    case "Non-Negative Integer Count Trial":
+                                        data.put("NNIC Name", "QRSuccess");
+                                        data.put("Non-Negative Integer", 1);
+                                        break;
+                                    case "Binomial Trial":
+                                        data.put("Binomial Type", "Pass");
+                                        break;
+                                    case "Count Trial":
+                                        data.put("Increment Count", "TRUE");
+                                        break;
+                                }
+                                db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            qrText.setText("Trial successfully updated!");
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else if (experToUpdate[2].equals("FAILURE")) {
+                    qrText.setText("Adding failure to: " + experToUpdate[1]);
+                    db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                String tType = "";
+                                for (DocumentSnapshot doc : task.getResult()) {
+                                    if (experToUpdate[1].equals(doc.get("Title"))) {
+                                        tType = (String) doc.get("TrialType");
+                                        break;
+                                    }
+                                }
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("Experiment Name", experToUpdate[1]);
+                                data.put("Trial Type", tType);
+                                switch (tType) {
+                                    case "Measurement Trial":
+                                        data.put("Measurement Name", "QRFailure");
+                                        data.put("Measurement", 0.0);
+                                        break;
+                                    case "Non-Negative Integer Count Trial":
+                                        data.put("NNIC Name", "QRFailure");
+                                        data.put("Non-Negative Integer", -1);
+                                        break;
+                                    case "Binomial Trial":
+                                        data.put("Binomial Type", "Fail");
+                                        break;
+                                    case "Count Trial":
+                                        data.put("Increment Count", "FALSE");
+                                        break;
+                                }
+                                db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            qrText.setText("Trial successfully updated!");
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    qrText.setText("QR code not applicable");
+                }
+            } else {
+                qrText.setText("Invalid QR code");
+            }
+        } else {
+            qrText.setText("Invalid QR code");
+        }
+        update.setVisibility(Button.GONE);
+    }
+
+    private void registerBar() {
+        String barcode = qrText.getText().toString();
+        HashMap<String, String> choiceMap = new HashMap<>();
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
+        String experTrial = qrText.getText().toString() + ".exp:." + uid + ".add trial result:." + trueFalse.getSelectedItem();
+        //TODO: add new field to experimenters or experiments document with registered barcodes
+        db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = null;
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        if (document.get("Title").toString().equals(experName.getSelectedItem())) {
+                            doc = document;
+                        }
+                    }
+                    Log.d("experiment data", String.valueOf(doc.getData()));
+                    Map<String, Object> existingData = doc.getData();
+                    boolean barExist = false;
+                    ArrayList<String> barcodes = new ArrayList<>();
+                    String removed = "";
+                    for (Map.Entry<String, Object> e : existingData.entrySet()) {
+                        if (e.getKey().equals("Barcodes")) {
+                            barExist = true;
+                            barcodes = (ArrayList<String>) e.getValue();
+                            removed = e.getKey();
+                        }
+                    }
+                    if (barExist) {
+                        existingData.remove(removed);
+                    }
+                    boolean alreadyReg = false;
+                    for (int i = 0; i < barcodes.size(); i++) {
+                        if (barcodes.get(i).equals(experTrial) && barcodes.get(i).contains(uid)) {
+                            qrText.setText("barcode already registered");
+                            alreadyReg = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyReg) {
+                        barcodes.add(experTrial);
+                        existingData.put("Barcodes", barcodes);
+                        db.collection("Experiments").document(doc.getId()).set(existingData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    qrText.setText("Barcode registered Successfully");
+                                    update.setVisibility(Button.GONE);
+                                    Log.d("data", "data successfully updated");
+                                } else {
+                                    Log.d("data", "could not update experiment");
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void scanSetup() {
+        // setup a scanner object to scan a QR code when it is centered on the camera on screen
+        codeScanner = new CodeScanner(this, scannerView);
+        codeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
+            qrText.setText(result.getText());
+            qrText.setTextColor(Color.WHITE);
+            Log.d("qrText", qrText.getText().toString());
+
+            // show only relevant information based on scan choice
+            switch (choice) {
+                case "SQ":
+                    update.setText("Update");
+                    update.setVisibility(Button.VISIBLE);
+                    break;
+                case "SB":
+                    update.setText("Update");
+                    populateBarcodeExper();
+                    update.setVisibility(Button.VISIBLE);
+                    barcodeExper.setVisibility(Button.VISIBLE);
+                    break;
+                case "BR":
+                    update.setText("Register");
+                    update.setVisibility(Button.VISIBLE);
+                    trueFalse.setVisibility(Spinner.VISIBLE);
+                    experName.setVisibility(Spinner.VISIBLE);
+                    break;
+            }
+        }));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         requestCam();
+        trueFalse.setVisibility(Spinner.GONE);
+        experName.setVisibility(Spinner.GONE);
+        update.setVisibility(Button.GONE);
+        qrText.setText("");
     }
 
     // function requests access to the phone camera
@@ -189,7 +561,7 @@ public class QRScanner extends AppCompatActivity {
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse response) {
-                mCodeScanner.startPreview();
+                codeScanner.startPreview();
             }
 
             @Override
@@ -207,8 +579,12 @@ public class QRScanner extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        codeScanner.releaseResources();
+        trueFalse.setVisibility(Spinner.GONE);
+        experName.setVisibility(Spinner.GONE);
+        update.setVisibility(Button.GONE);
+        qrText.setText("");
         super.onPause();
-        mCodeScanner.releaseResources();
     }
 
     // Refresh method

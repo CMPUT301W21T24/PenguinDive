@@ -21,16 +21,23 @@ public class PickScanType extends AppCompatActivity {
 
         final Button QR = findViewById(R.id.QR);
         final Button barcode = findViewById(R.id.bar);
+        final Button barReg = findViewById(R.id.bar_reg);
 
         QR.setOnClickListener(v -> {
             Intent intent = new Intent(PickScanType.this, QRScanner.class);
-            intent.putExtra("type", "Q");
+            intent.putExtra("type", "SQ");
             startActivity(intent);
         });
 
         barcode.setOnClickListener(v -> {
             Intent intent = new Intent(PickScanType.this, QRScanner.class);
-            intent.putExtra("type", "B");
+            intent.putExtra("type", "SB");
+            startActivity(intent);
+        });
+
+        barReg.setOnClickListener(v -> {
+            Intent intent = new Intent(PickScanType.this, QRScanner.class);
+            intent.putExtra("type", "BR");
             startActivity(intent);
         });
     }
