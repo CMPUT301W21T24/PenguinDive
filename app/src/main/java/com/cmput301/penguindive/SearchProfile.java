@@ -80,8 +80,9 @@ public class SearchProfile extends AppCompatActivity {
                                 profileArray.add(x);
                                 profileID.add((document.getId()));
                             }
-                            profileAdapter.notifyDataSetChanged();
+
                         }
+                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 // search using email
@@ -96,9 +97,10 @@ public class SearchProfile extends AppCompatActivity {
                                 profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
                             }
-                            profileAdapter.notifyDataSetChanged();
+
 
                         }
+                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 return false;
@@ -130,6 +132,11 @@ public class SearchProfile extends AppCompatActivity {
         finishAffinity();
     }
 
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, SearchProfile.class);
+    }
+
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
@@ -149,4 +156,5 @@ public class SearchProfile extends AppCompatActivity {
     public void ClickSearchUsers(View view){ MainActivity.closeDrawer(drawerLayout); }
 
     public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
 }

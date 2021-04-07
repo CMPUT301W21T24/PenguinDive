@@ -64,6 +64,11 @@ public class SelectedProfile extends AppCompatActivity {
         finishAffinity();
     }
 
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, SelectedProfile.class);
+    }
+
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
@@ -83,4 +88,10 @@ public class SelectedProfile extends AppCompatActivity {
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
     public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainActivity.closeDrawer(drawerLayout);
+    }
 }

@@ -132,6 +132,12 @@ public class AnswerActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, AnswerActivity.class);
+    }
+
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
