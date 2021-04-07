@@ -1,31 +1,16 @@
 package com.cmput301.penguindive;
 
+// has a value, pass or fail
 public class Binomial_Trial {
 
-    // passes/fails count
-    private int numPasses;
-    private int numFails;
+    private boolean pass;
 
     // constructor
-    public Binomial_Trial(int numPasses, int numFails) {
-        this.numPasses = numPasses;
-        this.numFails = numFails;
+    public Binomial_Trial(boolean pass) {
+        this.pass = pass;
     }
 
-    // functions that add one pass/fail when run, used bc storyboard indicates this format
-    public void addOnePass() {
-        numPasses++;
-    }
-
-    public void addOneFail() {
-        numFails++;
-    }
-
-    // getters
-    public int getNumPasses() {
-        return numPasses;
-    }
-    public int getNumFails() {
-        return numFails;
+    public boolean getPass() {
+        return pass;
     }
 }
