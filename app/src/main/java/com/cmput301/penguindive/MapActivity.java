@@ -48,7 +48,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
+/*
+Title: Places SDK for Android: How to validate AutocompleteSupportFragment is not empty?
+Author: Linray Wu
+Date: 2021/03/30
+Availability: https://stackoverflow.com/questions/59205440/places-sdk-for-android-how-to-validate-autocompletesupportfragment-is-not-empty
+Title: Add the marker for autocomplete search
+Author: Linray Wu
+Date: 2021/03/31
+Availability: https://stackoom.com/question/2Zl7c/%E5%9C%A8%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90%E6%90%9C%E7%B4%A2%E4%BD%8D%E7%BD%AE%E8%AE%BE%E7%BD%AE%E6%A0%87%E8%AE%B0
+Title: How to change the position of My Location Button in Google Maps using android studio
+Author: Linray Wu
+Date: 2021/03/30
+Availability: https://stackoverflow.com/questions/36785542/how-to-change-the-position-of-my-location-button-in-google-maps-using-android-st
+Title: Adding multiple markers in Google Maps API v2 Android
+Author: Linray Wu
+Date: 2021/03/30
+Availability:https://stackoverflow.com/questions/30569854/adding-multiple-markers-in-google-maps-api-v2-android
+*/
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
