@@ -212,7 +212,6 @@ public class ExperimentFragment extends DialogFragment {
                                 locationStatus = experimentLocation.isChecked();
                                 Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, locationStatus, trialType);
                                 listener.onOkPressed(newExperiment);
-                                }
                             }
                         });
                     }
