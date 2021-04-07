@@ -1,8 +1,6 @@
 package com.cmput301.penguindive;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,7 +28,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -100,11 +96,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     Button mapConfirm;
 
+    public ArrayList<MarkerOptions> options = new ArrayList<MarkerOptions>();
     MarkerOptions markerOptions;
-    LatLng latLng;
-    String address;
     Marker marker;
-    ArrayList<Marker> markers;
+    private LatLng latLng;
+    private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +120,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         expID = intent.getStringExtra("EXPID");
-
-        loadMap();
 
         mapConfirm.setOnClickListener(view -> {
             double Lat = locationLatLng.latitude;
@@ -153,6 +147,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //active the autocomplete place selection for select location
         getAutocompleteSelect();
+
+        loadMap();
 
     }
 
@@ -361,29 +357,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         experimentCollectionReference.addSnapshotListener((value, error) -> {
             for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
                 List<GeoPoint> locations = (List<GeoPoint>) doc.getData().get("Locations");
+                Log.i("Locations", ""+locations);
                 if (locations != null) {
-                    for (int i = 0; i < locations.size();i++){
+                    for (int i = 0; i < locations.size(); i++) {
                         GeoPoint geoPoint = locations.get(i);
+                        Log.i("geoPoints", "" + geoPoint);
                         double Lat = geoPoint.getLatitude();
                         double Lng = geoPoint.getLongitude();
-                        LatLng latLng = new LatLng(Lat, Lng);
-                        String address = getAddress(Lat, Lng);
-                        MarkerOptions markerOptions = new MarkerOptions();
+                        latLng = new LatLng(Lat, Lng);
+                        Log.i("LatLng", "" + latLng);
+                        address = getAddress(Lat, Lng);
+                        Log.i("address", address);
+                        markerOptions = new MarkerOptions();
                         markerOptions.position(latLng);
                         markerOptions.title(address);
                         markerOptions.zIndex(1.0f);
-                        //TODO: multiple marker
-                        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                            @Override
-                            public void onMapLoaded() {
-                                if (markerOptions != null) {
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.0f));
-                                    mMap.addMarker(markerOptions);
-                                }
-                            }
-                        });
+                        Log.i("Marker options", "" + markerOptions);
+                        options.add(markerOptions);
                     }
+                    mMap.setOnMapLoadedCallback(() -> {
+                        for (int i = 0; i<options.size(); i++) {
+                            marker = mMap.addMarker(options.get(i));
+                        }
+                    });
                 }
             }
         });
