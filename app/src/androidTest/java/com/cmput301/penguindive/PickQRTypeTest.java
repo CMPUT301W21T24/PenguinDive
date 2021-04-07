@@ -3,6 +3,7 @@ package com.cmput301.penguindive;
 import android.app.Activity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,16 +22,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * this class is to test the QRGenerate class
+ * this class is to test the PickQRType class
  */
 @RunWith(AndroidJUnit4.class)
-public class QRGenerateTest {
+public class PickQRTypeTest {
 
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<PickQRType> rule =
-        new ActivityTestRule<>(PickQRType.class, true, true);
+    public ActivityTestRule<MainActivity> rule =
+            new ActivityTestRule<>(MainActivity.class, true, true);
 
     /**
      * This function runs before all test and creates a solo instance
@@ -51,53 +52,30 @@ public class QRGenerateTest {
     }
 
     /**
-     * checks if the QR code is properly generated for trial results
+     * test that the Advertisement button works
      */
     @Test
-    public void checkGenerateForTrial() {
-        solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
-        solo.clickOnButton("Trial Result");
-        solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
-
-        // get spinners
-        View exper = solo.getView(Spinner.class, 0);
-        View pf = solo.getView(Spinner.class, 1);
-
-        // choose experiment
-        solo.clickOnView(exper);
-        solo.clickOnView(solo.getView(TextView.class, 2));
-
-        //choose pass or fail
-        solo.clickOnView(pf);
-        solo.clickOnView(solo.getView(TextView.class, 1));
-
-        // return to main
-        solo.clickOnButton("Generate");
-        solo.clickOnButton("Back");
+    public void checkAdOpen() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Generate QR Code");
+
+        solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
+        solo.clickOnText("Advertisement");
+        solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
     }
 
     /**
-     * Test for generating a QR code for advertisements
+     * test that the trial result button works
      */
     @Test
-    public void checkGenerateForAd() {
-        solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
-        solo.clickOnButton("Trial Result");
-        solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
-
-        // get spinners
-        View exper = solo.getView(Spinner.class, 0);
-
-        // choose experiment
-        solo.clickOnView(exper);
-        solo.clickOnView(solo.getView(TextView.class, 2));
-
-        // return to main
-        solo.clickOnButton("Generate");
-        solo.clickOnButton("Save");
-        solo.clickOnButton("Back");
+    public void checkTrialOpen() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnImage(0);
+        solo.clickOnText("Generate QR Code");
+
+        solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
+        solo.clickOnText("Trial Result");
+        solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
     }
 }
-
