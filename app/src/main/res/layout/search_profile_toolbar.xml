@@ -23,20 +23,20 @@
             android:id="@+id/searchLayout"
             android:layout_width="10dp"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/more_icon"
+            android:layout_toStartOf="@+id/refresh_icon"
             android:layout_toEndOf="@+id/menu_icon"
             android:iconifiedByDefault="false"
             android:queryHint="Search Profiles"
             android:textAlignment="center"/>
 
         <ImageView
-            android:id="@+id/more_icon"
+            android:id="@+id/refresh_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_more"
-            android:clickable="false"
+            android:src="@drawable/ic_refresh"
+            android:onClick="ClickRefresh"
             android:contentDescription="@string/more_icon_description" />
     </RelativeLayout>
 

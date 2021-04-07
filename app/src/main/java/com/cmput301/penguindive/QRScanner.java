@@ -374,6 +374,12 @@ public class QRScanner extends AppCompatActivity {
         qrText.setText("");
         super.onPause();
     }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, QRScanner.class);
+    }
+
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
@@ -393,4 +399,5 @@ public class QRScanner extends AppCompatActivity {
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
     public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
 }

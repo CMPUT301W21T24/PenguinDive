@@ -176,6 +176,12 @@ public class QRGenerate extends AppCompatActivity {
             save.setVisibility(Button.GONE);
         });
    }
+   
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, QRGenerate.class);
+    }
+
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
@@ -195,4 +201,5 @@ public class QRGenerate extends AppCompatActivity {
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
     public void ClickGitHub(View view){ MainActivity.openGitHub(this);}
+
 }

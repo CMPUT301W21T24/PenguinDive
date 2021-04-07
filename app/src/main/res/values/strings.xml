@@ -25,4 +25,5 @@
         <item>Non-Negative Integer Count Trial</item>
         <item>Measurement Trial</item>
     </string-array>
+    <string name="title_activity_maps">Map</string>
 </resources>

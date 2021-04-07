@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -20,7 +21,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -125,18 +129,24 @@ public class Profile extends AppCompatActivity {
      * A string that represents the new desired user name
      */
     public void updateUserName(String newName){
-        experimentCollectionReference.addSnapshotListener((value, error) -> {
-            for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
-                String ownerId = (String) doc.getData().get("ownerId");
-                if (ownerId.equals(uid)) {
-                    String experimentId = doc.getId();
-                    experimentCollectionReference.document(experimentId).update("ownerName", newName);
-                    Experiment currentExperiment = makeExperiment(doc); // Make the experiment for easier reference
-                    List<String> newKeywords = getExperimentKeywords(currentExperiment); // Get the keywords
-                    experimentCollectionReference.document(experimentId).update("Keywords", newKeywords); // Update database
+        ListenerRegistration registration = experimentCollectionReference.addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
+                            String ownerId = (String) doc.getData().get("ownerId");
+                            if (ownerId.equals(uid)) {
+                                String experimentId = doc.getId();
+                                experimentCollectionReference.document(experimentId).update("ownerName", newName);
+                                Experiment currentExperiment = makeExperiment(doc); // Make the experiment for easier reference
+                                List<String> newKeywords = getExperimentKeywords(currentExperiment); // Get the keywords
+                                experimentCollectionReference.document(experimentId).update("Keywords", newKeywords); // Update database
+                            }
+                        }
+                    }
                 }
-            }
-        });
+        );
+        registration.remove();
     }
 
     /**
@@ -159,8 +169,9 @@ public class Profile extends AppCompatActivity {
         String ownerName = (String) doc.getData().get("ownerName");
         List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
         String trialType = (String) doc.getData().get("TrialType");
+        Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
-        return new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
+        return new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
     }
 
     /**
@@ -186,6 +197,11 @@ public class Profile extends AppCompatActivity {
         keywords.add(newExperiment.getStatus().trim().toLowerCase());
 
         return keywords;
+    }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, Profile.class);
     }
 
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}

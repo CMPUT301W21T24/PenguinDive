@@ -4,27 +4,30 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
 
 /**
  * This class represents a dialog fragment for experiments
@@ -42,14 +46,15 @@ public class ExperimentFragment extends DialogFragment {
     private EditText experimentRegion;
     private NumberPicker experimentMinimumTrials;
     private TextView experimentOwner;
+    private ToggleButton experimentLocation;
     private Spinner experimentStatus;
     private OnFragmentInteractionListener listener;
     public Experiment experiment;
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+    public Boolean locationStatus;
     private Spinner spinnerTrialType;
-
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
@@ -85,6 +90,7 @@ public class ExperimentFragment extends DialogFragment {
         experimentMinimumTrials = view.findViewById(R.id.editCount);
         experimentOwner = view.findViewById(R.id.editOwner);
         experimentStatus = view.findViewById(R.id.editStatus);
+        experimentLocation = view.findViewById(R.id.location_switch);
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
@@ -113,6 +119,7 @@ public class ExperimentFragment extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             experiment = (Experiment) bundle.getSerializable("experiment");
+            locationStatus = experiment.getLocationState();
             position = (int) bundle.getSerializable("pos");
             experimentID = experiment.getExperimentId();
             experimentTitle.setText(experiment.getTitle());
@@ -127,22 +134,27 @@ public class ExperimentFragment extends DialogFragment {
             // Trial Type Spinner
             int trialtypeSpinnerPosition = trialtypeAdapter.getPosition(experiment.getTrialType());
             spinnerTrialType.setSelection(trialtypeSpinnerPosition);
-
+            experimentLocation.setChecked(locationStatus);
             experimenterIDs = experiment.getExperimenters();
         }
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
                 .setTitle("Add/Edit/Delete Experiment")
                 .setNeutralButton("Cancel", null)
-                .setNegativeButton("Delete", (dialog, i) -> listener.onDeletePressed(experiment))
+                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        if(experiment != null){
+                            listener.onDeletePressed(experiment);
+                        }
+                    }
+                })
                 .setPositiveButton("OK", (dialogInterface, i) -> {
-                    boolean isNew = false;
                     if (experimentID == null){
                         experimentID = UUID.randomUUID().toString();
-                        isNew = true;
+                        locationStatus = false;
                     }
                     String title = experimentTitle.getText().toString();
                     String description = experimentDescription.getText().toString();
@@ -169,46 +181,40 @@ public class ExperimentFragment extends DialogFragment {
                     else if(experiment != null){
                         // Re-use existing username
                         String ownerName = experiment.getOwnerUserName(); //
-                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,trialType);
-
-                        // Update the keywords to reflect any changes
-                        experimentCollectionReference.document(newExperiment.getExperimentId()).update("Keywords", getKeywords(newExperiment));
+                        // set the location status
+                        locationStatus = experimentLocation.isChecked();
+                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,locationStatus,trialType);
                         listener.onEditPressed(newExperiment, position);
-
                     }
                     // If it's a new experiment
                     else {
-
                         // Query the ownerId in Profiles collection
                         CollectionReference profileCollectionReference = db.collection("Experimenter");
                         DocumentReference docRef = profileCollectionReference.document(ownerId);
+                        docRef.get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                DocumentSnapshot document = task.getResult();
+                                String ownerName;
 
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful() && task.getResult() != null) {
-                                    DocumentSnapshot document = task.getResult();
-                                    String ownerName;
+                                // Get the given name
+                                String firestoreOwnerName = document.getString("name");
 
-                                    // Get the given name
-                                    String firestoreOwnerName = document.getString("name");
-
-                                    // Check to see if there is a name available
-                                    if (firestoreOwnerName != null) {
-                                        ownerName = firestoreOwnerName;
-                                    }
-                                    // Otherwise use userId
-                                    else{
-                                        ownerName = ownerId;
-                                    }
-
-                                    Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, trialType);
-                                    listener.onOkPressed(newExperiment);
+                                // Check to see if there is a name available
+                                if (firestoreOwnerName != null) {
+                                    ownerName = firestoreOwnerName;
                                 }
+                                // Otherwise use userId
+                                else{
+                                    ownerName = ownerId;
+                                }
+
+                                // set the location status
+                                locationStatus = experimentLocation.isChecked();
+                                Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, locationStatus, trialType);
+                                listener.onOkPressed(newExperiment);
                             }
                         });
                     }
-
                 }).create();
     }
 
@@ -220,31 +226,4 @@ public class ExperimentFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-    /**
-     * This method gets all searchable keywords from an experiment.
-     * This includes it's title, description, ownerId, ownerUserName and region
-     * @param newExperiment
-     * An experiment object to reference when required values
-     * @return
-     * A list of strings containing all keywords gathered within the experiment
-     */
-    public List<String> getKeywords(Experiment newExperiment){
-        List<String> keywords;
-        keywords = new ArrayList<>();
-        // For getting it to add multiple elements properly
-        // https://stackoverflow.com/a/36560577
-        // For whitespace and punctuation
-        // https://stackoverflow.com/a/28257108
-        keywords.add(newExperiment.getOwnerId().trim().toLowerCase()); // Full UserId will need to be searched
-        keywords.add(newExperiment.getOwnerUserName().trim().toLowerCase()); // Full Username will need to be searched
-        keywords.addAll(Arrays.asList(newExperiment.getTitle().trim().toLowerCase().split("\\W+")));
-        keywords.addAll(Arrays.asList(newExperiment.getDescription().trim().toLowerCase().split("\\W+")));
-        keywords.addAll(Arrays.asList(newExperiment.getRegion().toLowerCase().trim().split("\\W+")));
-        keywords.add(newExperiment.getStatus().trim().toLowerCase());
-
-        return keywords;
-    }
-
-
 }

@@ -41,6 +41,11 @@ public class PickScanType extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
+    // Refresh method
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, PickScanType.class);
+    }
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
@@ -60,4 +65,5 @@ public class PickScanType extends AppCompatActivity {
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
     public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
 }
