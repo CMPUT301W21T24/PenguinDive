@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 // This class is for the binomial activity, pretty much entirely refactored bc of database
 public class BinomialActivity extends AppCompatActivity {
@@ -41,10 +44,9 @@ public class BinomialActivity extends AppCompatActivity {
     private TextView experimentNameView;
     private String experimentName;
 
-    // list of binomial trials to use with database
-    private ArrayList<Binomial_Trial> binomialTrialList = new ArrayList<Binomial_Trial>();
-    // use a two-value array to store the last number of passes/fails
-    ArrayList<Integer> passFailList = new ArrayList<Integer>();
+    // used to initialize existing values in onCreate
+    Integer intPasses;
+    Integer intFails;
 
     // initialize db
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -68,9 +70,45 @@ public class BinomialActivity extends AppCompatActivity {
         // set textviews
         numPasses = findViewById(R.id.binomial_numpasses);
         numFails = findViewById(R.id.binomial_numfails);
-        //TODO: setting the values of the numpasses/numfails at startup doesnt work
-        // the list is out of bounds and idk what else to do, thinking of just making a random
-        // document in the database that stores the values but thats hacky
+
+        // get the initial values for count with a new oncompletelistener
+        // Made with help from Ryan Brooks
+        db.collection("Trials").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    // initialize values
+                    intPasses = 0;
+                    intFails = 0;
+
+                    // for each document
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        // if the document is for the experiment
+                        if (document.get("Experiment Name").equals(experimentName)) {
+                            // get values for object through document
+                            String binomialType = (String) document.get("Binomial Type");
+
+                            // put the trials in the list depending on what type they are
+                            if (binomialType.equals("Pass")) {
+                                intPasses++;
+                            } else if (binomialType.equals("Fail")) {
+                                intFails++;
+                            } else {
+                                System.out.println("Binomial Trial is not pass or fail!");
+                            }
+                        }
+                    }
+                } else {
+                    Log.d("Could not get data", "no data to get");
+                }
+
+                // set the text of textviews
+                numPasses.setText(String.valueOf(intPasses));
+                numFails.setText(String.valueOf(intFails));
+            }
+        });
+
 
         // set experiment name
         experimentNameView = findViewById(R.id.binomial_experiment_name);
@@ -82,8 +120,10 @@ public class BinomialActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // get number of passes from list
-                numPasses.setText(String.valueOf(passFailList.get(0)));
+                // get number of passes
+                Integer currentPasses = Integer.valueOf(numPasses.getText().toString());
+                Integer newPasses = currentPasses + 1;
+                numPasses.setText(String.valueOf(newPasses));
 
                 // firestore stuff
                 // make hashmap
@@ -119,8 +159,11 @@ public class BinomialActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // get value from list
-               numFails.setText(String.valueOf(passFailList.get(1)));
+                // get number of fails
+                Integer currentFails = Integer.valueOf(numFails.getText().toString());
+                Integer newFails = currentFails + 1;
+                numFails.setText(String.valueOf(newFails));
+
 
                 // firestore stuff
                 // make hashmap
@@ -150,55 +193,5 @@ public class BinomialActivity extends AppCompatActivity {
                         });
             }
         });
-
-        // add the snapshot listener once to get real time updates
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-
-            // whenever the database changes, reset and use the database values
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
-
-                // reset the values
-                binomialTrialList.clear();
-                passFailList.clear();
-                passFailList.add(0);
-                passFailList.add(0);
-
-                // for each document in the snapshot
-                for (QueryDocumentSnapshot document: queryDocumentSnapshots) {
-
-                    // if the document in the collection is for this experiment
-                    if (document.get("Experiment Name").equals(experimentName)) {
-
-                        // get values for object through document
-                        String binomialType = (String) document.get("Binomial Type");
-
-                        // put the trials in the list depending on what type they are
-                        if (binomialType.equals("Pass")) {
-                            binomialTrialList.add(new Binomial_Trial(true));
-                            int incrementP = passFailList.get(0) + 1;
-                            passFailList.set(0, incrementP);
-                        }
-                        else if (binomialType.equals("Fail")) {
-                            binomialTrialList.add(new Binomial_Trial(false));
-                            int incrementF = passFailList.get(1) + 1;
-                            passFailList.set(1, incrementF);
-                        }
-                        else {
-                            System.out.println("Binomial Trial is not pass or fail!");
-                        }
-
-                    }
-                }
-            }
-        });
-
-
-
-
-
     }
-
-
-
 }

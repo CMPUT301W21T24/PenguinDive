@@ -11,8 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class CountActivity extends AppCompatActivity {
 
@@ -43,9 +46,8 @@ public class CountActivity extends AppCompatActivity {
     // tag
     final String TAG = "Count Activity";
 
-    // literally use a one value list to pass the value
-    ArrayList<Integer> sumList = new ArrayList<Integer>();
-
+    // initial values
+    Integer sum;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +64,41 @@ public class CountActivity extends AppCompatActivity {
 
         // set count view
         count = findViewById(R.id.count_number);  // already set to zero in the constructor
-        //TODO: fix
+
+        // get the initial values for count with a new oncompletelistener
+        // Made with help from Ryan Brooks
+        db.collection("Trials").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    sum = 0;
+
+                    // for each document
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        // if the document is for the experiment
+                        if (document.get("Experiment Name").equals(experimentName)) {
+                            // get values for object through document
+                            String countType = (String) document.get("Count Type");
+
+                            // put the trials in the list depending on what type they are
+                            if (countType.equals("TRUE")) {
+                                sum++;
+                            } else if (countType.equals("FALSE")) {
+                                sum--;
+                            } else {
+                                System.out.println("Count Trial is not pass or fail!");
+                            }
+                        }
+                    }
+                } else {
+                    Log.d("Could not get data", "no data to get");
+                }
+
+                // set the text of count
+                count.setText(String.valueOf(sum));
+            }
+        });
 
         // set experiment name
         experimentNameView = findViewById(R.id.count_experiment_name);
@@ -73,8 +109,12 @@ public class CountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                // get text
+                Integer currentCount = Integer.valueOf(count.getText().toString());
+                Integer newCount = currentCount + 1;
                 // set text
-                count.setText(String.valueOf(sumList.get(0)));
+                count.setText(String.valueOf(newCount));
+
 
                 // firestore stuff
                 // make hashmap
@@ -110,8 +150,12 @@ public class CountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                // get text
+                Integer currentCount = Integer.valueOf(count.getText().toString());
+                Integer newCount = currentCount - 1;
                 // set text
-                count.setText(String.valueOf(sumList.get(0)));
+                count.setText(String.valueOf(newCount));
+
 
                 // firestore stuff
                 // make hashmap
@@ -141,44 +185,6 @@ public class CountActivity extends AppCompatActivity {
                         });
             }
         });
-
-
-        // add the snapshot listener once to get real time updates
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-
-            // whenever the database changes, reset and use the database values
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
-
-                // reset the values
-                sumList.clear();
-                sumList.add(0, 0);
-
-                // for each document in the snapshot
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-
-                    // if the document in the collection is for this experiment
-                    if (document.get("Experiment Name").equals(experimentName)) {
-
-                        // get values for object through document
-                        String countType = (String) document.get("Count Type");
-
-                        // put the trials in the list depending on what type they are
-                        if (countType.equals("TRUE")) {
-                            int increment = sumList.get(0) + 1;
-                            sumList.set(0, increment);
-                        } else if (countType.equals("FALSE")) {
-                            int decrement = sumList.get(0) - 1;
-                            sumList.set(0, decrement);
-                        } else {
-                            System.out.println("Count Trial is not pass or fail!");
-                        }
-
-                    }
-                }
-            }
-        });
-
 
     }
 }
