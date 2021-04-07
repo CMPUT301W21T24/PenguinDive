@@ -23,6 +23,8 @@ public class NNICFragment extends DialogFragment {
     interface OnFragmentInteractionListener {
 
         void AddNNIC_Trial(Non_Negative_Integer_Counts_Trial non_negative_integer_counts_trial);
+        // onOKPressed is used for what is done when OK is pressed, here mostly for database stuff
+        void onOKPressed(Non_Negative_Integer_Counts_Trial nnicTrial);
 
     }
 
@@ -89,6 +91,13 @@ public class NNICFragment extends DialogFragment {
 
                             // now use listener to run NNICActivity's Add Trial method and pass NNIC to activity
                             listener.AddNNIC_Trial(new Non_Negative_Integer_Counts_Trial(NNI, name));
+
+
+
+                            // call ONOKPRESSED to direct the trial object to NNICActivity and
+                            // let it do the firebase stuff every time the a fragment finishes
+                            listener.onOKPressed(new Non_Negative_Integer_Counts_Trial(NNI, name));
+
 
                         }
 
