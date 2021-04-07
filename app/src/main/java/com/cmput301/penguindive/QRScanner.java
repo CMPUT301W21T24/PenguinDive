@@ -163,7 +163,6 @@ public class QRScanner extends AppCompatActivity {
                     QRScanned();
                     break;
                 case "SB":
-                    populateBarcodeExper();
                     barcodeScanned();
                     break;
             }
@@ -188,6 +187,7 @@ public class QRScanner extends AppCompatActivity {
                         ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
                         for (int i = 0; i < s.size(); i++) {
                             if (s.get(i).contains(barcodeText) && s.get(i).contains(uid)) {
+                                Log.d("experiment barcodes", (String) document.get("Title"));
                                 expers.add((String) document.get("Title"));
                             }
                         }
@@ -196,7 +196,10 @@ public class QRScanner extends AppCompatActivity {
             } else {
                 Log.d("Could not get data", "no Data to get");
             }
-            String[] enames = (String[]) expers.toArray();
+            String[] enames = new String[expers.size()];
+            for (int i = 0; i < enames.length; i++) {
+                enames[i] = expers.get(i);
+            }
             ArrayAdapter<String> eAdapt = new ArrayAdapter(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, enames);
             barcodeExper.setAdapter(eAdapt);
         });
@@ -233,84 +236,100 @@ public class QRScanner extends AppCompatActivity {
                         String[] s = new String[4];
                         for (Map.Entry<String, Object> e : existingData.entrySet()) {
                             if (e.getKey().equals("Barcodes")) {
-                                s = e.getValue().toString().split("\\.");
-                                if (s[0].contains(barCodeText) && s[2].equals(uid)) {
-                                    break;
+                                Object[] barcodes = e.getValue().toString().split(",");
+                                for (int i = 0; i < barcodes.length; i++) {
+                                    s = barcodes[i].toString().split("\\.");
+                                    if (s[0].contains(barCodeText) && s[2].equals(uid)) {
+                                        break;
+                                    }
                                 }
+                                break;
                             }
                         }
                         if (s[4].contains("TRUE")) {
                             qrText.setText("adding success to trial result for experiment");
-                            db.collection("Experiments").get().addOnCompleteListener(task13 -> {
-                                if (task13.isSuccessful()) {
-                                    String tType = "";
-                                    for (DocumentSnapshot doc12 : task13.getResult()) {
-                                        if (ExperTitle.equals(doc12.get("Title"))) {
-                                            tType = (String) doc12.get("TrialType");
-                                            break;
+                            db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        String tType = "";
+                                        for (DocumentSnapshot doc12 : task.getResult()) {
+                                            if (ExperTitle.equals(doc12.get("Title"))) {
+                                                tType = (String) doc12.get("TrialType");
+                                                break;
+                                            }
                                         }
-                                    }
-                                    Map<String, Object> data = new HashMap<>();
-                                    data.put("Experiment Name", ExperTitle);
-                                    data.put("Trial Type", tType);
-                                    switch (tType) {
-                                        case "Measurement Trial":
-                                            data.put("Measurement Name", "BarSuccess");
-                                            data.put("Measurement", 1.0);
-                                            break;
-                                        case "Non-Negative Integer Count Trial":
-                                            data.put("NNIC Name", "BarSuccess");
-                                            data.put("Non-Negative Integer", 1);
-                                            break;
-                                        case "Binomial Trial":
-                                            data.put("Binomial Type", "Pass");
-                                            break;
-                                        case "Count Trial":
-                                            data.put("Increment Count", "TRUE");
-                                            break;
-                                    }
-                                    db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            qrText.setText("Trial successfully updated!");
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("Experiment Name", ExperTitle);
+                                        data.put("Trial Type", tType);
+                                        switch (tType) {
+                                            case "Measurement Trial":
+                                                data.put("Measurement Name", "BarSuccess");
+                                                data.put("Measurement", 1.0);
+                                                break;
+                                            case "Non-Negative Integer Count Trial":
+                                                data.put("NNIC Name", "BarSuccess");
+                                                data.put("Non-Negative Integer", 1);
+                                                break;
+                                            case "Binomial Trial":
+                                                data.put("Binomial Type", "Pass");
+                                                break;
+                                            case "Count Trial":
+                                                data.put("Increment Count", "TRUE");
+                                                break;
                                         }
-                                    });
+                                        db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    qrText.setText("Trial successfully updated (success)!");
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         } else if (s[4].contains("FALSE")) {
                             qrText.setText("adding failure to trial result for experiment");
-                            db.collection("Experiments").get().addOnCompleteListener(task12 -> {
-                                if (task12.isSuccessful()) {
-                                    String tType = "";
-                                    for (DocumentSnapshot doc1 : task12.getResult()) {
-                                        if (ExperTitle.equals(doc1.get("Title"))) {
-                                            tType = (String) doc1.get("TrialType");
-                                            break;
+                            db.collection("Experiments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        String tType = "";
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            if (ExperTitle.equals(document.get("Title"))) {
+                                                tType = (String) document.get("TrialType");
+                                                break;
+                                            }
                                         }
-                                    }
-                                    Map<String, Object> data = new HashMap<>();
-                                    data.put("Experiment Name", ExperTitle);
-                                    data.put("Trial Type", tType);
-                                    switch (tType) {
-                                        case "Measurement Trial":
-                                            data.put("Measurement Name", "QRSuccess");
-                                            data.put("Measurement", 0.0);
-                                            break;
-                                        case "Non-Negative Integer Count Trial":
-                                            data.put("NNIC Name", "QRSuccess");
-                                            data.put("Non-Negative Integer", -1);
-                                            break;
-                                        case "Binomial Trial":
-                                            data.put("Binomial Type", "Fail");
-                                            break;
-                                        case "Count Trial":
-                                            data.put("Increment Count", "FALSE");
-                                            break;
-                                    }
-                                    db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(task121 -> {
-                                        if (task121.isSuccessful()) {
-                                            qrText.setText("Trial successfully updated!");
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("Experiment Name", ExperTitle);
+                                        data.put("Trial Type", tType);
+                                        switch (tType) {
+                                            case "Measurement Trial":
+                                                data.put("Measurement Name", "BarFailure");
+                                                data.put("Measurement", 0.0);
+                                                break;
+                                            case "Non-Negative Integer Count Trial":
+                                                data.put("NNIC Name", "BarFailure");
+                                                data.put("Non-Negative Integer", -1);
+                                                break;
+                                            case "Binomial Trial":
+                                                data.put("Binomial Type", "Fail");
+                                                break;
+                                            case "Count Trial":
+                                                data.put("Increment Count", "FALSE");
+                                                break;
                                         }
-                                    });
+                                        db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    qrText.setText("Trial successfully updated (failure)!");
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         } else {
@@ -399,11 +418,11 @@ public class QRScanner extends AppCompatActivity {
                                 data.put("Trial Type", tType);
                                 switch (tType) {
                                     case "Measurement Trial":
-                                        data.put("Measurement Name", "QRSuccess");
+                                        data.put("Measurement Name", "QRFailure");
                                         data.put("Measurement", 0.0);
                                         break;
                                     case "Non-Negative Integer Count Trial":
-                                        data.put("NNIC Name", "QRSuccess");
+                                        data.put("NNIC Name", "QRFailure");
                                         data.put("Non-Negative Integer", -1);
                                         break;
                                     case "Binomial Trial":
@@ -513,6 +532,7 @@ public class QRScanner extends AppCompatActivity {
                     break;
                 case "SB":
                     update.setText("Update");
+                    populateBarcodeExper();
                     update.setVisibility(Button.VISIBLE);
                     barcodeExper.setVisibility(Button.VISIBLE);
                     break;
