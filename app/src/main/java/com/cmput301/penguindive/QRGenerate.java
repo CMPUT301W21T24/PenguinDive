@@ -118,7 +118,7 @@ public class QRGenerate extends AppCompatActivity {
         });
 
         // set the dropdown menu entries
-        String[] passOrFail = {"PASS", "FAIL"};
+        String[] passOrFail = {"SUCCESS", "FAILURE"};
         ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
         passfail.setAdapter(passFailAdapt);
 
@@ -176,7 +176,7 @@ public class QRGenerate extends AppCompatActivity {
             save.setVisibility(Button.GONE);
         });
    }
-   
+
     // Refresh method
     public void ClickRefresh(View view){
         MainActivity.redirectActivity(this, QRGenerate.class);
