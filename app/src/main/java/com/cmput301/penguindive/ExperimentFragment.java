@@ -7,13 +7,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,14 +46,15 @@ public class ExperimentFragment extends DialogFragment {
     private EditText experimentRegion;
     private NumberPicker experimentMinimumTrials;
     private TextView experimentOwner;
+    private ToggleButton experimentLocation;
     private Spinner experimentStatus;
     private OnFragmentInteractionListener listener;
     public Experiment experiment;
     private String experimentID;
     private List<String> experimenterIDs;
     private int position;
+    public Boolean locationStatus;
     private Spinner spinnerTrialType;
-
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");
@@ -85,6 +90,7 @@ public class ExperimentFragment extends DialogFragment {
         experimentMinimumTrials = view.findViewById(R.id.editCount);
         experimentOwner = view.findViewById(R.id.editOwner);
         experimentStatus = view.findViewById(R.id.editStatus);
+        experimentLocation = view.findViewById(R.id.location_switch);
         SharedPreferences sharedPref = getActivity().getSharedPreferences("identity", Context.MODE_PRIVATE);
         String userID = sharedPref.getString("UID", "");
         experimentOwner.setText(userID);
@@ -113,6 +119,7 @@ public class ExperimentFragment extends DialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             experiment = (Experiment) bundle.getSerializable("experiment");
+            locationStatus = experiment.getLocationState();
             position = (int) bundle.getSerializable("pos");
             experimentID = experiment.getExperimentId();
             experimentTitle.setText(experiment.getTitle());
@@ -127,7 +134,7 @@ public class ExperimentFragment extends DialogFragment {
             // Trial Type Spinner
             int trialtypeSpinnerPosition = trialtypeAdapter.getPosition(experiment.getTrialType());
             spinnerTrialType.setSelection(trialtypeSpinnerPosition);
-
+            experimentLocation.setChecked(locationStatus);
             experimenterIDs = experiment.getExperimenters();
         }
 
@@ -147,6 +154,7 @@ public class ExperimentFragment extends DialogFragment {
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     if (experimentID == null){
                         experimentID = UUID.randomUUID().toString();
+                        locationStatus = false;
                     }
                     String title = experimentTitle.getText().toString();
                     String description = experimentDescription.getText().toString();
@@ -172,17 +180,11 @@ public class ExperimentFragment extends DialogFragment {
                     // If an existing experiment
                     else if(experiment != null){
                         // Re-use existing username
-<<<<<<< HEAD
-                        String ownerName = experiment.getOwnerUserName();
-                        listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs, trialType), position);
-=======
-                      
-                        String ownerName = experiment.getOwnerUserName();
-                        listener.onEditPressed(new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs), position);
-
-
-
->>>>>>> e50900c480b744c6c48bb59ce847cbbf9dcd3737
+                        String ownerName = experiment.getOwnerUserName(); //
+                        // set the location status
+                        locationStatus = experimentLocation.isChecked();
+                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,locationStatus,trialType);
+                        listener.onEditPressed(newExperiment, position);
                     }
                     // If it's a new experiment
                     else {
@@ -205,7 +207,11 @@ public class ExperimentFragment extends DialogFragment {
                                 else{
                                     ownerName = ownerId;
                                 }
-                                listener.onOkPressed(new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, trialType));
+
+                                // set the location status
+                                locationStatus = experimentLocation.isChecked();
+                                Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, locationStatus, trialType);
+                                listener.onOkPressed(newExperiment);
                             }
                         });
                     }

@@ -204,4 +204,25 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Location: "
+            android:textSize="18sp"/>
+
+        <ToggleButton
+            android:id="@+id/location_switch"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textOn="On"
+            android:textOff="Off"
+            android:checked="true"/>
+
+    </LinearLayout>
+
 </LinearLayout>

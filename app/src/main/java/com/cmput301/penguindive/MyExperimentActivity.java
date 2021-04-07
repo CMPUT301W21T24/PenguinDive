@@ -21,6 +21,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
                     // Get all the keywords from the experiment
                     List<String> keywords = getKeywords(newExperiment);
+                    List<GeoPoint> locations = new ArrayList<>();
 
                     docData.put("Status",newExperiment.getStatus());
                     docData.put("ownerId",ownerId);
@@ -124,6 +126,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     docData.put("experimenterIDs", newExperiment.getExperimenters());
                     docData.put("TrialType", newExperiment.getTrialType());
                     docData.put("Keywords", keywords);
+                    docData.put("LocationStatus", newExperiment.getLocationState());
+                    docData.put("Locations", locations);
 
                     db.collection("Experiments").document(experimentId)
                             .set(docData)
@@ -145,6 +149,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Region", newExperiment.getRegion(),
                 "Description", newExperiment.getDescription(),
                 "Title", newExperiment.getTitle(),
+                "LocationStatus", newExperiment.getLocationState(),
                 "MinimumTrials", newExperiment.getMinTrials(),
                 "TrialType", newExperiment.getTrialType());
     }
@@ -183,8 +188,9 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                    Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerName, ownerId, status, experimenters, locationStatus, trialType));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -239,6 +245,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 String status = (String) doc.getData().get("Status");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
+                                                Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -250,7 +257,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType);
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
                                                     experimentDataList.add(newExperiment);
                                                 }
                                             }

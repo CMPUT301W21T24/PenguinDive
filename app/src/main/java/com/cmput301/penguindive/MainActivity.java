@@ -28,6 +28,7 @@ import com.google.firebase.firestore.CollectionReference;
 
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -75,17 +76,31 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         drawerLayout = findViewById(R.id.experiment_activity);
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
+            Boolean locationState = experimentDataList.get(position).getLocationState();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Subscribe Confirmation")
-                    .setMessage("Do you want to be an experimenter of this experiment?")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
-                                .update("experimenterIDs", FieldValue.arrayUnion(uid));
-                        dialog.cancel();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create()
-                    .show();
+            if (locationState){
+                builder.setTitle("Subscribe Confirmation")
+                        .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }else {
+                builder.setTitle("Subscribe Confirmation")
+                        .setMessage("Do you want to be an experimenter of this experiment?")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }
         });
 
         // Populate list from firestore
@@ -105,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         String experimentId = newExperiment.getExperimentId();
         String ownerId = newExperiment.getOwnerId();
         Map<String, Object> docData = new HashMap<>();
+        List<GeoPoint> locations = new ArrayList<>();
 
         // Get all the keywords from the experiment
         List<String> keywords = getKeywords(newExperiment);
@@ -118,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         docData.put("MinimumTrials", newExperiment.getMinTrials());
         docData.put("experimenterIDs", newExperiment.getExperimenters());
         docData.put("Keywords", keywords);
+        docData.put("LocationStatus", newExperiment.getLocationState());
         docData.put("TrialType", newExperiment.getTrialType());
+        docData.put("Locations", locations);
 
         db.collection("Experiments").document(experimentId)
                 .set(docData)
@@ -163,10 +181,9 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     String ownerId = (String) doc.getData().get("ownerId");
                     String ownerName = (String) doc.getData().get("ownerName");
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                    Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
-
-                    // Make new experiment object that can be added and passed to methods
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
@@ -225,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
+                                                Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
                                                 // Check to see if it has been added before
                                                 // Prevent duplicates even though firestore doc says ArrayContainsAny will de-dupe
@@ -236,7 +254,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                     }
                                                 }
                                                 if (!isAdded) {
-                                                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, trialType));
+                                                    Experiment newExperiment = new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType);
+                                                    experimentDataList.add(newExperiment);
                                                 }
                                             }
                                         }

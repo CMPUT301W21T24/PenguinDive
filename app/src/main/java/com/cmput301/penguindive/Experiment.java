@@ -17,10 +17,9 @@ public class Experiment implements Serializable {
     private String status;
     private List<String> experimenters;
     private String trialType;  // string for requested type of trial
+    private Boolean locationState;
 
-
-    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String ownerUserName, String status, List<String> experimenters, String trialType) {
-
+    public Experiment(String experimentId, String title, String description, String region, Integer minTrials, String ownerId, String ownerUserName, String status, List<String> experimenters, Boolean locationState, String trialType) {
         this.experimentId = experimentId;
         this.title = title;
         this.description = description;
@@ -30,6 +29,7 @@ public class Experiment implements Serializable {
         this.ownerUserName = ownerUserName;
         this.status = status;
         this.experimenters = experimenters;
+        this.locationState = locationState;
         this.trialType = trialType;
     }
 
@@ -107,5 +107,12 @@ public class Experiment implements Serializable {
     }
 
     public String getTrialType() { return trialType; }
+
+    public void setLocationState(boolean locationState) {
+        this.locationState = locationState;
+    }
+    Boolean getLocationState() {
+        return locationState;
+    }
 
 }

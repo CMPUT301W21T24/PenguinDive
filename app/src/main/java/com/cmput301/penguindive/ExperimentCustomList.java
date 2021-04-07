@@ -49,8 +49,21 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         TextView description = convertView.findViewById(R.id.experiment_description);
         TextView status = convertView.findViewById(R.id.experiment_status);
         TextView owner = convertView.findViewById(R.id.experiment_owner);
+        TextView Location = convertView.findViewById(R.id.experiment_locationStatus);
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
         Button trials_button = convertView.findViewById(R.id.trials_experiment);
+        Button map_button = convertView.findViewById(R.id.map_button);
+
+        map_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, MapActivity.class);
+                Experiment exp = getItem(position);
+                String exp_id = exp.getExperimentId();
+                intent.putExtra("EXPID", exp_id);
+                context.startActivity(intent);
+            }
+        });
 
         questions_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +134,13 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         description.setText(experiment.getDescription());
         status.setText(experiment.getStatus());
         owner.setText(experiment.getOwnerUserName());
+        if (experiment.getLocationState()){
+            Location.setText("ON");
+            map_button.setVisibility(View.VISIBLE);
+        }else{
+            Location.setText("OFF");
+            map_button.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }
