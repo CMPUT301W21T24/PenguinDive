@@ -1,29 +1,17 @@
 package com.cmput301.penguindive;
 
+// refactored to fit database
 public class Count_Trial {
 
     // variables
-    private int count;  // the integer count of what we're trying to measure
+    private boolean increment;
 
-    // constructor
-    public Count_Trial() {
-        this.count = 0;  // should always start at zero
+    public Count_Trial(boolean increment) {
+        this.increment = increment;
     }
 
-    // incrememnts count by 1
-    public void incrementCount() {
-        count++;
+    public boolean getIncrement() {
+        return increment;
     }
-
-    // decrement count by 1
-    public void decrementCount() {
-        count--;
-    }
-
-    // getters
-    public int getCount() {
-        return count;
-    }
-
 }
 

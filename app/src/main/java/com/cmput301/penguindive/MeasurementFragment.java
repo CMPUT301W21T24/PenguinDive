@@ -23,6 +23,7 @@ public class MeasurementFragment extends DialogFragment {
     interface OnFragmentInteractionListener {
 
         void AddMeasurement_Trial(Measurement_Trial measurement_trial);
+        void onOKPressed(Measurement_Trial measurement_trial);  // used for database in activity
 
     }
 
@@ -88,6 +89,9 @@ public class MeasurementFragment extends DialogFragment {
 
                             // now use listener to run NNICActivity's Add Trial method and pass NNIC to activity
                             listener.AddMeasurement_Trial(new Measurement_Trial(measurement, name));
+
+                            // run onOKPressed method because OK was pressed
+                            listener.onOKPressed(new Measurement_Trial(measurement, name));
 
                         }
 
