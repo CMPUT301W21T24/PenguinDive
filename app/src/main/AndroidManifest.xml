@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Penguindive">
-        <activity android:name=".SearchQuestionActivity"></activity>
+        <activity android:name=".SearchQuestionActivity" />
         <activity android:name=".PickScanType" />
         <activity android:name=".PickQRType" />
         <activity android:name=".AnswerActivity" />

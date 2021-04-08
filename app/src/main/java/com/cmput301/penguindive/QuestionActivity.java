@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +44,7 @@ public class QuestionActivity extends AppCompatActivity {
     String expID;
     EditText searchQuestion;
     Button searchQuestionButton;
+    String uid;
 
 
 
@@ -71,6 +74,10 @@ public class QuestionActivity extends AppCompatActivity {
         //initialize db
         db = FirebaseFirestore.getInstance();
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Questions");
 
@@ -97,6 +104,7 @@ public class QuestionActivity extends AppCompatActivity {
                 String questionSubject = addQuestionSubjectText.getText().toString();
                 String questionId = UUID.randomUUID().toString();
 
+
                 HashMap<String, String> data = new HashMap<>();
 
                 if ((questionText.length() > 0) && (questionSubject.length() > 0) ) {
@@ -105,6 +113,7 @@ public class QuestionActivity extends AppCompatActivity {
                     data.put("question_title",questionSubject);
                     data.put("question_id",questionId);
                     data.put("experiment_id",expID);
+                    data.put("question_user_id",uid);
 
                     collectionReference
 
@@ -146,10 +155,11 @@ public class QuestionActivity extends AppCompatActivity {
                     String questionId = doc.getId();
                     String questionTitle = (String)doc.getData().get("question_title");
                     String experimentID = (String)doc.getData().get("experiment_id");
+                    String questionUserId = (String)doc.getData().get("question_user_id");
 
                     //add new question
                     if(experimentID.equals(expID)){
-                        questionDataList.add(new Question(question, questionId, questionTitle));
+                        questionDataList.add(new Question(question, questionId, questionTitle, questionUserId));
                     }
 
 
@@ -168,6 +178,7 @@ public class QuestionActivity extends AppCompatActivity {
                 // pass intent and start new activity
                 Intent intent = new Intent(QuestionActivity.this, AnswerActivity.class);
                 // putting id
+                intent.putExtra("KEYWORD", "");
                 intent.putExtra("ID", question.getQuestionId());
                 intent.putExtra("TITLE", question.getQuestionTitle());
                 intent.putExtra("TEXT", question.getQuestion());

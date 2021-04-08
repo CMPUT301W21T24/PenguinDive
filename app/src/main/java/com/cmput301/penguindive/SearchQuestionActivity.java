@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -81,6 +82,24 @@ public class SearchQuestionActivity extends AppCompatActivity {
             }
         });
 
+        // click on question
+        questionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Question question = questionDataList.get(position);
+
+                // pass intent and start new activity
+                Intent intent = new Intent(SearchQuestionActivity.this, AnswerActivity.class);
+                // putting id
+                intent.putExtra("KEYWORD", "");
+                intent.putExtra("ID", question.getQuestionId());
+                intent.putExtra("TITLE", question.getQuestionTitle());
+                intent.putExtra("TEXT", question.getQuestion());
+                startActivity(intent);
+
+            }
+        });
+
         // pull question from DB
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -94,11 +113,14 @@ public class SearchQuestionActivity extends AppCompatActivity {
                     String questionId = doc.getId();
                     String questionTitle = (String)doc.getData().get("question_title");
                     String experimentID = (String)doc.getData().get("experiment_id");
+                    String questionUserId = (String)doc.getData().get("question_user_id");
 
                     //add new question
                     if(experimentID.equals(expID)){
-                        if(question.contains(keyword) || questionId.contains(keyword) || questionTitle.contains(keyword)){
-                            questionDataList.add(new Question(question, questionId, questionTitle));
+                        if(question.contains(keyword) || questionTitle.contains(keyword)){
+                            questionDataList.add(new Question(question, questionId, questionTitle,questionUserId));
+                        }else{
+                            Toast.makeText(getApplicationContext(),"No results found!",Toast.LENGTH_LONG);
                         }
                     }
 

@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
         android:id="@+id/question_subject"
         android:layout_width="wrap_content"
@@ -26,13 +27,27 @@
     </TextView>
 
     <EditText
+        android:id="@+id/search_answer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="SearchText"
+        android:ems="8" />
+
+    <Button
+        android:id="@+id/search_answer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Search" />
+
+    <EditText
         android:id="@+id/answer_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="30"
         android:hint="Answer"
         android:inputType="text"
-        android:layout_marginTop="50sp"/>
+        android:layout_marginTop="10sp"/>
 
     <Button
         android:id="@+id/reply_button"
@@ -41,6 +56,8 @@
         android:layout_marginHorizontal="50dp"
         android:layout_gravity="left"
         android:text="Reply"/>
+
+
 
     <ListView
         android:id="@+id/answer_list"

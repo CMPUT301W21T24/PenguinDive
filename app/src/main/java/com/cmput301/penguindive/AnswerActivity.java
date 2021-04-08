@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,9 @@ public class AnswerActivity extends AppCompatActivity {
     EditText addAnswerEditText;
     TextView subjectField;
     TextView questionField;
+    EditText searchAnswer;
+    Button searchAnswerButton;
+    String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class AnswerActivity extends AppCompatActivity {
         final String ID = intent.getStringExtra("ID");
         final String q_title = intent.getStringExtra("TITLE");
         final String q_text = intent.getStringExtra("TEXT");
+        final String keyword = intent.getStringExtra("KEYWORD");
 
         // fetching views
         answerList = findViewById(R.id.answer_list);
@@ -56,6 +62,8 @@ public class AnswerActivity extends AppCompatActivity {
         questionField = findViewById(R.id.question_text);
         addAnswerButton = findViewById(R.id.reply_button);
         addAnswerEditText = findViewById(R.id.answer_editText);
+        searchAnswer = findViewById(R.id.search_answer);
+        searchAnswerButton = findViewById(R.id.search_answer_button);
 
         subjectField.setText(q_title);
         questionField.setText(q_text);
@@ -69,6 +77,10 @@ public class AnswerActivity extends AppCompatActivity {
         //initialize db
         db = FirebaseFirestore.getInstance();
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Answers");
         // push to DB
@@ -81,6 +93,7 @@ public class AnswerActivity extends AppCompatActivity {
                 if (answerText.length()>0) {
                     data.put("answer_text", answerText);
                     data.put("question_id", ID);
+                    data.put("answer_user_id",uid);
 
                     collectionReference
                             // Add a new document with a generated id.
@@ -104,6 +117,22 @@ public class AnswerActivity extends AppCompatActivity {
 
             }
         });
+        searchAnswerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyword = searchAnswer.getText().toString();
+                if(keyword.length() > 0){
+                    // pass intent and start new activity
+                    Intent intent = new Intent(AnswerActivity.this, AnswerActivity.class);
+                    // putting word
+                    intent.putExtra("KEYWORD", keyword);
+                    intent.putExtra("ID", ID);
+                    intent.putExtra("TITLE", q_title);
+                    intent.putExtra("TEXT", q_text);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // pull from db
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -117,9 +146,12 @@ public class AnswerActivity extends AppCompatActivity {
 
                     String question_id = (String)doc.getData().get("question_id");
                     String answer = (String)doc.getData().get("answer_text");
+                    String answerUserid = (String)doc.getData().get("answer_user_id");
 
                     if(question_id.equals(ID)){
-                       answerDataList.add(new Answer(answer));
+                        if(answer.contains(keyword) || answer.equals("")){
+                            answerDataList.add(new Answer(answer,answerUserid));
+                        }
                     }
                 }
                 //Notifying the adapter to render any new data fetched from the cloud
