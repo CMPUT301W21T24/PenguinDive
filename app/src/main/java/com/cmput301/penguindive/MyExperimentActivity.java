@@ -150,7 +150,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "Title", newExperiment.getTitle(),
                 "LocationStatus", newExperiment.getLocationState(),
                 "MinimumTrials", newExperiment.getMinTrials(),
-                "TrialType", newExperiment.getTrialType());
+                "TrialType", newExperiment.getTrialType(),
+                "Keywords", getKeywords(newExperiment));
     }
 
     @Override
