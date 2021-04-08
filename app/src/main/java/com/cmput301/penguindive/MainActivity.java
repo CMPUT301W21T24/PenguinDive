@@ -77,12 +77,10 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
             Boolean locationState = experimentDataList.get(position).getLocationState();
-            String status = experimentDataList.get(position).getStatus();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            if (locationState && status.equals("Published")){
+            if (locationState){
                 builder.setTitle("Subscribe Confirmation")
-                        .setMessage("Do you want to be an experimenter of this experiment?\nWARNING: This experiment requires your location.")
+                        .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
                         .setPositiveButton("OK", (dialog, which) -> {
                             experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
                                     .update("experimenterIDs", FieldValue.arrayUnion(uid));
@@ -91,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                         .setNegativeButton("Cancel", null)
                         .create()
                         .show();
-            }else if (status.equals("Published")) {
+            }else {
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment?")
                         .setPositiveButton("OK", (dialog, which) -> {

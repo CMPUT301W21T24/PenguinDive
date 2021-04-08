@@ -134,7 +134,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                             .addOnSuccessListener(aVoid -> Log.d("TAG", "DocumentSnapshot successfully written!"))
                             .addOnFailureListener(e -> Log.w("TAG", "Error writing document", e));
 
-                    db.collection("Experiments").document(experimentId).update("Keywords", keywords);
                 }
             }
         });
@@ -190,7 +189,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
-                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerName, ownerId, status, experimenters, locationStatus, trialType));
+                    experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
                 }
             }
             experimentArrayAdapter.notifyDataSetChanged();
