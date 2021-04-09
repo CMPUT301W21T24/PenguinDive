@@ -105,7 +105,9 @@ public class QRGenerate extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("Published") && document.get("experimenterIDs").toString().contains(uid)) {
+                        if (document.get("Status").equals("Published")
+                                && (document.get("experimenterIDs").toString().contains(uid)
+                                || document.get("ownerId").toString().contains(uid))) {
                             experimentNames.add(document.get("Title").toString());
                             Log.d("experiment names", document.get("Title").toString());
                         }

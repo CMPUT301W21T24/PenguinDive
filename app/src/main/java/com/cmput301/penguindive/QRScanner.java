@@ -106,6 +106,7 @@ public class QRScanner extends AppCompatActivity {
     ArrayList<String> experimentNames;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,9 +128,13 @@ public class QRScanner extends AppCompatActivity {
         // get experiment names for registering barcodes
         experimentNames = new ArrayList<>();
         db.collection("Experiments").get().addOnCompleteListener(task -> {
+            SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+            String uid = sharedPref.getString("UID", "");
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                    if (document.get("Status").equals("Published")) {
+                    if (document.get("Status").equals("Published")
+                            && (document.get("experimenterIDs").toString().contains(uid)
+                            || document.get("ownerId").toString().contains(uid))) {
                         experimentNames.add(document.get("Title").toString());
                         Log.d("experiment names", document.get("Title").toString());
                     }
@@ -194,7 +199,9 @@ public class QRScanner extends AppCompatActivity {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                     Map<String, Object> m = document.getData();
-                    if (m.containsKey("Barcodes") && document.get("Status").equals("Published")) {
+                    if (m.containsKey("Barcodes") && document.get("Status").equals("Published")
+                            && (document.get("experimenterIDs").toString().contains(uid)
+                            || document.get("ownerId").toString().contains(uid))) {
                         ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
                         for (int i = 0; i < s.size(); i++) {
                             if (s.get(i).contains(barcodeText) && s.get(i).contains(uid)) {
@@ -215,7 +222,7 @@ public class QRScanner extends AppCompatActivity {
             // if there are no items in the dropdown then there are no registered barcodes, otherwise
             // show the update button and dropdown
             if (enames.length == 0) {
-                qrText.setText("No registered barcodes match this scan");
+                qrText.setText("No registered barcodes match this scan\nor no subscribed experiments");
             } else {
                 ArrayAdapter<String> eAdapt = new ArrayAdapter(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, enames);
                 barcodeExper.setAdapter(eAdapt);
@@ -281,9 +288,11 @@ public class QRScanner extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         String tType = "";
+                                        String eid = "";
                                         for (DocumentSnapshot doc12 : task.getResult()) {
                                             if (ExperTitle.equals(doc12.get("Title"))) {
                                                 tType = (String) doc12.get("TrialType");
+                                                eid = doc12.getId();
                                                 break;
                                             }
                                         }
@@ -295,6 +304,8 @@ public class QRScanner extends AppCompatActivity {
                                                 curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
                                                 curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
                                         data.put("Date", date);
+                                        data.put("Experiment ID", eid);
+                                        data.put("UID", uid);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarSuccess");
@@ -308,7 +319,7 @@ public class QRScanner extends AppCompatActivity {
                                                 data.put("Binomial Type", "Pass");
                                                 break;
                                             case "Count Trial":
-                                                data.put("Increment Count", "TRUE");
+                                                data.put("Count Type", "TRUE");
                                                 break;
                                         }
                                         db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -330,9 +341,11 @@ public class QRScanner extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         String tType = "";
+                                        String eid = "";
                                         for (DocumentSnapshot document : task.getResult()) {
                                             if (ExperTitle.equals(document.get("Title"))) {
                                                 tType = (String) document.get("TrialType");
+                                                eid = document.getId();
                                                 break;
                                             }
                                         }
@@ -344,6 +357,8 @@ public class QRScanner extends AppCompatActivity {
                                                 curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
                                                 curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
                                         data.put("Date", date);
+                                        data.put("Experiment ID", eid);
+                                        data.put("UID", uid);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarFailure");
@@ -409,10 +424,14 @@ public class QRScanner extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 String tType = "";
+                                String eid = "";
                                 boolean pub = false;
                                 for (DocumentSnapshot doc : task.getResult()) {
-                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")) {
+                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")
+                                            && (doc.get("experimenterIDs").toString().contains(uid)
+                                            || doc.get("ownerId").toString().contains(uid))) {
                                         tType = (String) doc.get("TrialType");
+                                        eid = doc.getId();
                                         pub = true;
                                         break;
                                     }
@@ -426,6 +445,8 @@ public class QRScanner extends AppCompatActivity {
                                             curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
                                             curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
                                     data.put("Date", date);
+                                    data.put("Experiment ID", eid);
+                                    data.put("UID", uid);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRSuccess");
@@ -451,7 +472,7 @@ public class QRScanner extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    qrText.setText("No experiment with that name exists");
+                                    qrText.setText("No experiment with that name exists\n or not subscribed");
                                 }
                             }
                         }
@@ -464,10 +485,14 @@ public class QRScanner extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 String tType = "";
+                                String eid = "";
                                 boolean pub = false;
                                 for (DocumentSnapshot doc : task.getResult()) {
-                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")) {
+                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")
+                                            && (doc.get("experimenterIDs").toString().contains(uid)
+                                            || doc.get("ownerId").toString().contains(uid))) {
                                         tType = (String) doc.get("TrialType");
+                                        eid = doc.getId();
                                         pub = true;
                                         break;
                                     }
@@ -481,6 +506,8 @@ public class QRScanner extends AppCompatActivity {
                                             curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
                                             curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
                                     data.put("Date", date);
+                                    data.put("Experiment ID", eid);
+                                    data.put("UID", uid);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRFailure");
@@ -506,7 +533,7 @@ public class QRScanner extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    qrText.setText("No experiment with that name exists");
+                                    qrText.setText("No experiment with that name exists\nor not subscribed");
                                 }
                             }
                         }
@@ -532,7 +559,6 @@ public class QRScanner extends AppCompatActivity {
     private void registerBar() {
         // get barcode and user id
         String barcode = qrText.getText().toString();
-        HashMap<String, String> choiceMap = new HashMap<>();
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         String uid = sharedPref.getString("UID", "");
         String experTrial = qrText.getText().toString() + ".exp:." + uid + ".add trial result:." + trueFalse.getSelectedItem();
@@ -614,10 +640,14 @@ public class QRScanner extends AppCompatActivity {
                     populateBarcodeExper();
                     break;
                 case "BR":
-                    update.setText("Register");
-                    update.setVisibility(Button.VISIBLE);
-                    trueFalse.setVisibility(Spinner.VISIBLE);
-                    experName.setVisibility(Spinner.VISIBLE);
+                    if (experimentNames.size() == 0) {
+                        qrText.setText("No subscribed experiments");
+                    } else {
+                        update.setText("Register");
+                        update.setVisibility(Button.VISIBLE);
+                        trueFalse.setVisibility(Spinner.VISIBLE);
+                        experName.setVisibility(Spinner.VISIBLE);
+                    }
                     break;
             }
         }));
