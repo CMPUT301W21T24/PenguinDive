@@ -298,11 +298,11 @@ public class QRScanner extends AppCompatActivity {
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarSuccess");
-                                                data.put("Measurement", 1.0);
+                                                data.put("Measurement", "1.0");
                                                 break;
                                             case "Non-Negative Integer Count Trial":
                                                 data.put("NNIC Name", "BarSuccess");
-                                                data.put("Non-Negative Integer", 1);
+                                                data.put("Non-Negative Integer", "1");
                                                 break;
                                             case "Binomial Trial":
                                                 data.put("Binomial Type", "Pass");
@@ -347,11 +347,11 @@ public class QRScanner extends AppCompatActivity {
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarFailure");
-                                                data.put("Measurement", 0.0);
+                                                data.put("Measurement", "0.0");
                                                 break;
                                             case "Non-Negative Integer Count Trial":
                                                 data.put("NNIC Name", "BarFailure");
-                                                data.put("Non-Negative Integer", -1);
+                                                data.put("Non-Negative Integer", "-1");
                                                 break;
                                             case "Binomial Trial":
                                                 data.put("Binomial Type", "Fail");
@@ -429,11 +429,11 @@ public class QRScanner extends AppCompatActivity {
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRSuccess");
-                                            data.put("Measurement", 1.0);
+                                            data.put("Measurement", "1.0");
                                             break;
                                         case "Non-Negative Integer Count Trial":
                                             data.put("NNIC Name", "QRSuccess");
-                                            data.put("Non-Negative Integer", 1);
+                                            data.put("Non-Negative Integer", "1");
                                             break;
                                         case "Binomial Trial":
                                             data.put("Binomial Type", "Pass");
@@ -484,11 +484,11 @@ public class QRScanner extends AppCompatActivity {
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRFailure");
-                                            data.put("Measurement", 0.0);
+                                            data.put("Measurement", "0.0");
                                             break;
                                         case "Non-Negative Integer Count Trial":
                                             data.put("NNIC Name", "QRFailure");
-                                            data.put("Non-Negative Integer", -1);
+                                            data.put("Non-Negative Integer", "-1");
                                             break;
                                         case "Binomial Trial":
                                             data.put("Binomial Type", "Fail");
