@@ -34,14 +34,13 @@
             android:id="@+id/measurement_add_trial_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginEnd="88dp"
+            android:layout_marginEnd="76dp"
             android:text="Add Measurement Trial"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.313"
+            app:layout_constraintVertical_bias="0.367"
             tools:visibility="visible">
 
         </Button>
@@ -54,7 +53,7 @@
             android:text="Ignore Results"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent">
 
         </Button>
