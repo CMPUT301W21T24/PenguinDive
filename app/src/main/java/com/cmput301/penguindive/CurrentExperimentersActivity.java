@@ -2,6 +2,8 @@ package com.cmput301.penguindive;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -10,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class CurrentExperimentersActivity extends AppCompatActivity {
     ListView experimentersList;
@@ -23,6 +23,8 @@ public class CurrentExperimentersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.current_experimenters);
         experimentersList = findViewById(R.id.current_experimenters_list);
+
+        // This is where we populate the list
         String[] experimenters = {"Hello", "world"};
 
         dataList = new ArrayList<>();
@@ -31,6 +33,13 @@ public class CurrentExperimentersActivity extends AppCompatActivity {
         experimentersAdapter = new ArrayAdapter<>(this, R.layout.current_experimenters_layout, dataList);
         experimentersList.setAdapter(experimentersAdapter);
 
+        experimentersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dataList.remove(position);
+                experimentersAdapter.notifyDataSetChanged();
+            }
+        });
 
     }
 }
