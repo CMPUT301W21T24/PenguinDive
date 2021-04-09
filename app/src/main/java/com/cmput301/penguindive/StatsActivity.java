@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-/*
-This class is an activity which displays the statistics and gives the user the ability to display histograms relative to
-four trial types an experiment may have
+/**
+ * This class is an activity which displays the statistics and gives the user the ability to display histograms relative to
+ * four trial types an experiment may have
  */
 public class StatsActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
