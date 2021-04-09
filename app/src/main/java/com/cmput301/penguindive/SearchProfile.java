@@ -91,6 +91,7 @@ public class SearchProfile extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         profileArray.clear();
+                        profileAdapter.notifyDataSetChanged();
                         if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));

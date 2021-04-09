@@ -27,9 +27,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-/**
- * This class represents a histogram activity for a given experiment
+/*
+Developped with help from:
+PhilJay's MPAndroidChart on GitHub
+Created By: Philipp Jahoda
+Last Updated on October 29, 2020
+License: Copyright 2020 Philipp Jahoda
+Licensed under the Apache License, Version 2.0
+URL: https://github.com/PhilJay/MPAndroidChart
  */
+
+//This class allows the user to display a bar-graph of the frequency a trial's associated data is repeated.
 public class Histogram extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     BarChart barChart;
@@ -78,12 +86,13 @@ public class Histogram extends AppCompatActivity {
                             }
                             int TRUE = Collections.frequency(count,"TRUE");
                             int FALSE = Collections.frequency(count,"FALSE");
+                            int total = TRUE - FALSE;
+
                             ArrayList<BarEntry> entries = new ArrayList<>();
 
-                            BarEntry barEntry = new BarEntry(0, TRUE);
+                            BarEntry barEntry = new BarEntry(0, total);
                             entries.add(barEntry);
-                            barEntry = new BarEntry(1,FALSE);
-                            entries.add(barEntry);
+
                             BarDataSet barDataSet = new BarDataSet(entries, type);
 
                             BarData data = new BarData(barDataSet);
@@ -93,6 +102,7 @@ public class Histogram extends AppCompatActivity {
 
                     });
 
+                    //If the experiment is of type Binomial Trial display the frequency of pass and fail
                 }else if (type.equals("Binomial Trial")){
                     db.collection("Trials")
                             .whereEqualTo("Experiment Name", name)
@@ -121,7 +131,7 @@ public class Histogram extends AppCompatActivity {
 
                     });
 
-
+                //If the experiment is of type Measurement display the frequency each measurement shows up in a trial
                 }else if (type.equals("Measurement Trial")){
                     db.collection("Trials")
                             .whereEqualTo("Experiment Name", name)
@@ -154,6 +164,7 @@ public class Histogram extends AppCompatActivity {
 
                     });
 
+                    //If the experiment is of type Non-negative Integer display the frequency each integer shows up in a trial
                 }else if (type.equals("Non-Negative Integer Count Trial")) {
                     db.collection("Trials")
                             .whereEqualTo("Experiment Name", name)
@@ -190,32 +201,7 @@ public class Histogram extends AppCompatActivity {
         });
 
     }
-    private void configureChartAppearance(){
-        barChart.getDescription().setEnabled(false);
-        barChart.setDrawValueAboveBar(false);
-    }
-    private void showBarChart(){
-        ArrayList<Double> valueList = new ArrayList<Double>();
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        String title = "Title";
 
-        //input data
-        for(int i = 0; i < 6; i++){
-            valueList.add(i * 100.1);
-        }
-
-        //fit the data into a bar
-        for (int i = 0; i < valueList.size(); i++) {
-            BarEntry barEntry = new BarEntry(i, valueList.get(i).floatValue());
-            entries.add(barEntry);
-        }
-
-        BarDataSet barDataSet = new BarDataSet(entries, title);
-
-        BarData data = new BarData(barDataSet);
-        barChart.setData(data);
-        barChart.invalidate();
-    }
     @Override
     public void onBackPressed(){
         Intent intent = new Intent(Histogram.this, MainActivity.class);
