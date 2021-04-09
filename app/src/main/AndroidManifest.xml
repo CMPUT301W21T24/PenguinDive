@@ -54,6 +54,7 @@
         <activity android:name=".SelectedProfile" />
         <activity android:name=".StatsActivity" />
         <activity android:name=".Histogram" />
+        <activity android:name=".CurrentExperimentersActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -67,6 +68,8 @@
         <activity android:name=".BinomialActivity" />
         <activity android:name=".NNICActivity" />
         <activity android:name=".MeasurementActivity" />
+        <activity android:name=".SearchQuestionActivity" />
+        <activity android:name=".Statistics" />
     </application>
 
 </manifest>

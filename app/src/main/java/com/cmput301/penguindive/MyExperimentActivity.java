@@ -23,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,14 +55,17 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         // Set view
         setContentView(R.layout.my_experiment_activity);
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
 
-
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
-        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
+        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList, uid);
         experimentList.setAdapter(experimentArrayAdapter);
 
         // create a clickListener on the existing experiment
@@ -70,10 +74,6 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
             ExperimentFragment.newInstance(trial, position).show(getSupportFragmentManager(), "Edit");
         });
-
-        // Get UID
-        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
-        uid = sharedPref.getString("UID", "");
 
         // Assign drawer
         drawerLayout = findViewById(R.id.my_experiment_activity);
@@ -156,7 +156,45 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
     @Override
     public void onDeletePressed(Experiment experiment) {
-        experimentCollectionReference.document(experiment.getExperimentId()).delete();
+        String experimendId = experiment.getExperimentId();
+        experimentCollectionReference.document(experimendId).delete();
+
+        // Delete all relevant trials
+        db.collection("Trials").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
+                    if (doc.getData().get("Experiment ID").equals(experimendId)){
+                        String trialsId = doc.getId();
+                        db.collection("Trials").document(trialsId).delete();
+                    }
+                }
+            }
+        });
+
+        // Delete all relevant questions and answers
+        db.collection("Questions").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
+                    if (doc.getData().get("experiment_id").equals(experimendId)){
+                        String questionId = doc.getId();
+                        db.collection("Answers").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
+                                    if (doc.getData().get("question_id").equals(questionId)){
+                                        String trialsId = doc.getId();
+                                        db.collection("Answers").document(trialsId).delete();
+                                    }
+                                }
+                            }
+                        });
+                        db.collection("Questions").document(questionId).delete();
+                    }
+                }
+            }
+        });
     }
 
     //showing message when there is any invalid input
@@ -187,7 +225,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String ownerName = (String) doc.getData().get("ownerName");
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
-                    List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                    List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
                     experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
@@ -243,7 +281,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 String status = (String) doc.getData().get("Status");
-                                                List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                                                List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
                                                 Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 
