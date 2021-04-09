@@ -64,6 +64,12 @@
             android:layout_marginStart="10dp"
             android:text="map"
             android:visibility="invisible"/>
+        <Button
+            android:id="@+id/stat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Stats"/>
     </LinearLayout>
 
 

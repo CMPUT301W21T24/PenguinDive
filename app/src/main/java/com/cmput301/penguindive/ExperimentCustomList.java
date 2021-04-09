@@ -53,11 +53,22 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
         Button trials_button = convertView.findViewById(R.id.trials_experiment);
         Button map_button = convertView.findViewById(R.id.map_button);
+        Button stat_button = convertView.findViewById(R.id.stat_button);
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, MapActivity.class);
+                Experiment exp = getItem(position);
+                String exp_id = exp.getExperimentId();
+                intent.putExtra("EXPID", exp_id);
+                context.startActivity(intent);
+            }
+        });
+        stat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,StatsActivity.class);
                 Experiment exp = getItem(position);
                 String exp_id = exp.getExperimentId();
                 intent.putExtra("EXPID", exp_id);

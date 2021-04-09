@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/histogram">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/Q1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Q1: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Q2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Q2: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Q3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Q3: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Q4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Q4: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Mean"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mean: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Median"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Median: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/Stdev"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stdev: "
+            android:textSize="20dp"
+            android:gravity="center"/>
+
+
+
+
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
