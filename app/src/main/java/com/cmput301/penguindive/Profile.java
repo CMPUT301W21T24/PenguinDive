@@ -129,24 +129,22 @@ public class Profile extends AppCompatActivity {
      * A string that represents the new desired user name
      */
     public void updateUserName(String newName){
-        ListenerRegistration registration = experimentCollectionReference.addSnapshotListener(
-                new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        for(QueryDocumentSnapshot doc: Objects.requireNonNull(value)) {
-                            String ownerId = (String) doc.getData().get("ownerId");
-                            if (ownerId.equals(uid)) {
-                                String experimentId = doc.getId();
-                                experimentCollectionReference.document(experimentId).update("ownerName", newName);
-                                Experiment currentExperiment = makeExperiment(doc); // Make the experiment for easier reference
-                                List<String> newKeywords = getExperimentKeywords(currentExperiment); // Get the keywords
-                                experimentCollectionReference.document(experimentId).update("Keywords", newKeywords); // Update database
-                            }
-                        }
+        experimentCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                    String ownerId = (String) doc.getData().get("ownerId");
+                    if (ownerId.equals(uid)) {
+                        String experimentId = doc.getId();
+                        experimentCollectionReference.document(experimentId).update("ownerName", newName);
+                        Experiment currentExperiment = makeExperiment(doc); // Make the experiment for easier reference
+                        currentExperiment.setOwnerUserName(newName);
+                        List<String> newKeywords = getExperimentKeywords(currentExperiment); // Get the keywords
+                        experimentCollectionReference.document(experimentId).update("Keywords", newKeywords); // Update database
                     }
                 }
-        );
-        registration.remove();
+            }
+        });
     }
 
     /**
