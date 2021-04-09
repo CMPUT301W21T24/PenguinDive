@@ -120,7 +120,7 @@ public class SearchQuestionActivity extends AppCompatActivity {
 
                     //add new question
                     if(experimentID.equals(expID)){
-                        if(question.contains(keyword) || questionTitle.contains(keyword)){
+                        if(question.contains(keyword.toLowerCase()) || questionTitle.contains(keyword.toLowerCase())){
                             questionDataList.add(new Question(question, questionId, questionTitle,questionUserId));
                         }else{
                             Toast.makeText(getApplicationContext(),"No results found!",Toast.LENGTH_LONG);
