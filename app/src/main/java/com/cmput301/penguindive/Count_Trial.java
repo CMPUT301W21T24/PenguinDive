@@ -1,24 +1,17 @@
 package com.cmput301.penguindive;
 
-public class Count_Trial extends Trial{
+// refactored to fit database
+public class Count_Trial {
 
     // variables
-    private int count;  // the integer count of what we're trying to measure
-    private int addedCount;  // TODO: the number of counts added/removed, to be collected from an converted edittext
+    private boolean increment;
 
-    // constructor
-    public Count_Trial(int count) {
-        this.count = count;
+    public Count_Trial(boolean increment) {
+        this.increment = increment;
     }
 
-    // adds an integer to the count
-    public void addCount() {
-        count = count + addedCount;
-    }
-
-    // getters
-    public int getCount() {
-        return count;
+    public boolean getIncrement() {
+        return increment;
     }
 }
 

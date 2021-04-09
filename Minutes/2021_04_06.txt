@@ -1,0 +1,18 @@
+April 06, 2021
+CMPUT 301 Team 24 Meeting on Project Part 4
+______________________________________________________________________________
+
+Discussed: 
+  - Majority of code is finished. Waiting on Kevin to finish Trials to implement final touches to other functionalities
+  - Location is nearly complete
+  - Possibly make a mockup of how the trial is stored in the database so that others can reference it for their parts.
+  - Record voiceovers on thursday
+  
+To Be Implemented:
+  - Ignoring results
+  - Video recording (Tuesday's meeting)
+  
+ ______________________________________________________________________________
+	
+Next meeting:
+	- Tuesday, Arpil 8th, 7:30 PM MST

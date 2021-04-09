@@ -2,6 +2,7 @@ package com.cmput301.penguindive;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,7 +66,6 @@ public class QRGenerate extends AppCompatActivity {
 
     String QRString;
     Spinner experName;
-    Spinner trialType;
     Spinner passfail;
     ImageView QRCode;
     Button generate;
@@ -72,16 +73,18 @@ public class QRGenerate extends AppCompatActivity {
     Button back;
     Bitmap bMap;
     TextView imSaved;
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_q_r_generate);
 
-        // TODO: add a trial name spinner for each experiment to allow choosing for which trial?
+        // Assign drawer
+        drawerLayout = findViewById(R.id.qrgenerate);
+
         // initialize variables
         experName = findViewById(R.id.experiment_name);
-        trialType = findViewById(R.id.trial_type);
         QRCode = findViewById(R.id.QR_code);
         generate = findViewById(R.id.generate);
         save = findViewById(R.id.saveButton);
@@ -99,7 +102,7 @@ public class QRGenerate extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("publish")) {
+                        if (document.get("Status").equals("Published")) {
                             experimentNames.add(document.get("Title").toString());
                             Log.d("experiment names", document.get("Title").toString());
                         }
@@ -114,19 +117,16 @@ public class QRGenerate extends AppCompatActivity {
         });
 
         // set the dropdown menu entries
-        String[] trialTypes = {"Binomial", "Count", "Measurement", "Non-Negative"};
-        String[] passOrFail = {"Pass", "Fail"};
-        ArrayAdapter<String> typeAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, trialTypes);
+        String[] passOrFail = {"SUCCESS", "FAILURE"};
         ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
-        trialType.setAdapter(typeAdapt);
         passfail.setAdapter(passFailAdapt);
 
         // hide buttons until QR code is generated
         save.setVisibility(Button.GONE);
         back.setVisibility(Button.GONE);
 
+        // if the user wants to advertise an experiment
         if (choice.equals("ad")) {
-            trialType.setVisibility(Spinner.GONE);
             passfail.setVisibility(Spinner.GONE);
         }
 
@@ -134,13 +134,13 @@ public class QRGenerate extends AppCompatActivity {
         // and combine into data for the QR code
         generate.setOnClickListener(v -> {
 
+            // determine QR data based on user choice to advertise or create trial result
             String name = experName.getSelectedItem().toString();
-            String type = trialType.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
             if (choice.equals("ad")) {
-                QRString = name;
+                QRString = "QR-" + name;
             } else {
-                QRString = name + "-" + type + "-" + passFail;
+                QRString = "QR-" + name + "-" + passFail;
             }
 
             // generate QR code and display to user
@@ -158,7 +158,6 @@ public class QRGenerate extends AppCompatActivity {
             generate.setVisibility(Button.GONE);
             experName.setVisibility(EditText.GONE);
             passfail.setVisibility(Spinner.GONE);
-            trialType.setVisibility(Spinner.GONE);
 
             save.setVisibility(Button.VISIBLE);
             back.setVisibility(Button.VISIBLE);
@@ -178,4 +177,82 @@ public class QRGenerate extends AppCompatActivity {
             save.setVisibility(Button.GONE);
         });
    }
+
+    /**
+     * This method refreshes the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, PickQRType.class);
+    }
+
+    /**
+     * This method gives the current drawer layout to the openDrawer method in MainActivity
+     * It is called when the hamburger icon is clicked on the toolbar
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    /**
+     * This method gives the current drawer layout to the closeDrawer method in MainActivity
+     * It is called when the PenguinDive logo is clicked in the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    /**
+     * This method redirects the user to MainActivity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    /**
+     * This method redirects the user to the MyExperimentActivity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    /**
+     * This method redirects the user to the PickScanType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this, PickScanType.class); }
+
+    /**
+     * This method redirects the user to the PickQRType Activity
+     * Since the user is already Generating a QR code, this simply closes the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGenerateQrCode(View view){ MainActivity.closeDrawer(drawerLayout);  }
+
+    /**
+     * This method redirects the user to the their profile page (Profile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    /**
+     * This method redirects the user to the search users page (SearchProfile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
+
+    /**
+     * This method calls openGitHub in MainActivity and provides it the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
 }
