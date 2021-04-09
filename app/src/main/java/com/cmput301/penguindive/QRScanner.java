@@ -42,6 +42,7 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -289,6 +290,11 @@ public class QRScanner extends AppCompatActivity {
                                         Map<String, Object> data = new HashMap<>();
                                         data.put("Experiment Name", ExperTitle);
                                         data.put("Trial Type", tType);
+                                        Calendar curDate = Calendar.getInstance();
+                                        String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                                curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                                curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                        data.put("Date", date);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarSuccess");
@@ -333,6 +339,11 @@ public class QRScanner extends AppCompatActivity {
                                         Map<String, Object> data = new HashMap<>();
                                         data.put("Experiment Name", ExperTitle);
                                         data.put("Trial Type", tType);
+                                        Calendar curDate = Calendar.getInstance();
+                                        String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                                curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                                curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                        data.put("Date", date);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarFailure");
@@ -410,6 +421,11 @@ public class QRScanner extends AppCompatActivity {
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("Experiment Name", experToUpdate[1]);
                                     data.put("Trial Type", tType);
+                                    Calendar curDate = Calendar.getInstance();
+                                    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                    data.put("Date", date);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRSuccess");
@@ -460,6 +476,11 @@ public class QRScanner extends AppCompatActivity {
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("Experiment Name", experToUpdate[1]);
                                     data.put("Trial Type", tType);
+                                    Calendar curDate = Calendar.getInstance();
+                                    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                    data.put("Date", date);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRFailure");
