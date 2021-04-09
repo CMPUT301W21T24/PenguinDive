@@ -83,7 +83,6 @@ public class QRGenerate extends AppCompatActivity {
         // Assign drawer
         drawerLayout = findViewById(R.id.qrgenerate);
 
-        // TODO: add a trial name spinner for each experiment to allow choosing for which trial?
         // initialize variables
         experName = findViewById(R.id.experiment_name);
         QRCode = findViewById(R.id.QR_code);
@@ -126,6 +125,7 @@ public class QRGenerate extends AppCompatActivity {
         save.setVisibility(Button.GONE);
         back.setVisibility(Button.GONE);
 
+        // if the user wants to advertise an experiment
         if (choice.equals("ad")) {
             passfail.setVisibility(Spinner.GONE);
         }
@@ -134,10 +134,11 @@ public class QRGenerate extends AppCompatActivity {
         // and combine into data for the QR code
         generate.setOnClickListener(v -> {
 
+            // determine QR data based on user choice to advertise or create trial result
             String name = experName.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
             if (choice.equals("ad")) {
-                QRString = name;
+                QRString = "QR-" + name;
             } else {
                 QRString = "QR-" + name + "-" + passFail;
             }

@@ -79,6 +79,9 @@ public class PickScanTypeTest {
         solo.assertCurrentActivity("Wrong Activity", QRScanner.class);
     }
 
+    /**
+     * check for QR scan choice
+     */
     @Test
     public void checkQRScanOpen() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);

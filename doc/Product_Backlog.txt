@@ -15,6 +15,7 @@ US 01.03.01: As an owner, I want to end an experiment. This leaves the results a
 	Rationale: Owners would like to close experiments from collecting more data. Useful when the owner has gathered they data they want or no longer wishes to continue trials. Thus, leaving only the results viewable.
 	Weight (1-10): 4 (An addition to the core functionality of US 01.01.01) Likely take 2-3 days to build and refine.
 	Risk level (low, medium, high): high
+	Status: complete
 	
 US 01.04.01: As an owner or experimenter, I want to subscribe to an experiment to participate in it.
 	Rationale: Owners would like to join in on experiments.
@@ -26,27 +27,32 @@ US 01.05.01: As an experimenter, I want to be able to execute trials for an expe
 	Rationale: Experimenters need to be able to execute trials for an experiment from the app and upload them to the experiment for Owner. 
 	Weight (1-10): 8 (Will need to add category for it in the database and will also have to take care of constraints.) 4-5 days to build.
 	Risk level (low, medium, high): medium
+	Status: complete
 
 US 01.06.01: As an owner or experimenter, I want to see histograms of the results of trials.
 	Rationale: Owner and experimenter need histograms to analyse the data better.
 	Weight (1-10): 10 (Will need to have some sort of API to build the histogram from the data from the database.) 5-7 days to build.
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 01.07.01: As an owner or experimenter, I want to see plots of the results of trials over time.
 	Rationale: Owners and experimenters can see visual representation of experiment outcomes as they are completed throughout the life of the experiment.
 	Weight (1-10): 5, (Backbone to the statistic readout for each experiment, will need to log all outcomes, omitting any that have been ignored by the owner) 2-3 days to build
 	Risk level (low, medium, high): medium
+	Status: complete
 
 US 01.08.01: As an owner, I want to ignore certain experimenters results.
 	Rationale: Owners would like control over which experiments they deem valid. Allowing them to omit ones they find inadequate or not fitting to their experiment.
 	Weight (1-10): 2 (Will need to remove the experiments results from statistics, while keeping the result active for qr code sharing) 1-2 days to build
 	Risk level (low, medium, high): low
+	Status: complete
 	
 US 01.09.01: As an owner or experimenter, I want to observe statistics (quartiles, median, mean, stdev) about a current trials.
 	Rationale: Statistics are a very important part of any trial.  They help determine how successful the experiment was.
 	Requirements: Owner, Experimenter, statistics.
 	Weight (1-10): 3 (standard statistics) 1-2 days to build
 	Risk level (low, medium, high): high
+	Status: complete
 
 
 US 02.01.01: As an experimenter, I want to ask a question about an experiment.
@@ -65,6 +71,7 @@ US 02.03.01: As an experimenter or owner, I want to browse questions and replies
 	Rationale: With questions and replies visible to the owner, the owner can gather valuable feedback in regards to his/her experiment and aid others by answering questions. Experiementers can look into whether the experiment interests them and view the experiences of others.
 	Weight (1-10): 1, (Most of the backbone will come from US 02.01.01) Viewability will like be inherited, polishing might take 0.5-1 day
 	Risk level (low, medium, high): low
+	Status: complete
 
 US 03.01.01: As an experimenter, I want to be able to generate QR codes that I can print for a specific experiment and trial 				 result (for instance PASS for a binomial trial I subscribed to). 
 	Rationale: An experimenter can take a QR code to anywhere and show their experiment results to others.
@@ -82,17 +89,20 @@ US 03.03.01: As an experimenter, I want to be able to register an arbitrary bar 
 	Rationale: An experimenter can register a barcode to their specific result/outcome and share it to others for them to scan and view. 
 	Weight (1-10): 4 (Will need to adapt existing qr code generation to accept a previously generated qr code) 2-4 days  
 	Risk level (low, medium, high): medium
+	Status: complete
 
 
 US 04.01.01: As an owner or experimenter, I want a profile with a unique username and my contact information.
 	Rationale: User needs a login page for secure data storage and would link all experiemnts they participate in or own to their account
 	Weight (1-10): 8 (Starting point) 2-3 days
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 04.02.01: As an owner or experimenter, I want to edit the contact information in my profile.
 	Rationale: Users should be able to edit their profile data
 	Weight (1-10): 3, 2-3 days
 	Risk level (low, medium, high): low
+	Status: complete
 
 US 04.03.01: As an owner or experimenter, I want to retrieve and show the profile of a presented username.
 	Rationale: Users wants the ability to view other user profiles
@@ -124,18 +134,22 @@ US 06.01.01: As an owner, I want to specify a Geo-location is required or not fo
 	Rationale: Confirmation on where the trial takes place
 	Weight (1-10): 8, 1-2 days
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 06.02.01: As an experimenter, I want to add Geo-location to experimental trials that need it.
 	Rationale: some experiment types require specific locations for trials
 	Weight (1-10): 8, (extension of US 06.01.01) 1-2 days
 	Risk level (low, medium, high): high
+	Status: complete
 
 US 06.03.01: As an experimenter, I want to be warned about geo-location trials.
 	Rationale: Search results display geo-location requirements
 	Weight (1-10): 2, 1-2 days
 	Risk level (low, medium, high): low
+	Status: complete
 
 US 06.04.01: As an experimenter, I want to see a map of geo-locations of a geo-location enabled expirement.
 	Rationale: User wants a map of all participants of a geo-location enabled trial
 	Weight (1-10): 5, 1-2 weeks
 	Risk level (low, medium, high): low
+	Status: complete

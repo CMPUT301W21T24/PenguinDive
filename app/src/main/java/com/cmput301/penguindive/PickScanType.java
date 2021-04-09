@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+/*
+This class lets the user choose to register a barcode, scan a barcode for a trial result, or
+scan a QR code (either for a trial result or to advertise an experiment
+ */
 public class PickScanType extends AppCompatActivity {
     DrawerLayout drawerLayout;
 
@@ -19,22 +23,26 @@ public class PickScanType extends AppCompatActivity {
         // Assign drawer
         drawerLayout = findViewById(R.id.qrscantype);
 
+        // buttons for choice
         final Button QR = findViewById(R.id.QR);
         final Button barcode = findViewById(R.id.bar);
         final Button barReg = findViewById(R.id.bar_reg);
 
+        // if QR code choice
         QR.setOnClickListener(v -> {
             Intent intent = new Intent(PickScanType.this, QRScanner.class);
             intent.putExtra("type", "SQ");
             startActivity(intent);
         });
 
+        // if wanting to scan a barcode
         barcode.setOnClickListener(v -> {
             Intent intent = new Intent(PickScanType.this, QRScanner.class);
             intent.putExtra("type", "SB");
             startActivity(intent);
         });
 
+        // if wanting to register a barcode
         barReg.setOnClickListener(v -> {
             Intent intent = new Intent(PickScanType.this, QRScanner.class);
             intent.putExtra("type", "BR");
