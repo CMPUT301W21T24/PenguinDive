@@ -4,7 +4,6 @@ package com.cmput301.penguindive;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +13,7 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,12 +31,12 @@ import java.util.ArrayList;
  */
 
 public class SearchProfile extends AppCompatActivity {
-    private ListView profileList;
     private ArrayList<String> profileArray;
     private ArrayAdapter<String> profileAdapter;
     private ArrayList<String> profileID;
     SearchView searchBar;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +44,12 @@ public class SearchProfile extends AppCompatActivity {
         // set view
         setContentView(R.layout.search_profile);
 
+        // Assign drawer
+        drawerLayout = findViewById(R.id.searchprofile);
+
         // initialise elements
         searchBar = findViewById(R.id.searchLayout);
-        profileList = findViewById(R.id.profileList);
+        ListView profileList = findViewById(R.id.profileList);
 
         //create an array adapter for the list of profiles
         profileArray = new ArrayList<>();
@@ -77,8 +80,9 @@ public class SearchProfile extends AppCompatActivity {
                                 profileArray.add(x);
                                 profileID.add((document.getId()));
                             }
-                            profileAdapter.notifyDataSetChanged();
+
                         }
+                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 // search using email
@@ -87,14 +91,16 @@ public class SearchProfile extends AppCompatActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        profileArray.clear();
                         if (!task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
                             }
-                            profileAdapter.notifyDataSetChanged();
+
 
                         }
+                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 return false;
@@ -106,6 +112,7 @@ public class SearchProfile extends AppCompatActivity {
             }
         });
         // send to selected profile activity when a profile is clicked on the list of profiles
+
         profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -124,4 +131,82 @@ public class SearchProfile extends AppCompatActivity {
         startActivity(intent);
         finishAffinity();
     }
+
+    /**
+     * This method refreshes the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickRefresh(View view){
+        MainActivity.redirectActivity(this, SearchProfile.class);
+    }
+
+    /**
+     * This method gives the current drawer layout to the openDrawer method in MainActivity
+     * It is called when the hamburger icon is clicked on the toolbar
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
+
+    /**
+     * This method gives the current drawer layout to the closeDrawer method in MainActivity
+     * It is called when the PenguinDive logo is clicked in the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
+
+    /**
+     * This method redirects the user to MainActivity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
+
+    /**
+     * This method redirects the user to the MyExperimentActivity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
+
+    /**
+     * This method redirects the user to the PickScanType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+
+    /**
+     * This method redirects the user to the PickQRType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
+
+    /**
+     * This method redirects the user to the their profile page (Profile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickMyProfile(View view){
+        MainActivity.redirectActivity(this,Profile.class);
+    }
+
+    /**
+     * This method redirects the user to the search users page (SearchProfile Activity)
+     * Since the user is already on the SearchProfile Activity, this simply closes the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickSearchUsers(View view){ MainActivity.closeDrawer(drawerLayout); }
+
+    /**
+     * This method calls openGitHub in MainActivity and provides it the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
+
 }

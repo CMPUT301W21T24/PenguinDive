@@ -6,7 +6,7 @@ Summary: Create tests, merge code, create javadocs, update backlog, update UML, 
 _____________________________________________________________________________
 
 News:
-	- Once everything is finished we can take the weekend off. No meeting Satuday.
+	- Once everything is finished we can take the weekend off. No meeting Saturday.
 	- We can strategize how to continue the project on Monday.
 
 Goals:

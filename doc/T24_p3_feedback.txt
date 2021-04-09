@@ -1,0 +1,21 @@
+Addressing Feedback： 
+• All addressed
+• Well addressed
+
+OOAD :
+Clearly OO
+Proper encapsulation
+Understandable design rationale
+and helpful commentary
+
+Unit Testing:
+Mostly convincing testing
+Mostly consistent
+
+Tool Practices:
+Team members commit to Git/ Wiki regularly
+
+
+*update your user interface mockup and story board sequence with your current app interface (could be screenshot)
+
+Overall: 12/12
