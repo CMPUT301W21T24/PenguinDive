@@ -1,6 +1,7 @@
 package com.cmput301.penguindive;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -23,6 +24,8 @@ public class CurrentExperimentersCustomList extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.trial_measurement_layout, parent, false);
+        }
     }
 }
