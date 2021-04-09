@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     SearchView searchBar;
     String uid;
     DrawerLayout drawerLayout;
-    Button test_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList, uid);
         experimentList.setAdapter(experimentArrayAdapter);
-        test_button = findViewById(R.id.test_button);
+
         // Assign drawer
         drawerLayout = findViewById(R.id.experiment_activity);
 
@@ -86,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             List<String> experimenters = currentExperiment.getExperimenters();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            // If the user hasn't subscribed to a publish location enabled experiment
             if (locationState && status.equals("Published") && !experimenters.contains(uid)){
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
@@ -98,12 +99,28 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                         .setNegativeButton("Cancel", null)
                         .create()
                         .show();
-            }else if (status.equals("Published") && !experimenters.contains(uid)) {
+            }
+            // If the user hasn't subscribed to a published experiment
+            else if (status.equals("Published") && !experimenters.contains(uid)) {
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment?")
                         .setPositiveButton("OK", (dialog, which) -> {
                             experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
                                     .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                            Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }
+            // Already subscribed, prompt to unsubscribe
+            else{
+                builder.setTitle("Unsubscribe Confirmation")
+                        .setMessage("Do you want to unsubscribe from this experiment?")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayRemove(uid));
                             dialog.cancel();
                             Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
                         })
@@ -121,15 +138,6 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
-
-        test_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CurrentExperimentersActivity.class);
-                startActivity(intent);
-                finishAffinity();
-            }
-        });
 
     }
 

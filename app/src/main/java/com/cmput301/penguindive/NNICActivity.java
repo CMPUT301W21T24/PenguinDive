@@ -13,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -26,6 +28,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFragmentInteractionListener {
 
@@ -36,15 +40,18 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
 
     // declare add Trial button
     private Button addNNICTrialButton;
+    private Button ignoreResultsButton;
 
     // declare name variables
     private TextView experimentNameView;
     private String experimentName;
+    private String experimentID;
 
     // initialize firebase
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     // get reference to Trials collection
-    CollectionReference collectionReference = db.collection("Trials");
+    CollectionReference trialsCollectionReference = db.collection("Trials");
+    CollectionReference experimentCollectionReference = db.collection("Experiments");
 
     // make tag
     final String TAG = "NNICActivity";
@@ -55,6 +62,9 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
             curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
             curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
 
+    // uid
+    private String uid;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,8 +73,12 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
         // get intent/experiment name
         Intent intent = getIntent();
         experimentName = intent.getStringExtra("Experiment Name");
+        experimentID = intent.getStringExtra("Experiment ID");
         experimentNameView = findViewById(R.id.nnic_experiment_name);
         experimentNameView.setText(experimentName);
+        uid = intent.getStringExtra("UID");
+        String ownerId = intent.getStringExtra("Owner ID");
+
 
         // set the trial list to the view
         NNICTrialList = findViewById(R.id.nnic_trial_list);
@@ -80,6 +94,15 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
         // fragment stuff
         // initialize button
         addNNICTrialButton = findViewById(R.id.nnic_add_trial_button);
+        ignoreResultsButton = findViewById(R.id.nnic_ignore_results_button);
+
+        // Hide ignore results button if not owner
+        if(uid.equals(ownerId)){
+            ignoreResultsButton.setVisibility(View.VISIBLE);
+        }
+        else{
+            ignoreResultsButton.setVisibility(View.GONE);
+        }
 
         // set the listener for the button
         addNNICTrialButton.setOnClickListener(new View.OnClickListener() {
@@ -116,14 +139,16 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
             // add mandatory Trial Type and Experiment Name into hashmap
             hashmap.put("Trial Type", "NNIC Trial");  // not really used but good to have for qr codes/in general
             hashmap.put("Experiment Name", experimentName);
+            hashmap.put("Experiment ID", experimentID);
             hashmap.put("Date", date);
+            hashmap.put("UID", uid);
 
             // add the values into the hashmap
             hashmap.put("Non-Negative Integer", nniString);
             hashmap.put("NNIC Name", nnicName);
 
             // add the hashmap to the collection
-            collectionReference
+            trialsCollectionReference
                     .add(hashmap)  // adds data and gives it a unique id
                     // on success
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -149,7 +174,7 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
     public void FillDataFromDatabase() {
 
         // add the snapshot listener, this only needs to happen once
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        trialsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
 
             // every time the database changes
             @Override
@@ -159,25 +184,51 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
                 NNICTrialDataList.clear();
 
                 // done to every document in the collection at the current snapshot
-                for (QueryDocumentSnapshot document: queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot trialDoc: queryDocumentSnapshots) {
 
                     // if the document in the collection is for this experiment
-                    if (String.valueOf((document.get("Experiment Name"))).equals(experimentName)) {
+                    if (String.valueOf((trialDoc.get("Experiment ID"))).equals(experimentID)) {
+                        experimentCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                for (QueryDocumentSnapshot experimentDoc : Objects.requireNonNull(task.getResult())) {
+                                    if (experimentDoc.getId().equals(experimentID)){
 
-                        // put a trial made from the document's data in the dataList
-                        // no need to do anything else than cast because we added these in onOKPressed
-                        String NNICName = (String) document.get("NNIC Name");
-                        String NNIString = (String) document.get("Non-Negative Integer");
-                        Integer NNI = Integer.valueOf(NNIString);  // convert to int
+                                        List<String> ignored = (List<String>) experimentDoc.getData().get("ignoredExperimenters");
+                                        if (ignored == null){
+                                            ignored = new ArrayList<String>();
+                                        }
+                                        // if the user is not ignored add their trial
+                                        String uid = (String) trialDoc.getData().get("UID");
+                                        if(!ignored.contains(uid)){
+                                            // put a trial made from the document's data in the dataList
+                                            // no need to do anything else than cast because we added these in onOKPressed
+                                            String NNICName = (String) trialDoc.get("NNIC Name");
+                                            String NNIString = (String) trialDoc.get("Non-Negative Integer");
+                                            Integer NNI = Integer.valueOf(NNIString);  // convert to int
 
-                        // make new trial to populate datalist
-                        NNICTrialDataList.add(new Non_Negative_Integer_Counts_Trial(NNI, NNICName));
-
+                                            // make new trial to populate datalist
+                                            NNICTrialDataList.add(new Non_Negative_Integer_Counts_Trial(NNI, NNICName));
+                                        }
+                                    }
+                                }
+                                // notify adapter that the data has changed
+                                NNICArrayAdapter.notifyDataSetChanged();
+                            }
+                        });
                     }
                 }
+            }
+        });
 
-                // notify adapter that the data has changed
-                NNICArrayAdapter.notifyDataSetChanged();
+        // when the ignore results button is clicked, redirect to activity
+        ignoreResultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NNICActivity.this, CurrentExperimentersActivity.class);
+                intent.putExtra("Experiment ID", experimentID);
+
+                startActivity(intent);
             }
         });
 
