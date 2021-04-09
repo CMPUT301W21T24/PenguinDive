@@ -177,7 +177,6 @@ public class MainActivityTest {
         assertTrue("Published not present", solo.waitForText("soloPublishedTest-Main", 1 , 2000, true, true));
     }
 
-
     /**
      * Add an unpublished Experiment to the list and make sure it has not been added to the screen
      */

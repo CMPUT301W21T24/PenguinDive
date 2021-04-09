@@ -37,7 +37,9 @@ Licensed under the Apache License, Version 2.0
 URL: https://github.com/PhilJay/MPAndroidChart
  */
 
-//This class allows the user to display a bar-graph of the frequency a trial's associated data is repeated.
+/**
+ * This class allows the user to display a bar-graph of the frequency a trial's associated data is repeated.
+ */
 public class Histogram extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     BarChart barChart;
