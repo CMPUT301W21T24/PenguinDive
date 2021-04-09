@@ -25,6 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -48,6 +49,12 @@ public class CountActivity extends AppCompatActivity {
 
     // initial values
     Integer sum;
+
+    // date
+    Calendar curDate = Calendar.getInstance();
+    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,6 +130,7 @@ public class CountActivity extends AppCompatActivity {
                 // add one pass to the hashmap, along with the mandatory trial type and experiment name
                 data.put("Trial Type", "Count Trial");
                 data.put("Experiment Name", experimentName);
+                data.put("Date", date);
 
                 data.put("Count Type", "TRUE");
 
