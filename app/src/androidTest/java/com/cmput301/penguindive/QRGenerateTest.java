@@ -3,6 +3,7 @@ package com.cmput301.penguindive;
 import android.app.Activity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -29,8 +30,8 @@ public class QRGenerateTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<PickQRType> rule =
-        new ActivityTestRule<>(PickQRType.class, true, true);
+    public ActivityTestRule<MainActivity> rule =
+        new ActivityTestRule<>(MainActivity.class, true, true);
 
     /**
      * This function runs before all test and creates a solo instance
@@ -55,6 +56,18 @@ public class QRGenerateTest {
      */
     @Test
     public void checkGenerateForTrial() {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        View v = solo.getView(ListView.class, 0);
+        solo.clickOnView(v);
+        if (solo.waitForText("Subscribe Confirmation")) {
+            solo.clickOnText("OK");
+        } else if (solo.waitForText("Unsubscribe Confirmation")) {
+            solo.clickOnText("Cancel");
+        }
+
+        solo.clickOnImage(0);
+        solo.clickOnText("Generate QR Code");
+
         solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
         solo.clickOnButton("Trial Result");
         solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
@@ -65,7 +78,7 @@ public class QRGenerateTest {
 
         // choose experiment
         solo.clickOnView(exper);
-        solo.clickOnView(solo.getView(TextView.class, 2));
+        solo.clickOnView(solo.getView(TextView.class, 0));
 
         //choose pass or fail
         solo.clickOnView(pf);
@@ -82,6 +95,18 @@ public class QRGenerateTest {
      */
     @Test
     public void checkGenerateForAd() {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        View v = solo.getView(ListView.class, 0);
+        solo.clickOnView(v);
+        if (solo.waitForText("Subscribe Confirmation")) {
+            solo.clickOnText("OK");
+        } else if (solo.waitForText("Unsubscribe Confirmation")) {
+            solo.clickOnText("Cancel");
+        }
+
+        solo.clickOnImage(0);
+        solo.clickOnText("Generate QR Code");
+
         solo.assertCurrentActivity("Wrong Activity", PickQRType.class);
         solo.clickOnButton("Trial Result");
         solo.assertCurrentActivity("Wrong Activity", QRGenerate.class);
@@ -91,7 +116,7 @@ public class QRGenerateTest {
 
         // choose experiment
         solo.clickOnView(exper);
-        solo.clickOnView(solo.getView(TextView.class, 2));
+        solo.clickOnView(solo.getView(TextView.class, 0));
 
         // return to main
         solo.clickOnButton("Generate");

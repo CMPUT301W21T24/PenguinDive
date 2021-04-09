@@ -23,6 +23,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * This class represents an activity that will show all non-ignored experimenters for a given trial
+ * The experiment owner can then choose to ignore experimenters to hide their results from the experiment
+ */
 public class CurrentExperimentersActivity extends AppCompatActivity {
     ListView experimentersList;
     private ArrayAdapter<String> experimentersAdapter;

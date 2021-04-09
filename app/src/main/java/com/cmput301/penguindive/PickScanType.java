@@ -8,9 +8,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-/*
-This class lets the user choose to register a barcode, scan a barcode for a trial result, or
-scan a QR code (either for a trial result or to advertise an experiment
+/**
+ * This class lets the user choose to register a barcode, scan a barcode for a trial result, or
+ * scan a QR code (either for a trial result or to advertise an experiment
  */
 public class PickScanType extends AppCompatActivity {
     DrawerLayout drawerLayout;

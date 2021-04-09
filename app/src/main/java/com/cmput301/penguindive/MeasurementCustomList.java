@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a custom list for measurement trial objects
+ */
 public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
 
     // define measurement list and context

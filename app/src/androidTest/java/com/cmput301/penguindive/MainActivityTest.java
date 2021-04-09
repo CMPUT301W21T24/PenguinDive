@@ -167,6 +167,11 @@ public class MainActivityTest {
         solo.pressSpinnerItem(0, 0); // Choose published
         solo.clickOnButton("OK"); //Select Ok Button
 
+        // Get search bar
+        View searchBar = solo.getView(RelativeLayout.class, 1);
+        solo.clickOnView(searchBar);  // Click on search bar
+        solo.enterText(0, "soloPublishedTest");
+
         // Make sure it's in list
         solo.scrollToTop();
         assertTrue("Published not present", solo.waitForText("soloPublishedTest-Main", 1 , 2000, true, true));
@@ -193,6 +198,11 @@ public class MainActivityTest {
         solo.pressSpinnerItem(0, 1); // Choose unpublished
         solo.clickOnButton("OK"); //Select Ok Button
 
+        // Get search bar
+        View searchBar = solo.getView(RelativeLayout.class, 1);
+        solo.clickOnView(searchBar);  // Click on search bar
+        solo.enterText(0, "soloUnpublishedTest");
+
         // Make sure it's not in list
         solo.scrollToTop();
         assertFalse("Unpublished is present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
@@ -218,6 +228,11 @@ public class MainActivityTest {
         solo.enterText((EditText) solo.getView(R.id.editRegion), "RegionTest");
         solo.pressSpinnerItem(0, 2); // Choose ended
         solo.clickOnButton("OK"); //Select Ok Button
+
+        // Get search bar
+        View searchBar = solo.getView(RelativeLayout.class, 1);
+        solo.clickOnView(searchBar);  // Click on search bar
+        solo.enterText(0, "soloEndedTest");
 
         // Make sure it's in list
         solo.scrollToTop();

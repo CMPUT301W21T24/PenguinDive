@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class represents a dialog fragment for measurement trials
+ */
 public class MeasurementFragment extends DialogFragment {
 
     // initialize variables used in the fragment

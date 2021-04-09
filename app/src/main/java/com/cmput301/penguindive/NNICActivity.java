@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents an activity that shows the given NNIC trials for an experiment
+ */
 public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFragmentInteractionListener {
 
     // declare variables for adapting
@@ -120,8 +123,10 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
     }
 
 
-    // This method activates every time OK is pressed in the fragment, aka every time a new trial is made
-    // Used to add the trial to the database
+    /**
+     * This method activates every time OK is pressed in the fragment, aka every time a new trial is made
+     * Used to add the trial to the database
+     */
     @Override
     public void onOKPressed(Non_Negative_Integer_Counts_Trial nnicTrial) {
 
@@ -169,8 +174,12 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
     }
 
 
-    // This method adds the snapshot listener, making the app have real-time connection to the database.
-    // It is used to update the data in the list, and is called every time the database changes, built for importing entire collection
+
+
+    /**
+     * This method adds the snapshot listener, making the app have real-time connection to the database.
+     * It is used to update the data in the list, and is called every time the database changes, built for importing entire collection
+     */
     public void FillDataFromDatabase() {
 
         // add the snapshot listener, this only needs to happen once
@@ -235,7 +244,11 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
     }
 
 
-    // implement adding trial method required by interface
+    /**
+     * This method adds a NNIC trial to the interface
+     * @param NNICTrial
+     * Takes a NNIC Trial object
+     */
     public void AddNNIC_Trial(Non_Negative_Integer_Counts_Trial NNICTrial) {
         NNICArrayAdapter.add(NNICTrial);
     }

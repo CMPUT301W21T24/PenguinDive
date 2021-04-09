@@ -1,5 +1,8 @@
 package com.cmput301.penguindive;
 
+/**
+ * This class represents a quesiton object
+ */
 public class Question {
 
     private String question;

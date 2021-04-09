@@ -164,7 +164,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
-                    if (doc.getData().get("Experiment ID").equals(experimendId)){
+                    if (Objects.equals(doc.getData().get("Experiment ID"), experimendId)){
                         String trialsId = doc.getId();
                         db.collection("Trials").document(trialsId).delete();
                     }
@@ -177,13 +177,13 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
-                    if (doc.getData().get("experiment_id").equals(experimendId)){
+                    if (Objects.equals(doc.getData().get("experiment_id"), experimendId)){
                         String questionId = doc.getId();
                         db.collection("Answers").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 for(QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
-                                    if (doc.getData().get("question_id").equals(questionId)){
+                                    if (Objects.equals(doc.getData().get("question_id"), questionId)){
                                         String trialsId = doc.getId();
                                         db.collection("Answers").document(trialsId).delete();
                                     }
@@ -197,12 +197,17 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         });
     }
 
-    //showing message when there is any invalid input
+    /**
+     * This method prompts the user if one of the experiment fields exceeds it's character limit
+     */
     @Override
     public void extraStringError() {
         Toast.makeText(this,"The description exceeds the maximum limitation.", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * This method prompts the user if one of the experiment fields was left empty
+     */
     @Override
     public void nullValueError() {
         Toast.makeText(this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();

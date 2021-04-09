@@ -29,6 +29,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class represents an activity where the user can see all answers to a given question
+ */
 public class AnswerActivity extends AppCompatActivity {
 
     ListView answerList;
@@ -149,7 +152,7 @@ public class AnswerActivity extends AppCompatActivity {
                     String answerUserid = (String)doc.getData().get("answer_user_id");
 
                     if(question_id.equals(ID)){
-                        if(answer.contains(keyword) || answer.equals("")){
+                        if(answer.contains(keyword.toLowerCase()) || answer.equals("")){
                             answerDataList.add(new Answer(answer,answerUserid));
                         }
                     }

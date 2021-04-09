@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_margin="20dp">
+    android:layout_margin="8dp">
 
     <TextView
         android:id="@+id/question_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
         android:text="Question"
         android:textSize="30sp">
 
     </TextView>
+
     <TextView
         android:id="@+id/question_poster"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_below="@+id/question_text"
         android:text="Poster"
-        android:textSize="14sp">
-    </TextView>
-</LinearLayout>
+        android:textStyle="italic"
+        android:layout_margin="8dp"
+        android:textSize="14sp"></TextView>
+</RelativeLayout>
