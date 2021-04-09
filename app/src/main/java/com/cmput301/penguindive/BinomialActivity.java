@@ -158,7 +158,7 @@ public class BinomialActivity extends AppCompatActivity {
                 }
             }
         });
-        
+
         // set experiment name
         experimentNameView = findViewById(R.id.binomial_experiment_name);
         experimentNameView.setText(experimentName);

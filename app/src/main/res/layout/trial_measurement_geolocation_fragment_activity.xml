@@ -7,6 +7,7 @@
         android:id="@+id/measurement_geolocation_fragment_letter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         >
 
     </TextView>
@@ -17,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Insert measurement here"
+        android:layout_margin="8dp"
         >
 
     </EditText>
@@ -26,25 +28,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Insert geolocation here"
-        >
+        android:layout_margin="8dp"/>
 
-    </EditText>
-
-    <Button
-        android:id="@+id/measurement_geolocation_fragment_save_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save">
+        android:orientation="horizontal">
 
-    </Button>
+        <Button
+            android:id="@+id/measurement_geolocation_fragment_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_margin="8dp"/>
 
-    <Button
-        android:id="@+id/measurement_geolocation_fragment_close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Close">
+        <Button
+            android:id="@+id/measurement_geolocation_fragment_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Close"
+            android:layout_margin="8dp"/>
+    </LinearLayout>
 
-    </Button>
 
 
 </LinearLayout>
