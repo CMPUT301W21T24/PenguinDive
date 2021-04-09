@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFragmentInteractionListener {
@@ -47,6 +48,12 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
 
     // make tag
     final String TAG = "NNICActivity";
+
+    // date
+    Calendar curDate = Calendar.getInstance();
+    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +116,7 @@ public class NNICActivity extends AppCompatActivity implements NNICFragment.OnFr
             // add mandatory Trial Type and Experiment Name into hashmap
             hashmap.put("Trial Type", "NNIC Trial");  // not really used but good to have for qr codes/in general
             hashmap.put("Experiment Name", experimentName);
+            hashmap.put("Date", date);
 
             // add the values into the hashmap
             hashmap.put("Non-Negative Integer", nniString);

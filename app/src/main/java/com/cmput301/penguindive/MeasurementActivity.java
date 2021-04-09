@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class MeasurementActivity extends AppCompatActivity implements MeasurementFragment.OnFragmentInteractionListener {
@@ -45,6 +46,12 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
     CollectionReference collectionReference = db.collection("Trials");
 
     final String TAG = "Measurement Activity";
+
+    // date
+    Calendar curDate = Calendar.getInstance();
+    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,6 +113,7 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
             // add mandatory Trial Type and Experiment Name into hashmap
             hashmap.put("Trial Type", "Measurement Trial");  // not really used but good to have for qr codes/in general
             hashmap.put("Experiment Name", experimentName);
+            hashmap.put("Date", date);
 
             // add the values into the hashmap
             hashmap.put("Measurement", measurementString);
