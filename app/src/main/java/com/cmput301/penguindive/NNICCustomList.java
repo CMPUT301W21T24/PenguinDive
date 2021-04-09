@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a custom list to hold all trials of NNIC type
+ */
 public class NNICCustomList extends ArrayAdapter<Non_Negative_Integer_Counts_Trial> {
 
     // define NNIC list and context

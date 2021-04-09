@@ -1,6 +1,9 @@
 package com.cmput301.penguindive;
 
-// has a value, pass or fail
+/**
+ * This class represents a binomial trial object
+ * Has a value of pass or fail
+ */
 public class Binomial_Trial {
 
     private boolean pass;

@@ -29,6 +29,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class represents an activity where the user can see all answers to a given question
+ */
 public class AnswerActivity extends AppCompatActivity {
 
     ListView answerList;

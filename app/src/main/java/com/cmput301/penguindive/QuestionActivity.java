@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class represents a question activity, where all questions for a given experiment are displayed
+ */
 public class QuestionActivity extends AppCompatActivity {
 
     ListView questionList;

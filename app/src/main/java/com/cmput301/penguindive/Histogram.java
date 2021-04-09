@@ -27,6 +27,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * This class represents a histogram activity for a given experiment
+ */
 public class Histogram extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     BarChart barChart;

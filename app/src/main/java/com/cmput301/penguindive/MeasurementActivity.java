@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents an activity that shows the given measurement trials for an experiment
+ */
 public class MeasurementActivity extends AppCompatActivity implements MeasurementFragment.OnFragmentInteractionListener {
 
     // declare variables for adapting

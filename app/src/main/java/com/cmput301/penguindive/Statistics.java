@@ -20,6 +20,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This class shows the user all current statistics for a given trial
+ */
 public class Statistics extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 

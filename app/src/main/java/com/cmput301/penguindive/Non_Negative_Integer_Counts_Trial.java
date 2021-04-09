@@ -2,6 +2,9 @@ package com.cmput301.penguindive;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a NNIC Trial object
+ */
 public class Non_Negative_Integer_Counts_Trial implements Serializable {
 
     //referenced

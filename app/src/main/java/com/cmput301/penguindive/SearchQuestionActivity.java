@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class represents a search activity for all profiles
+ */
 public class SearchQuestionActivity extends AppCompatActivity {
 
     ListView questionList;
