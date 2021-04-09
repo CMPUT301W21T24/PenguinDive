@@ -1,6 +1,8 @@
 package com.cmput301.penguindive;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,9 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -26,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class MeasurementActivity extends AppCompatActivity implements MeasurementFragment.OnFragmentInteractionListener {
 
@@ -33,6 +39,7 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
     ListView MeasurementTrialList;
     ArrayList<Measurement_Trial> MeasurementTrialDataList;
     ArrayAdapter<Measurement_Trial> MeasurementArrayAdapter;
+    String uid;
 
     // declare add Trial button
     private Button addMeasurementTrialButton;
@@ -40,6 +47,7 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
     // initialize name
     TextView experimentNameView;
     String experimentName;
+    String experimentOwnerId;
 
     // initialize firestore stuff
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,9 +66,14 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trial_measurement_activity);  // set the content view to NNICActivity
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // get the experiment name
         Intent intent = getIntent();
         experimentName = intent.getStringExtra("Experiment Name");
+        experimentOwnerId = intent.getStringExtra("Experiment Owner ID");
         experimentNameView = findViewById(R.id.measurement_experiment_name);
         experimentNameView.setText(experimentName);
 
@@ -91,6 +104,26 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
         // run FillDataFromDatabase once because a listener attaches to use later
         FillDataFromDatabase();
 
+        MeasurementTrialList.setOnItemClickListener((parent, view, position, id) -> {
+            // Get trial in question
+            Measurement_Trial currentTrial = MeasurementTrialDataList.get(position);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            if (uid.equals(experimentOwnerId)) {
+                builder.setTitle("Ignore Result Confirmation")
+                        .setMessage("Do you want to ignore this result?")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            MeasurementTrialDataList.remove(currentTrial);
+                            MeasurementArrayAdapter.notifyDataSetChanged();
+                            dialog.cancel();
+                            Toast.makeText(this, "You have ignored this result.", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }
+        });
+
     }
 
     // onOKPressed used to add new trial to database
@@ -113,6 +146,7 @@ public class MeasurementActivity extends AppCompatActivity implements Measuremen
             // add mandatory Trial Type and Experiment Name into hashmap
             hashmap.put("Trial Type", "Measurement Trial");  // not really used but good to have for qr codes/in general
             hashmap.put("Experiment Name", experimentName);
+            hashmap.put("Experiment Owner ID", experimentOwnerId);
             hashmap.put("Date", date);
 
             // add the values into the hashmap

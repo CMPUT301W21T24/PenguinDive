@@ -98,6 +98,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                 Experiment experiment = getItem(position);
                 String experimentName = experiment.getTitle();
                 String experimentTrialType = experiment.getTrialType();
+                String experimentOwnerId = experiment.getOwnerId();
 
                 // cases for different trial types
                 // if the trial type matches, make the intent, put the name in, and redirect
@@ -129,6 +130,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Measurement Trial": {
                         Intent intent = new Intent(context, MeasurementActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment Owner ID", experimentOwnerId);
 
                         // redirect to activity
                         context.startActivity(intent);

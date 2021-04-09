@@ -17,12 +17,13 @@
 
     </TextView>
 
+
     <ListView
         android:id="@+id/measurement_trial_list"
         android:layout_width="wrap_content"
         android:layout_height="400dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="4dp">
 
     </ListView>
 
