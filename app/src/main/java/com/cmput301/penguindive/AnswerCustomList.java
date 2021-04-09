@@ -38,9 +38,7 @@ public class AnswerCustomList extends ArrayAdapter<Answer> {
         // getting and setting answer
         Answer answer = answerArrayList.get(position);
         TextView answerText = view.findViewById(R.id.answer_text);
-        TextView answerUserId = view.findViewById(R.id.answer_poster);
         answerText.setText(answer.getAnswerText());
-        answerUserId.setText(answer.getAnswerUserID());
         return view;
 
     }

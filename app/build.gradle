@@ -43,9 +43,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
 
-    // for histogram and plotting
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
 
     // for QR and barcode generation and scanning
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'

@@ -2,6 +2,8 @@ package com.cmput301.penguindive;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.SyncEngine;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is a custom list for experiments
@@ -20,14 +34,19 @@ import java.util.ArrayList;
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private final ArrayList<Experiment> experiments;
     private final Context context;
+    private final String uid;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference experimentCollectionReference = db.collection("Experiments");
 
     Button questions_button;
     Button trials_button;
 
-    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
+    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment, String uid) {
         super(context,0,experiment);
         this.context = context;
         this.experiments = experiment;
+        this.uid = uid;
     }
 
     @Nullable
@@ -53,22 +72,11 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
         Button trials_button = convertView.findViewById(R.id.trials_experiment);
         Button map_button = convertView.findViewById(R.id.map_button);
-        Button stat_button = convertView.findViewById(R.id.stat_button);
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, MapActivity.class);
-                Experiment exp = getItem(position);
-                String exp_id = exp.getExperimentId();
-                intent.putExtra("EXPID", exp_id);
-                context.startActivity(intent);
-            }
-        });
-        stat_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context,StatsActivity.class);
                 Experiment exp = getItem(position);
                 String exp_id = exp.getExperimentId();
                 intent.putExtra("EXPID", exp_id);
@@ -145,22 +153,30 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         description.setText(experiment.getDescription());
         status.setText(experiment.getStatus());
         owner.setText(experiment.getOwnerUserName());
+
+        // Set map button visibility
         if (experiment.getLocationState()){
             Location.setText("ON");
             map_button.setVisibility(View.VISIBLE);
-        }else{
+        }else {
             Location.setText("OFF");
             map_button.setVisibility(View.GONE);
         }
 
-        // Prevent more trials if ended
-        if (experiment.getStatus().equals("Published")){
+        // Set trials button visibility
+        String ownerId = experiment.getOwnerId();
+        String experimentStatus = experiment.getStatus();
+        List<String> experimenters = experiment.getExperimenters();
+
+        // If the experiment isn't ended and the user is either the owner or subscribed
+        // This implies the owner can perform trials to their unpublished experiment
+        if ((ownerId.equals(uid) || experimenters.contains(uid)) && !experimentStatus.equals("Ended")) {
             trials_button.setVisibility(View.VISIBLE);
         }
-        else{
+        // Otherwise hide the button
+        else {
             trials_button.setVisibility(View.GONE);
         }
-
         return convertView;
     }
 

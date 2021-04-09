@@ -155,6 +155,7 @@ public class ExperimentFragment extends DialogFragment {
                     if (experimentID == null){
                         experimentID = UUID.randomUUID().toString();
                         locationStatus = false;
+                        experimenterIDs = new ArrayList<String>();
                     }
                     String title = experimentTitle.getText().toString();
                     String description = experimentDescription.getText().toString();
@@ -163,7 +164,8 @@ public class ExperimentFragment extends DialogFragment {
                     String ownerId = experimentOwner.getText().toString();
                     String status = experimentStatus.getSelectedItem().toString();
                     String trialType = spinnerTrialType.getSelectedItem().toString();
-                    experimenterIDs = new ArrayList<>();
+
+
 
                     if(description.length()==0){
                         listener.nullValueError();
@@ -183,11 +185,12 @@ public class ExperimentFragment extends DialogFragment {
                         String ownerName = experiment.getOwnerUserName(); //
                         // set the location status
                         locationStatus = experimentLocation.isChecked();
-                        Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,locationStatus,trialType);
+                        Experiment newExperiment = new Experiment(experimentID, title, description, region, minTrials, ownerId, ownerName, status, experimenterIDs, locationStatus, trialType);
                         listener.onEditPressed(newExperiment, position);
                     }
                     // If it's a new experiment
                     else {
+
                         // Query the ownerId in Profiles collection
                         CollectionReference profileCollectionReference = db.collection("Experimenter");
                         DocumentReference docRef = profileCollectionReference.document(ownerId);

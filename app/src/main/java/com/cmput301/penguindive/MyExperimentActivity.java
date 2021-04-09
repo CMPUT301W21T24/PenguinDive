@@ -54,6 +54,10 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         // Set view
         setContentView(R.layout.my_experiment_activity);
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // Initialize elements
         experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
@@ -61,7 +65,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
 
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
-        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
+        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList, uid);
         experimentList.setAdapter(experimentArrayAdapter);
 
         // create a clickListener on the existing experiment
@@ -71,9 +75,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
             ExperimentFragment.newInstance(trial, position).show(getSupportFragmentManager(), "Edit");
         });
 
-        // Get UID
-        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
-        uid = sharedPref.getString("UID", "");
+
 
         // Assign drawer
         drawerLayout = findViewById(R.id.my_experiment_activity);
@@ -151,7 +153,8 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                 "LocationStatus", newExperiment.getLocationState(),
                 "MinimumTrials", newExperiment.getMinTrials(),
                 "TrialType", newExperiment.getTrialType(),
-                "Keywords", getKeywords(newExperiment));
+                "Keywords", getKeywords(newExperiment),
+                "ownerName", newExperiment.getOwnerUserName());
     }
 
     @Override
@@ -187,7 +190,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                     String ownerName = (String) doc.getData().get("ownerName");
                     String title = (String) doc.getData().get("Title");
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
-                    List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                    List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
                     experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
@@ -243,7 +246,7 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
                                                 Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                                 String ownerName = (String) doc.getData().get("ownerName");
                                                 String status = (String) doc.getData().get("Status");
-                                                List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
+                                                List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
                                                 Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 

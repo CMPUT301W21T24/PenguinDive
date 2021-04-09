@@ -37,10 +37,7 @@ public class QuestionCustomList extends ArrayAdapter<Question> {
 
         Question question = questionArrayList.get(position);
         TextView questionText = view.findViewById(R.id.question_text);
-        TextView questionUserId = view.findViewById(R.id.question_poster);
-        questionText.setText(question.getQuestionTitle());
-        questionUserId.setText(question.getQuestionUserId());
-
+        questionText.setText(question.getQuestion());
         return view;
     }
 }
