@@ -149,7 +149,7 @@ public class AnswerActivity extends AppCompatActivity {
                     String answerUserid = (String)doc.getData().get("answer_user_id");
 
                     if(question_id.equals(ID)){
-                        if(answer.contains(keyword) || answer.equals("")){
+                        if(answer.contains(keyword.toLowerCase()) || answer.equals("")){
                             answerDataList.add(new Answer(answer,answerUserid));
                         }
                     }
