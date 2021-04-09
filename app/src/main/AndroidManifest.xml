@@ -67,6 +67,8 @@
         <activity android:name=".BinomialActivity" />
         <activity android:name=".NNICActivity" />
         <activity android:name=".MeasurementActivity" />
+        <activity android:name=".SearchQuestionActivity" />
+        <activity android:name=".Statistics" />
     </application>
 
 </manifest>
