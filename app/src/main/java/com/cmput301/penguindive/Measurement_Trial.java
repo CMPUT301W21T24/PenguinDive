@@ -2,6 +2,9 @@ package com.cmput301.penguindive;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a measurement trial object
+ */
 public class Measurement_Trial implements Serializable {
 
     // variables

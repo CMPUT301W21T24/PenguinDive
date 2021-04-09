@@ -66,6 +66,10 @@ Author: Linray Wu
 Date: 2021/03/30
 Availability:https://stackoverflow.com/questions/30569854/adding-multiple-markers-in-google-maps-api-v2-android
 */
+
+/**
+ * This class represents a map activity where the user can view
+ */
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference experimentCollectionReference = db.collection("Experiments");

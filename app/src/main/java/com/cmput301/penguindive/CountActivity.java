@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents an activity that shows the given count trials for an experiment
+ */
 public class CountActivity extends AppCompatActivity {
 
     // initialize experiment name

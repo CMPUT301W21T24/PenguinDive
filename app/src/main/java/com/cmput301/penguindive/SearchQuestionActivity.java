@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class represents a search activity for all profiles
+ */
 public class SearchQuestionActivity extends AppCompatActivity {
 
     ListView questionList;
@@ -117,7 +120,7 @@ public class SearchQuestionActivity extends AppCompatActivity {
 
                     //add new question
                     if(experimentID.equals(expID)){
-                        if(question.contains(keyword) || questionTitle.contains(keyword)){
+                        if(question.contains(keyword.toLowerCase()) || questionTitle.contains(keyword.toLowerCase())){
                             questionDataList.add(new Question(question, questionId, questionTitle,questionUserId));
                         }else{
                             Toast.makeText(getApplicationContext(),"No results found!",Toast.LENGTH_LONG);

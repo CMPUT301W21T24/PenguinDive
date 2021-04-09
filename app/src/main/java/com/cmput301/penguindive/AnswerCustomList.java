@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a custom list for answer objects
+ */
 public class AnswerCustomList extends ArrayAdapter<Answer> {
 
     private ArrayList<Answer> answerArrayList;

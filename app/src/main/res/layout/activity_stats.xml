@@ -13,26 +13,62 @@
         <include
             layout="@layout/secondary_toolbar"/>
 
-
-        <TextView
-            android:id="@+id/UserID"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Experiment: "
-            android:textSize="20dp"
-            android:gravity="center"/>
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Experiment Name: "
+                android:textSize="20sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/Q1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/Q2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/Q3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/Q4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/Mean"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/Stdev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/statsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Statistics"
-                android:layout_margin="10dp"/>
 
             <Button
                 android:id="@+id/histogramButton"
@@ -41,12 +77,6 @@
                 android:layout_margin="10dp"
                 android:text="Histogram" />
 
-            <Button
-                android:id="@+id/plotButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Plot"/>
         </LinearLayout>
 
     </LinearLayout>
