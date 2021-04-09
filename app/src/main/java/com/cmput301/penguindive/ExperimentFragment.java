@@ -155,6 +155,7 @@ public class ExperimentFragment extends DialogFragment {
                     if (experimentID == null){
                         experimentID = UUID.randomUUID().toString();
                         locationStatus = false;
+                        experimenterIDs = new ArrayList<>();
                     }
                     String title = experimentTitle.getText().toString();
                     String description = experimentDescription.getText().toString();
@@ -163,7 +164,6 @@ public class ExperimentFragment extends DialogFragment {
                     String ownerId = experimentOwner.getText().toString();
                     String status = experimentStatus.getSelectedItem().toString();
                     String trialType = spinnerTrialType.getSelectedItem().toString();
-                    experimenterIDs = new ArrayList<>();
 
                     if(description.length()==0){
                         listener.nullValueError();
