@@ -169,7 +169,7 @@ public class MainActivityTest {
 
         // Make sure it's in list
         solo.scrollToTop();
-        assertTrue("Ended not present", solo.waitForText("soloEndedTest-Main", 1 , 2000, true, true));
+        assertTrue("Published not present", solo.waitForText("soloPublishedTest-Main", 1 , 2000, true, true));
     }
 
 
@@ -195,7 +195,7 @@ public class MainActivityTest {
 
         // Make sure it's not in list
         solo.scrollToTop();
-        assertFalse("Ended not present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
+        assertFalse("Unpublished is present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
     }
 
     /**
