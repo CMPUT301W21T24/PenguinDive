@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a custom list for experiments
@@ -20,14 +21,13 @@ import java.util.ArrayList;
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private final ArrayList<Experiment> experiments;
     private final Context context;
+    private final String uid;
 
-    Button questions_button;
-    Button trials_button;
-
-    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
+    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment, String uid) {
         super(context,0,experiment);
         this.context = context;
         this.experiments = experiment;
+        this.uid = uid;
     }
 
     @Nullable
@@ -153,14 +153,20 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
             map_button.setVisibility(View.GONE);
         }
 
-        // Prevent more trials if ended
-        if (experiment.getStatus().equals("Published")){
+        // Set trials button visibility
+        String ownerId = experiment.getOwnerId();
+        String experimentStatus = experiment.getStatus();
+        List<String> experimenters = experiment.getExperimenters();
+
+        // If the experiment isn't ended and the user is either the owner or subscribed
+        // This implies the owner can perform trials to their unpublished experiment
+        if ((ownerId.equals(uid) || experimenters.contains(uid)) && !experimentStatus.equals("Ended")) {
             trials_button.setVisibility(View.VISIBLE);
         }
-        else{
+        // Otherwise hide the button
+        else {
             trials_button.setVisibility(View.GONE);
         }
-
         return convertView;
     }
 
