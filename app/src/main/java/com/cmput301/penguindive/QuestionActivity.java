@@ -3,9 +3,10 @@ package com.cmput301.penguindive;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +42,9 @@ public class QuestionActivity extends AppCompatActivity {
     EditText addQuestionSubjectText;
     EditText addQuestionEditText;
     String expID;
-    DrawerLayout drawerLayout;
+    EditText searchQuestion;
+    Button searchQuestionButton;
+    String uid;
 
 
 
@@ -49,9 +52,6 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
-
-        // Assign drawer
-        drawerLayout = findViewById(R.id.questionactivity);
 
         // fetch intent
         Intent intent = getIntent();
@@ -62,6 +62,8 @@ public class QuestionActivity extends AppCompatActivity {
         addQuestionButton = findViewById(R.id.add_question_button);
         addQuestionEditText = findViewById(R.id.add_question_detail_field);
         addQuestionSubjectText = findViewById(R.id.add_question_subject_field);
+        searchQuestion = findViewById(R.id.search_question);
+        searchQuestionButton = findViewById(R.id.search_question_button);
 
 
         questionDataList = new ArrayList<>();
@@ -72,8 +74,27 @@ public class QuestionActivity extends AppCompatActivity {
         //initialize db
         db = FirebaseFirestore.getInstance();
 
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
+
         // Get a top level reference to the collection
         final CollectionReference collectionReference = db.collection("Questions");
+
+        searchQuestionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyword = searchQuestion.getText().toString();
+                if(keyword.length() > 0){
+                    // pass intent and start new activity
+                    Intent intent = new Intent(QuestionActivity.this, SearchQuestionActivity.class);
+                    // putting word
+                    intent.putExtra("KEYWORD", keyword);
+                    intent.putExtra("EXPID",expID);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // push question to DB
         addQuestionButton.setOnClickListener( new View.OnClickListener() {
@@ -83,6 +104,7 @@ public class QuestionActivity extends AppCompatActivity {
                 String questionSubject = addQuestionSubjectText.getText().toString();
                 String questionId = UUID.randomUUID().toString();
 
+
                 HashMap<String, String> data = new HashMap<>();
 
                 if ((questionText.length() > 0) && (questionSubject.length() > 0) ) {
@@ -91,6 +113,7 @@ public class QuestionActivity extends AppCompatActivity {
                     data.put("question_title",questionSubject);
                     data.put("question_id",questionId);
                     data.put("experiment_id",expID);
+                    data.put("question_user_id",uid);
 
                     collectionReference
 
@@ -132,10 +155,11 @@ public class QuestionActivity extends AppCompatActivity {
                     String questionId = doc.getId();
                     String questionTitle = (String)doc.getData().get("question_title");
                     String experimentID = (String)doc.getData().get("experiment_id");
+                    String questionUserId = (String)doc.getData().get("question_user_id");
 
                     //add new question
                     if(experimentID.equals(expID)){
-                        questionDataList.add(new Question(question, questionId, questionTitle));
+                        questionDataList.add(new Question(question, questionId, questionTitle, questionUserId));
                     }
 
 
@@ -154,91 +178,18 @@ public class QuestionActivity extends AppCompatActivity {
                 // pass intent and start new activity
                 Intent intent = new Intent(QuestionActivity.this, AnswerActivity.class);
                 // putting id
+                intent.putExtra("KEYWORD", "");
                 intent.putExtra("ID", question.getQuestionId());
                 intent.putExtra("TITLE", question.getQuestionTitle());
                 intent.putExtra("TEXT", question.getQuestion());
+                intent.putExtra("POSTERID",question.getQuestionUserId());
                 startActivity(intent);
 
             }
         });
-    }
-    /**
-     * This method refreshes the current activity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickRefresh(View view){
-        MainActivity.redirectActivity(this, AnswerActivity.class);
-    }
+        }
 
-    /**
-     * This method gives the current drawer layout to the openDrawer method in MainActivity
-     * It is called when the hamburger icon is clicked on the toolbar
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
-
-    /**
-     * This method gives the current drawer layout to the closeDrawer method in MainActivity
-     * It is called when the PenguinDive logo is clicked in the drawer
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
-
-    /**
-     * This method redirects the user to MainActivity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
-
-    /**
-     * This method redirects the user to the MyExperimentActivity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
-
-    /**
-     * This method redirects the user to the PickScanType Activity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
-
-    /**
-     * This method redirects the user to the PickQRType Activity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickGenerateQrCode(View view){ MainActivity.redirectActivity(this,PickQRType.class);}
-
-    /**
-     * This method redirects the user to the their profile page (Profile Activity)
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickMyProfile(View view){
-        MainActivity.redirectActivity(this,Profile.class);
-    }
-
-    /**
-     * This method redirects the user to the search users page (SearchProfile Activity)
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
-
-    /**
-     * This method calls openGitHub in MainActivity and provides it the current activity
-     * @param view
-     * Takes a view representing the current view
-     */
-    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
-
-}
+        }
 
 
 

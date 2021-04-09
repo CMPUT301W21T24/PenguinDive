@@ -59,60 +59,49 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         // Set view
         setContentView(R.layout.experiment_activity);
 
-        // Get UID
-        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
-        uid = sharedPref.getString("UID", "");
-
         // Initialize elements
         ListView experimentList = findViewById(R.id.experimentList);
         searchBar = findViewById(R.id.experimentSearchBar);
 
         // Setup list and adapter
         experimentDataList = new ArrayList<>();
-        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList, uid);
+        experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList);
         experimentList.setAdapter(experimentArrayAdapter);
 
-
+        // Get UID
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        uid = sharedPref.getString("UID", "");
 
         // Assign drawer
         drawerLayout = findViewById(R.id.experiment_activity);
 
         experimentList.setOnItemClickListener((parent, view, position, id) -> {
-            // Get experiment in question
-            Experiment currentExperiment = experimentDataList.get(position);
-
-            // Get fields
-            Boolean locationState = currentExperiment.getLocationState();
-            String status = currentExperiment.getStatus();
-            List<String> experimenters = currentExperiment.getExperimenters();
-
+            Boolean locationState = experimentDataList.get(position).getLocationState();
+            String status = experimentDataList.get(position).getStatus();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            if (locationState && status.equals("Published") && !experimenters.contains(uid)){
+            if (locationState && status.equals("Published")){
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
                         .setPositiveButton("OK", (dialog, which) -> {
                             experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
                                     .update("experimenterIDs", FieldValue.arrayUnion(uid));
                             dialog.cancel();
-                            Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("Cancel", null)
                         .create()
                         .show();
-            }else if (status.equals("Published") && !experimenters.contains(uid)) {
+            }else if (status.equals("Published")) {
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment?")
                         .setPositiveButton("OK", (dialog, which) -> {
                             experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
                                     .update("experimenterIDs", FieldValue.arrayUnion(uid));
                             dialog.cancel();
-                            Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("Cancel", null)
                         .create()
                         .show();
             }
-
         });
 
         // Populate list from firestore
@@ -192,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                     Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                     String ownerId = (String) doc.getData().get("ownerId");
                     String ownerName = (String) doc.getData().get("ownerName");
-                    List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
+                    List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                     Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
                     String trialType = (String) doc.getData().get("TrialType");
                     experimentDataList.add(new Experiment(expID, title, description, region, minTrials, ownerId, ownerName, status, experimenters, locationStatus, trialType));
@@ -252,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                                                 Integer minTrials = Math.toIntExact((Long) doc.getData().get("MinimumTrials"));
                                                 String ownerId = (String) doc.getData().get("ownerId");
                                                 String ownerName = (String) doc.getData().get("ownerName");
-                                                List<String> experimenters = (List<String>) doc.getData().get("experimenterIDs");
+                                                List<String> experimenters = (List<String>) doc.getData().get("experimentIDs");
                                                 String trialType = (String) doc.getData().get("TrialType");
                                                 Boolean locationStatus = (Boolean) doc.getData().get("LocationStatus");
 

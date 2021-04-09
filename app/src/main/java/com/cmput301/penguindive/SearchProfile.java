@@ -79,11 +79,9 @@ public class SearchProfile extends AppCompatActivity {
                                 String x = document.getString("name") + " " + (document.getString("email"));
                                 profileArray.add(x);
                                 profileID.add((document.getId()));
-                                profileAdapter.notifyDataSetChanged();
                             }
-
+                            profileAdapter.notifyDataSetChanged();
                         }
-
                     }
                 });
                 // search using email
@@ -97,9 +95,8 @@ public class SearchProfile extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
-                                profileAdapter.notifyDataSetChanged();
                             }
-
+                            profileAdapter.notifyDataSetChanged();
                         }
                     }
                 });

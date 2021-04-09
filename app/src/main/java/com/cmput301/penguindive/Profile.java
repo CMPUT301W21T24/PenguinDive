@@ -46,6 +46,9 @@ public class Profile extends AppCompatActivity {
     String uid;
     DrawerLayout drawerLayout;
 
+
+    //private ArrayList<Experiment> ownedExperiments;
+    //private ArrayList<Experiment> subscribedExperiments;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference profileCollectionReference = db.collection("Experimenter");
     CollectionReference experimentCollectionReference = db.collection("Experiments");
@@ -152,7 +155,6 @@ public class Profile extends AppCompatActivity {
      * A Experiment item with all values filled in
      */
     public Experiment makeExperiment(QueryDocumentSnapshot doc){
-
         String expID = doc.getId();
         String description = (String) doc.getData().get("Description");
         String region = (String) doc.getData().get("Region");
