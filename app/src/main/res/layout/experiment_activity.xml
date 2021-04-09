@@ -12,11 +12,19 @@
         <include
             layout = "@layout/home_toolbar"/>
 
+        <Button
+            android:id="@+id/test_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/experiment_toolbar"
+            android:text="test"
+            />
+
         <ListView
             android:id="@+id/experimentList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/experiment_toolbar"
+            android:layout_below="@id/test_button"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 

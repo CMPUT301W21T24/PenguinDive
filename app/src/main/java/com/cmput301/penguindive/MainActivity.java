@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
     SearchView searchBar;
     String uid;
     DrawerLayout drawerLayout;
+    Button test_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         experimentDataList = new ArrayList<>();
         experimentArrayAdapter = new ExperimentCustomList(this, experimentDataList, uid);
         experimentList.setAdapter(experimentArrayAdapter);
-
+        test_button = findViewById(R.id.test_button);
         // Assign drawer
         drawerLayout = findViewById(R.id.experiment_activity);
 
@@ -120,6 +121,15 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         final FloatingActionButton addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(view ->
                 new ExperimentFragment().show(getSupportFragmentManager(), "ADD"));
+
+        test_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CurrentExperimentersActivity.class);
+                startActivity(intent);
+                finishAffinity();
+            }
+        });
 
     }
 
