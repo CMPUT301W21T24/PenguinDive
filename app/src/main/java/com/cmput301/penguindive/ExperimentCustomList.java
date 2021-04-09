@@ -150,7 +150,15 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
             map_button.setVisibility(View.VISIBLE);
         }else{
             Location.setText("OFF");
-            map_button.setVisibility(View.INVISIBLE);
+            map_button.setVisibility(View.GONE);
+        }
+
+        // Prevent more trials if ended
+        if (experiment.getStatus().equals("Published")){
+            trials_button.setVisibility(View.VISIBLE);
+        }
+        else{
+            trials_button.setVisibility(View.GONE);
         }
 
         return convertView;

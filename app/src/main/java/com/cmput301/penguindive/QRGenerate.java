@@ -83,7 +83,6 @@ public class QRGenerate extends AppCompatActivity {
         // Assign drawer
         drawerLayout = findViewById(R.id.qrgenerate);
 
-        // TODO: add a trial name spinner for each experiment to allow choosing for which trial?
         // initialize variables
         experName = findViewById(R.id.experiment_name);
         QRCode = findViewById(R.id.QR_code);
@@ -126,6 +125,7 @@ public class QRGenerate extends AppCompatActivity {
         save.setVisibility(Button.GONE);
         back.setVisibility(Button.GONE);
 
+        // if the user wants to advertise an experiment
         if (choice.equals("ad")) {
             passfail.setVisibility(Spinner.GONE);
         }
@@ -134,10 +134,11 @@ public class QRGenerate extends AppCompatActivity {
         // and combine into data for the QR code
         generate.setOnClickListener(v -> {
 
+            // determine QR data based on user choice to advertise or create trial result
             String name = experName.getSelectedItem().toString();
             String passFail = passfail.getSelectedItem().toString();
             if (choice.equals("ad")) {
-                QRString = name;
+                QRString = "QR-" + name;
             } else {
                 QRString = "QR-" + name + "-" + passFail;
             }
@@ -177,29 +178,81 @@ public class QRGenerate extends AppCompatActivity {
         });
    }
 
-    // Refresh method
+    /**
+     * This method refreshes the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickRefresh(View view){
-        MainActivity.redirectActivity(this, QRGenerate.class);
+        MainActivity.redirectActivity(this, PickQRType.class);
     }
 
+    /**
+     * This method gives the current drawer layout to the openDrawer method in MainActivity
+     * It is called when the hamburger icon is clicked on the toolbar
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMenu(View view){ MainActivity.openDrawer(drawerLayout);}
 
+    /**
+     * This method gives the current drawer layout to the closeDrawer method in MainActivity
+     * It is called when the PenguinDive logo is clicked in the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickLogo(View view){ MainActivity.closeDrawer(drawerLayout);}
 
+    /**
+     * This method redirects the user to MainActivity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickHome(View view){MainActivity.redirectActivity(this,MainActivity.class); }
 
+    /**
+     * This method redirects the user to the MyExperimentActivity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMyExperiments(View view){ MainActivity.redirectActivity(this,MyExperimentActivity.class); }
 
-    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this,PickScanType.class);  }
+    /**
+     * This method redirects the user to the PickScanType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickScanQrCode(View view){ MainActivity.redirectActivity(this, PickScanType.class); }
 
-    public void ClickGenerateQrCode(View view){ MainActivity.closeDrawer(drawerLayout); }
+    /**
+     * This method redirects the user to the PickQRType Activity
+     * Since the user is already Generating a QR code, this simply closes the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGenerateQrCode(View view){ MainActivity.closeDrawer(drawerLayout);  }
 
+    /**
+     * This method redirects the user to the their profile page (Profile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMyProfile(View view){
         MainActivity.redirectActivity(this,Profile.class);
     }
 
+    /**
+     * This method redirects the user to the search users page (SearchProfile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickSearchUsers(View view){ MainActivity.redirectActivity(this,SearchProfile.class); }
 
-    public void ClickGitHub(View view){ MainActivity.openGitHub(this);}
+    /**
+     * This method calls openGitHub in MainActivity and provides it the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
+    public void ClickGitHub(View view){ MainActivity.openGitHub(this); }
 
 }
