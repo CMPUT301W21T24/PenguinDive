@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a custom list for measurement trial objects
+ */
 public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
 
     // define measurement list and context
@@ -49,6 +52,7 @@ public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
         // set the value of the view with the object
         String measurementString = String.valueOf(measurementTrial.getMeasurement());
         String measurementNameString = measurementTrial.getMeasurementName();
+
         measurementView.setText(measurementString);
         measurementNameView.setText(measurementNameString);
 

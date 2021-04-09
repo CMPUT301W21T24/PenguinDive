@@ -42,6 +42,7 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -87,8 +88,10 @@ Date last modified: Nov 14, 2019
 Created by: bikashthapa01: https://github.com/bikashthapa01
 Licence: unknown (could not find)
 URL: https://github.com/bikashthapa01/QR-APP/tree/master/app
+*/
 
-This class allows users to scan a printed QR code and will read out the text of the QR code back to the user
+/**
+ * This class allows users to scan a printed QR code and will read out the text of the QR code back to the user
  */
 public class QRScanner extends AppCompatActivity {
 
@@ -104,6 +107,7 @@ public class QRScanner extends AppCompatActivity {
     String choice;
     ArrayList<String> experimentNames;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +130,13 @@ public class QRScanner extends AppCompatActivity {
         // get experiment names for registering barcodes
         experimentNames = new ArrayList<>();
         db.collection("Experiments").get().addOnCompleteListener(task -> {
+            SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+            String uid = sharedPref.getString("UID", "");
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                    if (document.get("Status").equals("Published")) {
+                    if (document.get("Status").equals("Published")
+                            && (document.get("experimenterIDs").toString().contains(uid)
+                            || document.get("ownerId").toString().contains(uid))) {
                         experimentNames.add(document.get("Title").toString());
                         Log.d("experiment names", document.get("Title").toString());
                     }
@@ -193,7 +201,9 @@ public class QRScanner extends AppCompatActivity {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                     Map<String, Object> m = document.getData();
-                    if (m.containsKey("Barcodes") && document.get("Status").equals("Published")) {
+                    if (m.containsKey("Barcodes") && document.get("Status").equals("Published")
+                            && (document.get("experimenterIDs").toString().contains(uid)
+                            || document.get("ownerId").toString().contains(uid))) {
                         ArrayList<String> s = (ArrayList<String>) m.get("Barcodes");
                         for (int i = 0; i < s.size(); i++) {
                             if (s.get(i).contains(barcodeText) && s.get(i).contains(uid)) {
@@ -214,7 +224,7 @@ public class QRScanner extends AppCompatActivity {
             // if there are no items in the dropdown then there are no registered barcodes, otherwise
             // show the update button and dropdown
             if (enames.length == 0) {
-                qrText.setText("No registered barcodes match this scan");
+                qrText.setText("No registered barcodes match this scan\nor no subscribed experiments");
             } else {
                 ArrayAdapter<String> eAdapt = new ArrayAdapter(QRScanner.this, R.layout.support_simple_spinner_dropdown_item, enames);
                 barcodeExper.setAdapter(eAdapt);
@@ -280,29 +290,38 @@ public class QRScanner extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         String tType = "";
+                                        String eid = "";
                                         for (DocumentSnapshot doc12 : task.getResult()) {
                                             if (ExperTitle.equals(doc12.get("Title"))) {
                                                 tType = (String) doc12.get("TrialType");
+                                                eid = doc12.getId();
                                                 break;
                                             }
                                         }
                                         Map<String, Object> data = new HashMap<>();
                                         data.put("Experiment Name", ExperTitle);
                                         data.put("Trial Type", tType);
+                                        Calendar curDate = Calendar.getInstance();
+                                        String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                                curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                                curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                        data.put("Date", date);
+                                        data.put("Experiment ID", eid);
+                                        data.put("UID", uid);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarSuccess");
-                                                data.put("Measurement", 1.0);
+                                                data.put("Measurement", "1.0");
                                                 break;
                                             case "Non-Negative Integer Count Trial":
                                                 data.put("NNIC Name", "BarSuccess");
-                                                data.put("Non-Negative Integer", 1);
+                                                data.put("Non-Negative Integer", "1");
                                                 break;
                                             case "Binomial Trial":
                                                 data.put("Binomial Type", "Pass");
                                                 break;
                                             case "Count Trial":
-                                                data.put("Increment Count", "TRUE");
+                                                data.put("Count Type", "TRUE");
                                                 break;
                                         }
                                         db.collection("Trials").document(UUID.randomUUID().toString()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -324,23 +343,32 @@ public class QRScanner extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         String tType = "";
+                                        String eid = "";
                                         for (DocumentSnapshot document : task.getResult()) {
                                             if (ExperTitle.equals(document.get("Title"))) {
                                                 tType = (String) document.get("TrialType");
+                                                eid = document.getId();
                                                 break;
                                             }
                                         }
                                         Map<String, Object> data = new HashMap<>();
                                         data.put("Experiment Name", ExperTitle);
                                         data.put("Trial Type", tType);
+                                        Calendar curDate = Calendar.getInstance();
+                                        String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                                curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                                curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                        data.put("Date", date);
+                                        data.put("Experiment ID", eid);
+                                        data.put("UID", uid);
                                         switch (tType) {
                                             case "Measurement Trial":
                                                 data.put("Measurement Name", "BarFailure");
-                                                data.put("Measurement", 0.0);
+                                                data.put("Measurement", "0.0");
                                                 break;
                                             case "Non-Negative Integer Count Trial":
                                                 data.put("NNIC Name", "BarFailure");
-                                                data.put("Non-Negative Integer", -1);
+                                                data.put("Non-Negative Integer", "-1");
                                                 break;
                                             case "Binomial Trial":
                                                 data.put("Binomial Type", "Fail");
@@ -398,10 +426,14 @@ public class QRScanner extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 String tType = "";
+                                String eid = "";
                                 boolean pub = false;
                                 for (DocumentSnapshot doc : task.getResult()) {
-                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")) {
+                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")
+                                            && (doc.get("experimenterIDs").toString().contains(uid)
+                                            || doc.get("ownerId").toString().contains(uid))) {
                                         tType = (String) doc.get("TrialType");
+                                        eid = doc.getId();
                                         pub = true;
                                         break;
                                     }
@@ -410,14 +442,21 @@ public class QRScanner extends AppCompatActivity {
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("Experiment Name", experToUpdate[1]);
                                     data.put("Trial Type", tType);
+                                    Calendar curDate = Calendar.getInstance();
+                                    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                    data.put("Date", date);
+                                    data.put("Experiment ID", eid);
+                                    data.put("UID", uid);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRSuccess");
-                                            data.put("Measurement", 1.0);
+                                            data.put("Measurement", "1.0");
                                             break;
                                         case "Non-Negative Integer Count Trial":
                                             data.put("NNIC Name", "QRSuccess");
-                                            data.put("Non-Negative Integer", 1);
+                                            data.put("Non-Negative Integer", "1");
                                             break;
                                         case "Binomial Trial":
                                             data.put("Binomial Type", "Pass");
@@ -435,7 +474,7 @@ public class QRScanner extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    qrText.setText("No experiment with that name exists");
+                                    qrText.setText("No experiment with that name exists\n or not subscribed");
                                 }
                             }
                         }
@@ -448,10 +487,14 @@ public class QRScanner extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 String tType = "";
+                                String eid = "";
                                 boolean pub = false;
                                 for (DocumentSnapshot doc : task.getResult()) {
-                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")) {
+                                    if (experToUpdate[1].equals(doc.get("Title")) && doc.get("Status").equals("Published")
+                                            && (doc.get("experimenterIDs").toString().contains(uid)
+                                            || doc.get("ownerId").toString().contains(uid))) {
                                         tType = (String) doc.get("TrialType");
+                                        eid = doc.getId();
                                         pub = true;
                                         break;
                                     }
@@ -460,14 +503,21 @@ public class QRScanner extends AppCompatActivity {
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("Experiment Name", experToUpdate[1]);
                                     data.put("Trial Type", tType);
+                                    Calendar curDate = Calendar.getInstance();
+                                    String date = curDate.get(Calendar.DAY_OF_MONTH) + "-" + (curDate.get(Calendar.MONTH) + 1) + "-" +
+                                            curDate.get(Calendar.YEAR) + " " + curDate.get(Calendar.HOUR) + ":" +
+                                            curDate.get(Calendar.MINUTE) + ":" + curDate.get(Calendar.SECOND);
+                                    data.put("Date", date);
+                                    data.put("Experiment ID", eid);
+                                    data.put("UID", uid);
                                     switch (tType) {
                                         case "Measurement Trial":
                                             data.put("Measurement Name", "QRFailure");
-                                            data.put("Measurement", 0.0);
+                                            data.put("Measurement", "0.0");
                                             break;
                                         case "Non-Negative Integer Count Trial":
                                             data.put("NNIC Name", "QRFailure");
-                                            data.put("Non-Negative Integer", -1);
+                                            data.put("Non-Negative Integer", "-1");
                                             break;
                                         case "Binomial Trial":
                                             data.put("Binomial Type", "Fail");
@@ -485,7 +535,7 @@ public class QRScanner extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    qrText.setText("No experiment with that name exists");
+                                    qrText.setText("No experiment with that name exists\nor not subscribed");
                                 }
                             }
                         }
@@ -511,7 +561,6 @@ public class QRScanner extends AppCompatActivity {
     private void registerBar() {
         // get barcode and user id
         String barcode = qrText.getText().toString();
-        HashMap<String, String> choiceMap = new HashMap<>();
         SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
         String uid = sharedPref.getString("UID", "");
         String experTrial = qrText.getText().toString() + ".exp:." + uid + ".add trial result:." + trueFalse.getSelectedItem();
@@ -593,10 +642,14 @@ public class QRScanner extends AppCompatActivity {
                     populateBarcodeExper();
                     break;
                 case "BR":
-                    update.setText("Register");
-                    update.setVisibility(Button.VISIBLE);
-                    trueFalse.setVisibility(Spinner.VISIBLE);
-                    experName.setVisibility(Spinner.VISIBLE);
+                    if (experimentNames.size() == 0) {
+                        qrText.setText("No subscribed experiments");
+                    } else {
+                        update.setText("Register");
+                        update.setVisibility(Button.VISIBLE);
+                        trueFalse.setVisibility(Spinner.VISIBLE);
+                        experName.setVisibility(Spinner.VISIBLE);
+                    }
                     break;
             }
         }));

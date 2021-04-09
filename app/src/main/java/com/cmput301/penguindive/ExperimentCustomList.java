@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a custom list for experiments
@@ -20,14 +21,13 @@ import java.util.ArrayList;
 public class ExperimentCustomList extends ArrayAdapter<Experiment> {
     private final ArrayList<Experiment> experiments;
     private final Context context;
+    private final String uid;
 
-    Button questions_button;
-    Button trials_button;
-
-    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment) {
+    public ExperimentCustomList(Context context, ArrayList<Experiment> experiment, String uid) {
         super(context,0,experiment);
         this.context = context;
         this.experiments = experiment;
+        this.uid = uid;
     }
 
     @Nullable
@@ -53,11 +53,22 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
         Button questions_button = convertView.findViewById(R.id.questions_experiment);
         Button trials_button = convertView.findViewById(R.id.trials_experiment);
         Button map_button = convertView.findViewById(R.id.map_button);
+        Button stat_button = convertView.findViewById(R.id.stat_button);
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, MapActivity.class);
+                Experiment exp = getItem(position);
+                String exp_id = exp.getExperimentId();
+                intent.putExtra("EXPID", exp_id);
+                context.startActivity(intent);
+            }
+        });
+        stat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,StatsActivity.class);
                 Experiment exp = getItem(position);
                 String exp_id = exp.getExperimentId();
                 intent.putExtra("EXPID", exp_id);
@@ -86,6 +97,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                 // get experiment properties
                 Experiment experiment = getItem(position);
                 String experimentName = experiment.getTitle();
+                String experimentID = experiment.getExperimentId();
                 String experimentTrialType = experiment.getTrialType();
 
                 // cases for different trial types
@@ -94,6 +106,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Count Trial": {
                         Intent intent = new Intent(context, CountActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -102,6 +117,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Binomial Trial": {
                         Intent intent = new Intent(context, BinomialActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -110,6 +128,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Non-Negative Integer Count Trial": {
                         Intent intent = new Intent(context, NNICActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -118,6 +139,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Measurement Trial": {
                         Intent intent = new Intent(context, MeasurementActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -127,8 +151,8 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                         System.out.println("There is no correct trial type set for this experiment!");
                     }
                 }
-             }
-         });
+            }
+        });
 
         experimentName.setText(experiment.getTitle());
         description.setText(experiment.getDescription());
@@ -142,14 +166,20 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
             map_button.setVisibility(View.GONE);
         }
 
-        // Prevent more trials if ended
-        if (experiment.getStatus().equals("Published")){
+        // Set trials button visibility
+        String ownerId = experiment.getOwnerId();
+        String experimentStatus = experiment.getStatus();
+        List<String> experimenters = experiment.getExperimenters();
+
+        // If the experiment isn't ended and the user is either the owner or subscribed
+        // This implies the owner can perform trials to their unpublished experiment
+        if ((ownerId.equals(uid) || experimenters.contains(uid)) && !experimentStatus.equals("Ended")) {
             trials_button.setVisibility(View.VISIBLE);
         }
-        else{
+        // Otherwise hide the button
+        else {
             trials_button.setVisibility(View.GONE);
         }
-
         return convertView;
     }
 

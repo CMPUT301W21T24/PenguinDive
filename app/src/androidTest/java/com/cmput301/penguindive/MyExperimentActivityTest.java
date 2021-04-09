@@ -316,15 +316,18 @@ public class MyExperimentActivityTest {
         assertTrue("Unpublished is not present", solo.waitForText("soloUnpublishedTest-MyExperiment", 1, 2000, true, true));
 
         // Click on published and delete
-        solo.clickOnText("soloPublishedTest-MyExperiment");
+        solo.scrollToTop();
+        solo.clickOnText("soloPublishedTest-MyExperiment", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on ended and delete
-        solo.clickOnText("soloEndedTest-MyExperiment");
+        solo.scrollToTop();
+        solo.clickOnText("soloEndedTest-MyExperiment", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on unpublished and delete
-        solo.clickOnText("soloUnpublishedTest-MyExperiment");
+        solo.scrollToTop();
+        solo.clickOnText("soloUnpublishedTest-MyExperiment", 1, true);
         solo.clickOnButton("Delete");
 
         // Ensure all experiments are gone

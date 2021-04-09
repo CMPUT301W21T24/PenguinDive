@@ -80,9 +80,8 @@ public class SearchProfile extends AppCompatActivity {
                                 profileArray.add(x);
                                 profileID.add((document.getId()));
                             }
-
+                            profileAdapter.notifyDataSetChanged();
                         }
-                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 // search using email
@@ -97,10 +96,8 @@ public class SearchProfile extends AppCompatActivity {
                                 profileArray.add((document.getString("email")));
                                 profileID.add((document.getId()));
                             }
-
-
+                            profileAdapter.notifyDataSetChanged();
                         }
-                        profileAdapter.notifyDataSetChanged();
                     }
                 });
                 return false;

@@ -169,7 +169,7 @@ public class MainActivityTest {
 
         // Make sure it's in list
         solo.scrollToTop();
-        assertTrue("Ended not present", solo.waitForText("soloEndedTest-Main", 1 , 2000, true, true));
+        assertTrue("Published not present", solo.waitForText("soloPublishedTest-Main", 1 , 2000, true, true));
     }
 
 
@@ -195,7 +195,7 @@ public class MainActivityTest {
 
         // Make sure it's not in list
         solo.scrollToTop();
-        assertFalse("Ended not present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
+        assertFalse("Unpublished is present", solo.waitForText("soloUnpublishedTest-Main", 1 , 2000, true, true));
     }
 
     /**
@@ -316,15 +316,18 @@ public class MainActivityTest {
         solo.clickOnText("My Experiments");
 
         // Click on published and delete
-        solo.clickOnText("soloPublishedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloPublishedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on ended and delete
-        solo.clickOnText("soloEndedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloEndedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on unpublished and delete
-        solo.clickOnText("soloUnpublishedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloUnpublishedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Go back to MainActivity

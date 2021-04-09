@@ -131,9 +131,13 @@ public class ExperimentFragment extends DialogFragment {
             // Return spinner to last choice
             int spinnerPosition = statusAdapter.getPosition(experiment.getStatus());
             experimentStatus.setSelection(spinnerPosition);
-            // Trial Type Spinner
+
+            // Trial Type Spinner (cannot be changed if it's not a new experiment
             int trialtypeSpinnerPosition = trialtypeAdapter.getPosition(experiment.getTrialType());
             spinnerTrialType.setSelection(trialtypeSpinnerPosition);
+            if (experiment != null){
+                spinnerTrialType.setEnabled(false);
+            }
             experimentLocation.setChecked(locationStatus);
             experimenterIDs = experiment.getExperimenters();
         }
@@ -155,6 +159,7 @@ public class ExperimentFragment extends DialogFragment {
                     if (experimentID == null){
                         experimentID = UUID.randomUUID().toString();
                         locationStatus = false;
+                        experimenterIDs = new ArrayList<>();
                     }
                     String title = experimentTitle.getText().toString();
                     String description = experimentDescription.getText().toString();
@@ -163,7 +168,6 @@ public class ExperimentFragment extends DialogFragment {
                     String ownerId = experimentOwner.getText().toString();
                     String status = experimentStatus.getSelectedItem().toString();
                     String trialType = spinnerTrialType.getSelectedItem().toString();
-                    experimenterIDs = new ArrayList<>();
 
                     if(description.length()==0){
                         listener.nullValueError();
@@ -183,6 +187,7 @@ public class ExperimentFragment extends DialogFragment {
                         String ownerName = experiment.getOwnerUserName(); //
                         // set the location status
                         locationStatus = experimentLocation.isChecked();
+
                         Experiment newExperiment = new Experiment(experimentID,title,description,region, minTrials,ownerId, ownerName, status,experimenterIDs,locationStatus,trialType);
                         listener.onEditPressed(newExperiment, position);
                     }
