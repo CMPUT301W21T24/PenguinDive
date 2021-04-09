@@ -30,7 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-// This class is for the binomial activity, pretty much entirely refactored bc of database
+/**
+ * This class represents an activity that shows the given binomial trials for an experiment
+ */
 public class BinomialActivity extends AppCompatActivity {
 
     // declare buttons
@@ -76,8 +78,6 @@ public class BinomialActivity extends AppCompatActivity {
         experimentID = intent.getStringExtra("Experiment ID");
         String uid = intent.getStringExtra("UID");
         String ownerId = intent.getStringExtra("Owner ID");
-
-
 
         // set buttons
         addPassButton = findViewById(R.id.binomial_pass_button);
@@ -158,8 +158,7 @@ public class BinomialActivity extends AppCompatActivity {
                 }
             }
         });
-
-
+        
         // set experiment name
         experimentNameView = findViewById(R.id.binomial_experiment_name);
         experimentNameView.setText(experimentName);

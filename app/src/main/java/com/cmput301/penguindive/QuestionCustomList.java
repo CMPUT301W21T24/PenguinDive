@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-
+/**
+ * This class represents a custom list that holds question objects
+ */
 public class QuestionCustomList extends ArrayAdapter<Question> {
 
     private ArrayList<Question> questionArrayList;

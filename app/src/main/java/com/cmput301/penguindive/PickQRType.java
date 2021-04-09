@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-/*
-This class lets the user choose whether to create a QR code for a trial result or to advertise an experiment
+/**
+ * This class lets the user choose whether to create a QR code for a trial result or to advertise an experiment
  */
 public class PickQRType extends AppCompatActivity {
     DrawerLayout drawerLayout;

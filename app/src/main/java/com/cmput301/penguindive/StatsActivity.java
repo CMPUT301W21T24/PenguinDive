@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This class represents an activity where the user can choose what kind of statistics to view
+ * Redirects the user to the appropriate activity
+ */
 public class StatsActivity extends AppCompatActivity {
     private String expID;
     Button statButton;

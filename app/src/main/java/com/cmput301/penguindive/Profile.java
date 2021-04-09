@@ -36,7 +36,6 @@ import java.util.Objects;
 /**
  * This class represents an activity that will show the user's profile
  */
-
 public class Profile extends AppCompatActivity {
     private EditText name;
     private EditText email;

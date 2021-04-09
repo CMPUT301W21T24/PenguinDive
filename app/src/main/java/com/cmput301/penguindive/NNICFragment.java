@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class represents a dialog fragment for NNIC trials
+ */
 public class NNICFragment extends DialogFragment {
 
     // initialize variables used in the fragment

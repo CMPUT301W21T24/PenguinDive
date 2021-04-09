@@ -1,6 +1,9 @@
 package com.cmput301.penguindive;
 
-// refactored to fit database
+/**
+ * This class represents a count trial object
+ * Increment and decrements only
+ */
 public class Count_Trial {
 
     // variables

@@ -197,12 +197,17 @@ public class MyExperimentActivity extends AppCompatActivity implements Experimen
         });
     }
 
-    //showing message when there is any invalid input
+    /**
+     * This method prompts the user if one of the experiment fields exceeds it's character limit
+     */
     @Override
     public void extraStringError() {
         Toast.makeText(this,"The description exceeds the maximum limitation.", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * This method prompts the user if one of the experiment fields was left empty
+     */
     @Override
     public void nullValueError() {
         Toast.makeText(this,"The information of description and date of the experiment is required.", Toast.LENGTH_SHORT).show();
