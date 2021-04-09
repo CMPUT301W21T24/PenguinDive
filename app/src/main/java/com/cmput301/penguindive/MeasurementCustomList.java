@@ -49,6 +49,7 @@ public class MeasurementCustomList extends ArrayAdapter<Measurement_Trial> {
         // set the value of the view with the object
         String measurementString = String.valueOf(measurementTrial.getMeasurement());
         String measurementNameString = measurementTrial.getMeasurementName();
+
         measurementView.setText(measurementString);
         measurementNameView.setText(measurementNameString);
 

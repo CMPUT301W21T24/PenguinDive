@@ -2,9 +2,9 @@ package com.cmput301.penguindive;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -24,10 +24,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 // This class is for the binomial activity, pretty much entirely refactored bc of database
@@ -36,6 +36,7 @@ public class BinomialActivity extends AppCompatActivity {
     // declare buttons
     private Button addPassButton;
     private Button addFailButton;
+    private Button ignoreResultsButton;
 
     // declare textviews
     private TextView numPasses;
@@ -44,6 +45,7 @@ public class BinomialActivity extends AppCompatActivity {
     // experiment name stuff
     private TextView experimentNameView;
     private String experimentName;
+    private String experimentID;
 
     // used to initialize existing values in onCreate
     Integer intPasses;
@@ -51,7 +53,9 @@ public class BinomialActivity extends AppCompatActivity {
 
     // initialize db
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference collectionReference = db.collection("Trials");
+    CollectionReference trialsCollectionReference = db.collection("Trials");
+    CollectionReference experimentCollectionReference = db.collection("Experiments");
+
     // add tag
     final String TAG = "Binomial Activity";
 
@@ -69,10 +73,24 @@ public class BinomialActivity extends AppCompatActivity {
         // get experiment name from intent
         Intent intent = getIntent();
         experimentName = intent.getStringExtra("Experiment Name");
+        experimentID = intent.getStringExtra("Experiment ID");
+        String uid = intent.getStringExtra("UID");
+        String ownerId = intent.getStringExtra("Owner ID");
+
+
 
         // set buttons
         addPassButton = findViewById(R.id.binomial_pass_button);
         addFailButton = findViewById(R.id.binomial_fail_button);
+        ignoreResultsButton = findViewById(R.id.binomial_ignore_results_button);
+
+        // Hide ignore results button if not owner
+        if(uid.equals(ownerId)){
+            ignoreResultsButton.setVisibility(View.VISIBLE);
+        }
+        else{
+            ignoreResultsButton.setVisibility(View.GONE);
+        }
 
         // set textviews
         numPasses = findViewById(R.id.binomial_numpasses);
@@ -88,31 +106,56 @@ public class BinomialActivity extends AppCompatActivity {
                     // initialize values
                     intPasses = 0;
                     intFails = 0;
+                    numPasses.setText(String.valueOf(intPasses));
+                    numFails.setText(String.valueOf(intFails));
 
                     // for each document
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    for (QueryDocumentSnapshot trialDoc : Objects.requireNonNull(task.getResult())) {
                         // if the document is for the experiment
-                        if (document.get("Experiment Name").equals(experimentName)) {
-                            // get values for object through document
-                            String binomialType = (String) document.get("Binomial Type");
+                        if (trialDoc.get("Experiment ID").equals(experimentID)) {
+                            experimentCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    for (QueryDocumentSnapshot experimentDoc : Objects.requireNonNull(task.getResult())) {
+                                        if (experimentDoc.getId().equals(experimentID)) {
 
-                            // put the trials in the list depending on what type they are
-                            if (binomialType.equals("Pass")) {
-                                intPasses++;
-                            } else if (binomialType.equals("Fail")) {
-                                intFails++;
-                            } else {
-                                System.out.println("Binomial Trial is not pass or fail!");
-                            }
+                                            List<String> ignored = (List<String>) experimentDoc.getData().get("ignoredExperimenters");
+                                            if (ignored == null) {
+                                                ignored = new ArrayList<String>();
+                                            }
+                                            String uid = (String) trialDoc.getData().get("UID");
+
+                                            // if the user is not ignored
+                                            if(!ignored.contains(uid)){
+
+                                                // get values for object through document
+                                                String binomialType = (String) trialDoc.get("Binomial Type");
+
+                                                // put the trials in the list depending on what type they are
+                                                if (binomialType.equals("Pass")) {
+                                                    intPasses++;
+                                                } else if (binomialType.equals("Fail")) {
+                                                    intFails++;
+                                                } else {
+                                                    System.out.println("Binomial Trial is not pass or fail!");
+                                                }
+                                                // set the text of textviews
+                                                numPasses.setText(String.valueOf(intPasses));
+                                                numFails.setText(String.valueOf(intFails));
+                                            }
+                                        }
+                                    }
+
+                                }
+                            });
                         }
+                        // set the text of textviews from other listener
+                        numPasses.setText(String.valueOf(intPasses));
+                        numFails.setText(String.valueOf(intFails));
                     }
                 } else {
                     Log.d("Could not get data", "no data to get");
                 }
-
-                // set the text of textviews
-                numPasses.setText(String.valueOf(intPasses));
-                numFails.setText(String.valueOf(intFails));
             }
         });
 
@@ -139,12 +182,14 @@ public class BinomialActivity extends AppCompatActivity {
                 // add one pass to the hashmap, along with the mandatory trial type and experiment name
                 data.put("Trial Type", "Binomial Trial");
                 data.put("Experiment Name", experimentName);
+                data.put("Experiment ID", experimentID);
                 data.put("Date", date);
+                data.put("UID", uid);
 
                 data.put("Binomial Type", "Pass");
 
                 // add to firestore
-                collectionReference
+                trialsCollectionReference
                         // add and set id
                         .add(data)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -180,11 +225,14 @@ public class BinomialActivity extends AppCompatActivity {
                 // add one fail to the hashmap, along with the mandatory trial type and experiment name
                 data.put("Trial Type", "Binomial Trial");
                 data.put("Experiment Name", experimentName);
+                data.put("Experiment ID", experimentID);
+                data.put("Date", date);
+                data.put("UID", uid);
 
                 data.put("Binomial Type", "Fail");
 
                 // add to firestore
-                collectionReference
+                trialsCollectionReference
                         // add and set id
                         .add(data)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -199,6 +247,16 @@ public class BinomialActivity extends AppCompatActivity {
                                 Log.d(TAG, "There was an error adding data: " + e.toString());
                             }
                         });
+            }
+        });
+
+        // when the ignore results button is clicked, redirect to activity
+        ignoreResultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BinomialActivity.this, CurrentExperimentersActivity.class);
+                intent.putExtra("Experiment ID", experimentID);
+                startActivity(intent);
             }
         });
     }

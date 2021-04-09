@@ -28,6 +28,20 @@
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/count_ignore_results_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ignore Results"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5">
+
+    </Button>
+
+
     <TextView
         android:id="@+id/count_experiment_name"
         android:layout_width="280dp"

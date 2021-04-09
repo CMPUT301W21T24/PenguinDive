@@ -316,15 +316,18 @@ public class MainActivityTest {
         solo.clickOnText("My Experiments");
 
         // Click on published and delete
-        solo.clickOnText("soloPublishedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloPublishedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on ended and delete
-        solo.clickOnText("soloEndedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloEndedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Click on unpublished and delete
-        solo.clickOnText("soloUnpublishedTest-Main");
+        solo.scrollToTop();
+        solo.clickOnText("soloUnpublishedTest-Main", 1, true);
         solo.clickOnButton("Delete");
 
         // Go back to MainActivity

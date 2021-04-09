@@ -41,10 +41,25 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.496"
+            app:layout_constraintVertical_bias="0.313"
             tools:visibility="visible">
 
         </Button>
+
+        <Button
+            android:id="@+id/measurement_ignore_results_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:text="Ignore Results"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent">
+
+        </Button>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
             List<String> experimenters = currentExperiment.getExperimenters();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            // If the user hasn't subscribed to a publish location enabled experiment
             if (locationState && status.equals("Published") && !experimenters.contains(uid)){
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment? This experiment is a located experiment")
@@ -97,12 +99,28 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
                         .setNegativeButton("Cancel", null)
                         .create()
                         .show();
-            }else if (status.equals("Published") && !experimenters.contains(uid)) {
+            }
+            // If the user hasn't subscribed to a published experiment
+            else if (status.equals("Published") && !experimenters.contains(uid)) {
                 builder.setTitle("Subscribe Confirmation")
                         .setMessage("Do you want to be an experimenter of this experiment?")
                         .setPositiveButton("OK", (dialog, which) -> {
                             experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
                                     .update("experimenterIDs", FieldValue.arrayUnion(uid));
+                            dialog.cancel();
+                            Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            }
+            // Already subscribed, prompt to unsubscribe
+            else{
+                builder.setTitle("Unsubscribe Confirmation")
+                        .setMessage("Do you want to unsubscribe from this experiment?")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            experimentCollectionReference.document(experimentDataList.get(position).getExperimentId())
+                                    .update("experimenterIDs", FieldValue.arrayRemove(uid));
                             dialog.cancel();
                             Toast.makeText(MainActivity.this,"You have subscribed to the experiment.", Toast.LENGTH_SHORT).show();
                         })

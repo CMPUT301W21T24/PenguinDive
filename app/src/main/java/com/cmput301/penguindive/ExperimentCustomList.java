@@ -97,6 +97,7 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                 // get experiment properties
                 Experiment experiment = getItem(position);
                 String experimentName = experiment.getTitle();
+                String experimentID = experiment.getExperimentId();
                 String experimentTrialType = experiment.getTrialType();
 
                 // cases for different trial types
@@ -105,6 +106,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Count Trial": {
                         Intent intent = new Intent(context, CountActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -113,6 +117,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Binomial Trial": {
                         Intent intent = new Intent(context, BinomialActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -121,6 +128,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Non-Negative Integer Count Trial": {
                         Intent intent = new Intent(context, NNICActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -129,6 +139,9 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                     case "Measurement Trial": {
                         Intent intent = new Intent(context, MeasurementActivity.class);
                         intent.putExtra("Experiment Name", experimentName);
+                        intent.putExtra("Experiment ID", experimentID);
+                        intent.putExtra("UID", uid);
+                        intent.putExtra("Owner ID", experiment.getOwnerId());
 
                         // redirect to activity
                         context.startActivity(intent);
@@ -138,8 +151,8 @@ public class ExperimentCustomList extends ArrayAdapter<Experiment> {
                         System.out.println("There is no correct trial type set for this experiment!");
                     }
                 }
-             }
-         });
+            }
+        });
 
         experimentName.setText(experiment.getTitle());
         description.setText(experiment.getDescription());
