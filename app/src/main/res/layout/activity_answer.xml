@@ -3,6 +3,33 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+
+        <TextView
+            android:id="@+id/question_posted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Posted by:"
+            android:textSize="10sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/question_poster1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Poster"
+            android:textSize="10sp">
+
+        </TextView>
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/question_subject"
@@ -25,6 +52,9 @@
         android:textSize="20sp">
 
     </TextView>
+
+
+
 
 
     <EditText

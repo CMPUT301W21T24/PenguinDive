@@ -43,6 +43,8 @@ public class AnswerActivity extends AppCompatActivity {
     EditText searchAnswer;
     Button searchAnswerButton;
     String uid;
+    TextView posted;
+    TextView poster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class AnswerActivity extends AppCompatActivity {
         final String q_title = intent.getStringExtra("TITLE");
         final String q_text = intent.getStringExtra("TEXT");
         final String keyword = intent.getStringExtra("KEYWORD");
+        final String question_poster = intent.getStringExtra("POSTERID");
 
         // fetching views
         answerList = findViewById(R.id.answer_list);
@@ -64,9 +67,12 @@ public class AnswerActivity extends AppCompatActivity {
         addAnswerEditText = findViewById(R.id.answer_editText);
         searchAnswer = findViewById(R.id.search_answer);
         searchAnswerButton = findViewById(R.id.search_answer_button);
+        posted = findViewById(R.id.question_posted);
+        poster = findViewById(R.id.question_poster1);
 
         subjectField.setText(q_title);
         questionField.setText(q_text);
+        poster.setText(question_poster);
 
         answerDataList = new ArrayList<>();
 

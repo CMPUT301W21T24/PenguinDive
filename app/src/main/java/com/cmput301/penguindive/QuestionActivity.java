@@ -182,6 +182,7 @@ public class QuestionActivity extends AppCompatActivity {
                 intent.putExtra("ID", question.getQuestionId());
                 intent.putExtra("TITLE", question.getQuestionTitle());
                 intent.putExtra("TEXT", question.getQuestion());
+                intent.putExtra("POSTERID",question.getQuestionUserId());
                 startActivity(intent);
 
             }
