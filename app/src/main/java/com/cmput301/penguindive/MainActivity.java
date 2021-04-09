@@ -298,75 +298,150 @@ public class MainActivity extends AppCompatActivity implements ExperimentFragmen
         return keywords;
     }
 
-    // Refresh method
+    /**
+     * This method refreshes the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickRefresh(View view){
         redirectActivity(this, MainActivity.class);
     }
 
-    // Navigation methods
+    /**
+     * This method gives the current drawer layout to the openDrawer method
+     * It is called when the hamburger icon is clicked on the toolbar
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMenu(View view){
         // open the drawer
         openDrawer(drawerLayout);
     }
 
+    /**
+     * This method opens the navigation drawer
+     * @param drawerLayout
+     * Takes a drawerLayout that represents the current activities drawer
+     */
     public static void openDrawer(DrawerLayout drawerLayout) {
         drawerLayout.openDrawer(GravityCompat.START);
     }
 
+    /**This method gives the current drawer layout to the closeDrawer method
+     * It is called when the PenguinDive logo is clicked in the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickLogo(View view){
         closeDrawer(drawerLayout);
     }
 
+    /**
+     * This method closes the navigation drawer
+     * @param drawerLayout
+     * Takes a drawerLayout that represents the current activities drawer
+     */
     public static void closeDrawer(DrawerLayout drawerLayout){
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 
+    /**
+     * This method redirects the user to MainActivity
+     * Since the user is current on the MainActivity, it simply closes the drawer
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickHome(View view){
         MainActivity.closeDrawer(drawerLayout);
     }
 
+    /**
+     * This method redirects the user to the MyExperimentActivity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMyExperiments(View view){
         redirectActivity(this,MyExperimentActivity.class);
     }
 
+    /**
+     * This method redirects the user to the PickScanType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickScanQrCode(View view){
         redirectActivity(this,PickScanType.class);
     }
 
+    /**
+     * This method redirects the user to the PickQRType Activity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickGenerateQrCode(View view){
         redirectActivity(this,PickQRType.class);
     }
 
+    /**
+     * This method redirects the user to the their profile page (Profile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickMyProfile(View view){
         redirectActivity(this,Profile.class);
     }
 
+    /**
+     * This method redirects the user to the search users page (SearchProfile Activity)
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickSearchUsers(View view){
         redirectActivity(this,SearchProfile.class);
     }
 
 
-    // Courtesy of Parag Chauhan
-    // https://stackoverflow.com/a/4930319
+    /**
+     * This method calls openGitHub and provides it the current activity
+     * @param view
+     * Takes a view representing the current view
+     */
     public void ClickGitHub(View view){
         openGitHub(this);
     }
 
+    /**
+     * This method opens the GitHub page in Google Chrome
+     * @param activity
+     * Takes an activity that represents the current activity
+     */
     public static void openGitHub(Activity activity){
+        // Courtesy of Parag Chauhan
+        // https://stackoverflow.com/a/4930319
         Uri uri = Uri.parse("https://github.com/CMPUT301W21T24/PenguinDive");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         System.out.println(intent);
         activity.startActivity(intent);
     }
 
+    /**
+     * This method is a generic method that redirects the user from the current activity to another
+     * @param activity
+     * Takes an Activity that represents the current activity
+     * @param aClass
+     * Takes a Class that represents the class of the next Activity
+     */
     public static void redirectActivity(Activity activity, Class aClass){
         Intent intent = new Intent(activity,aClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
 
+    /**
+     * This method closes the drawer when the activity is paused
+     */
     @Override
     protected void onPause(){
         super.onPause();
