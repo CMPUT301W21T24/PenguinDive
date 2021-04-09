@@ -15,43 +15,23 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/search_question"
+            android:id="@+id/search_question2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="SearchText"
             android:ems="8" />
 
         <Button
-            android:id="@+id/search_question_button"
+            android:id="@+id/search_question_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginHorizontal="10dp"
             android:text="Search" />
 
-        <EditText
-            android:id="@+id/add_question_subject_field"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Question Subject"
-            android:ems="8" />
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/add_question_detail_field"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Additional Question Details"
-        android:ems="8" />
 
-    <Button
-        android:id="@+id/add_question_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginHorizontal="10dp"
-        android:text="Ask Question" />
 
     <ListView
         android:id="@+id/question_list"
