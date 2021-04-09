@@ -25,7 +25,7 @@ public class CurrentExperimentersCustomList extends ArrayAdapter<String> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.trial_measurement_layout, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.current_experimenters_layout, parent, false);
         }
     }
 }
