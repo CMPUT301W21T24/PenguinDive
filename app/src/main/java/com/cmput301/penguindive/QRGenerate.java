@@ -6,6 +6,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -93,6 +94,8 @@ public class QRGenerate extends AppCompatActivity {
         imSaved = findViewById(R.id.image_saved);
 
         String choice = getIntent().getSerializableExtra("type").toString();
+        SharedPreferences sharedPref = this.getSharedPreferences("identity", Context.MODE_PRIVATE);
+        String uid = sharedPref.getString("UID", "");
 
         ArrayList<String> experimentNames = new ArrayList<>();
         // get experiment names from database
@@ -102,13 +105,23 @@ public class QRGenerate extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        if (document.get("Status").equals("Published")) {
+                        if (document.get("Status").equals("Published") && document.get("experimenterIDs").toString().contains(uid)) {
                             experimentNames.add(document.get("Title").toString());
                             Log.d("experiment names", document.get("Title").toString());
                         }
                     }
                 } else {
                     Log.d("Could not get data", "no Data to get");
+                }
+                // hide buttons until QR code is generated
+                save.setVisibility(Button.GONE);
+                back.setVisibility(Button.GONE);
+                if (experimentNames.size() == 0) {
+                    imSaved.setText("No subscribed experiments");
+                    back.setVisibility(Button.VISIBLE);
+                    generate.setVisibility(Button.GONE);
+                    experName.setVisibility(Spinner.GONE);
+                    passfail.setVisibility(Spinner.GONE);
                 }
                 String[] eNames = experimentNames.toArray(new String[0]);
                 ArrayAdapter<String> namesAdapt = new ArrayAdapter<>(QRGenerate.this, R.layout.support_simple_spinner_dropdown_item, eNames);
@@ -120,10 +133,6 @@ public class QRGenerate extends AppCompatActivity {
         String[] passOrFail = {"SUCCESS", "FAILURE"};
         ArrayAdapter<String> passFailAdapt = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, passOrFail);
         passfail.setAdapter(passFailAdapt);
-
-        // hide buttons until QR code is generated
-        save.setVisibility(Button.GONE);
-        back.setVisibility(Button.GONE);
 
         // if the user wants to advertise an experiment
         if (choice.equals("ad")) {
