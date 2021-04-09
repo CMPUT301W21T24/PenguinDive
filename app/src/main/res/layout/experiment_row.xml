@@ -64,12 +64,6 @@
             android:layout_marginStart="10dp"
             android:text="map"
             android:visibility="invisible"/>
-        <Button
-            android:id="@+id/stat_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Stats"/>
     </LinearLayout>
 
 
@@ -122,10 +116,23 @@
         />
 
     <Button
-        android:id="@+id/trials_experiment"
+        android:id="@+id/stat_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/questions_experiment"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@+id/experiment_description"
+        android:textSize="12sp"
+        android:text="Stats" />
+
+    <Button
+        android:id="@+id/trials_experiment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stat_button"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="-4dp"
         android:layout_marginStart="4dp"
