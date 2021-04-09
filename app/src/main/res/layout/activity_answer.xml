@@ -6,11 +6,12 @@
 
     <TextView
         android:id="@+id/question_subject"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_margin="8dp"
         android:text="Question"
-        android:textSize="30sp">
+        android:textSize="30sp"
+        android:textAlignment="center">
 
 
     </TextView>
@@ -18,11 +19,12 @@
 
     <TextView
         android:id="@+id/question_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_margin="8dp"
         android:text="Question"
-        android:textSize="20sp">
+        android:textSize="20sp"
+        android:textAlignment="center">
 
     </TextView>
 

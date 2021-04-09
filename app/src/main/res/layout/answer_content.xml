@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_margin="20dp">
+    android:layout_margin="8dp">
 
     <TextView
         android:id="@+id/answer_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_margin="8dp"
         android:text="Answer"
         android:textSize="30sp">
 
     </TextView>
     <TextView
         android:id="@+id/answer_poster"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_below="@+id/answer_text"
+        android:layout_margin="8dp"
         android:text="Poster"
-        android:textSize="14sp">
+        android:textSize="14sp"
+        android:textStyle="italic">
     </TextView>
-</LinearLayout>
+</RelativeLayout>

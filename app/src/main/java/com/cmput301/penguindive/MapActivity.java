@@ -68,7 +68,7 @@ Availability:https://stackoverflow.com/questions/30569854/adding-multiple-marker
 */
 
 /**
- * This class represents a map activity where the user can view the map for a given experiment
+ * This class represents a map activity where the user can view
  */
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
     FirebaseFirestore db = FirebaseFirestore.getInstance();
